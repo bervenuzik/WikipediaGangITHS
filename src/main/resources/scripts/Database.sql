@@ -15,7 +15,6 @@ CREATE TABLE `wikipedia`.`person` (
   `email` VARCHAR(45) NOT NULL,
   `type_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `type_id_idx` (`type_id` ASC) VISIBLE,
   CONSTRAINT `type_id`
     FOREIGN KEY (`type_id`)
     REFERENCES `wikipedia`.`user_type` (`id`)
@@ -38,12 +37,12 @@ CREATE TABLE `wikipedia`.`login_info` (
   `password` VARCHAR(45) NOT NULL,
   `person_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `person_id_idx` (`person_id` ASC) VISIBLE,
   CONSTRAINT `person_id`
     FOREIGN KEY (`person_id`)
     REFERENCES `wikipedia`.`person` (`id`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT);
+
 CREATE TABLE `wikipedia`.`article` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(200) NOT NULL,
@@ -51,20 +50,10 @@ CREATE TABLE `wikipedia`.`article` (
   `theme_id` INT NOT NULL,
   `status_id` INT NOT NULL,
   `text` MEDIUMTEXT NOT NULL,
-  `borrower_id` INT NOT NULL,
   `num_views` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `author_id_idx` (`author_id` ASC) VISIBLE,
-  INDEX `borrower_id_idx` (`borrower_id` ASC) VISIBLE,
-  INDEX `theme_id_idx` (`theme_id` ASC) VISIBLE,
-  INDEX `status_id_idx` (`status_id` ASC) VISIBLE,
   CONSTRAINT `author_id`
     FOREIGN KEY (`author_id`)
-    REFERENCES `wikipedia`.`person` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT,
-  CONSTRAINT `borrower_id`
-    FOREIGN KEY (`borrower_id`)
     REFERENCES `wikipedia`.`person` (`id`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
@@ -79,7 +68,6 @@ CREATE TABLE `wikipedia`.`article` (
     ON DELETE CASCADE
     ON UPDATE RESTRICT);
 
-
 CREATE TABLE `wikipedia`.`article_borrower_info` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `article_id` INT NOT NULL,
@@ -87,8 +75,6 @@ CREATE TABLE `wikipedia`.`article_borrower_info` (
   `borrow_date` DATE NOT NULL,
   `return_date` DATE NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `article_id_idx` (`article_id` ASC) VISIBLE,
-  INDEX `borrower_id_idx` (`borrower_id` ASC) VISIBLE,
   CONSTRAINT `article_id`
     FOREIGN KEY (`article_id`)
     REFERENCES `wikipedia`.`article` (`id`)
@@ -108,8 +94,6 @@ CREATE TABLE `wikipedia`.`comment` (
   `article_id` INT NOT NULL,
   `date` DATE NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `person_id_idx` (`person_id` ASC) VISIBLE,
-  INDEX `article_id2_idx` (`article_id` ASC) VISIBLE,
   CONSTRAINT `person_id2`
     FOREIGN KEY (`person_id`)
     REFERENCES `wikipedia`.`person` (`id`)
@@ -127,7 +111,6 @@ CREATE TABLE `wikipedia`.`error_log` (
   `person_id` INT NOT NULL,
   `date` DATE NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `person_id_idx` (`person_id` ASC) VISIBLE,
   CONSTRAINT `person_id3`
     FOREIGN KEY (`person_id`)
     REFERENCES `wikipedia`.`person` (`id`)
