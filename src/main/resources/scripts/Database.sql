@@ -21,7 +21,7 @@ CREATE TABLE `wikipedia`.`person` (
     ON DELETE CASCADE
     ON UPDATE RESTRICT);
 
-CREATE TABLE `wikipedia`.`theme` (
+CREATE TABLE `wikipedia`.`article_category` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`));
