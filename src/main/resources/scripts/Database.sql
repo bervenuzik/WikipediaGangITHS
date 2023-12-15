@@ -47,7 +47,7 @@ CREATE TABLE `wikipedia`.`article` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(200) NOT NULL,
   `author_id` INT NOT NULL,
-  `theme_id` INT NOT NULL,
+  `category_id` INT NOT NULL,
   `status_id` INT NOT NULL,
   `text` MEDIUMTEXT NOT NULL,
   `num_views` INT NULL,
@@ -57,9 +57,9 @@ CREATE TABLE `wikipedia`.`article` (
     REFERENCES `wikipedia`.`person` (`id`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
-  CONSTRAINT `theme_id`
-    FOREIGN KEY (`theme_id`)
-    REFERENCES `wikipedia`.`theme` (`id`)
+  CONSTRAINT `category_id`
+    FOREIGN KEY (`category_id`)
+    REFERENCES `wikipedia`.`category` (`id`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
   CONSTRAINT `status_id`
