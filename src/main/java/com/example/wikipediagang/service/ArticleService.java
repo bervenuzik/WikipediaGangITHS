@@ -124,9 +124,6 @@ public class ArticleService {
         System.out.print("Enter title of the article: ");
         String chosenTitle = ScannerHelper.getStringInput();
         List<Article> articlesWithSameName = articleRepo.findArticleByTitle(chosenTitle);
-        if (articlesWithSameName.isEmpty()) {
-            System.out.println("!! Article with desired title NOT found !!");
-        }
         return articlesWithSameName;
     }
 
