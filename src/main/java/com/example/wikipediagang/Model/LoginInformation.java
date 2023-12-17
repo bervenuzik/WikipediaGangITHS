@@ -1,4 +1,4 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.Model;
 
 import jakarta.persistence.*;
 
@@ -39,7 +39,8 @@ public class LoginInformation {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        if(userNameValidator(userName)){
+            this.userName = userName;}
     }
 
     public String getPassword() {
@@ -47,7 +48,10 @@ public class LoginInformation {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+
+        if(passwordValidator(password)){
+            this.password = password;
+        }
     }
 
    public Person getPerson() {
@@ -58,9 +62,26 @@ public class LoginInformation {
     this.person = person;
     }
 
+    private boolean userNameValidator(String userName){
+        if(userName.isEmpty()){
+            System.out.println("username can't be empty.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean passwordValidator(String password){
+        if(password.isEmpty()){
+            System.out.println("password can't be enpty");
+            return false;
+        }
+        // check here that the password is sequere enough, exempelvis att den ska vara av en viss längd och att den ska innhålle minst 1 siffra och ett special tecken.
+        return true;
+    }
+
     @Override
     public String toString() {
-        return "user: " + Person.getName()+" \n userName:" + userName + '\n' +
+        return "user: " + person.getFirstName()+ " "+ person.getLastName() +" \n userName:" + userName + '\n' +
                 "password:" + password ;
     }
 
