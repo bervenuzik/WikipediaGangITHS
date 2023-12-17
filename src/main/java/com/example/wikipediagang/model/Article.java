@@ -1,5 +1,6 @@
 package com.example.wikipediagang.model;
 
+import com.example.wikipediagang.Person;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,9 +31,8 @@ public class Article {
     @JoinColumn(name="category_id")
     private ArticleCategory category;
 
-    @ManyToOne
-    @JoinColumn(name="status_id")
-    private ArticleStatus status;
+    @Column(name="available_as_hard_copy")
+    private String availableAsHardCopy;
 
     @Column(name="num_views")
     private int numOfViews;
@@ -40,12 +40,12 @@ public class Article {
     public Article() {
     }
 
-    public Article(String title, String content, Person person, ArticleCategory category, ArticleStatus status) {
+    public Article(String title, String content, Person person, ArticleCategory category) {
         this.title = title;
         this.content = content;
         this.person = person;
         this.category = category;
-        this.status = status;
+        this.availableAsHardCopy = "no";
         this.numOfViews = 0;
     }
 
@@ -85,12 +85,12 @@ public class Article {
         this.category = category;
     }
 
-    public ArticleStatus getStatus() {
-        return status;
+    public String getAvailableAsHardCopy() {
+        return availableAsHardCopy;
     }
 
-    public void setStatus(ArticleStatus status) {
-        this.status = status;
+    public void setAvailableAsHardCopy(String availableAsHardCopy) {
+        this.availableAsHardCopy = availableAsHardCopy;
     }
 
     public int getNumOfViews() {
@@ -104,12 +104,10 @@ public class Article {
     @Override
     public String toString() {
         return "Article{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", person=" + person +
+                "title='" + title + '\'' + ",\n" +
+                " author=" + person.getFirstName() + " " + person.getLastName() +
                 ", category=" + category.getName() +
-                ", status=" + status.getName() +
+                ", availableAsHardCopy='" + availableAsHardCopy + '\'' +
                 ", numOfViews=" + numOfViews +
                 '}' + "\n";
     }
