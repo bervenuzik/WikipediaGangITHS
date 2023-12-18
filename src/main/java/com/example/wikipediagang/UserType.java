@@ -3,6 +3,7 @@ package com.example.wikipediagang;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name="user_type")
 public class UserType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

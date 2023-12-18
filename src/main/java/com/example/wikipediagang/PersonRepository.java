@@ -20,7 +20,9 @@ public interface PersonRepository extends JpaRepository < Person ,Integer > {
     List<Person> findByType(int type);
 
     @Query(nativeQuery = true,
-            value = "select p.* from Person p inner join Article a on p.id = a.author_id where p.firstname=:firstName and p.lastname=:lastName")
-    List<Person> allAuthorsWithName(String firstName, String lastName);
+            value = "select distinct p.* from person p inner join article a on p.id = a.author_id where p.firstname=:firstName and p.lastname=:lastName")
+    List<Person> allAuthorsWithSameName(String firstName, String lastName);
+
+
 
 }

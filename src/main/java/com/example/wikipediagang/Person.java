@@ -13,7 +13,7 @@ public class Person {
     @Column(name = "lastname")
     private String lastName;
     private String email;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id" , referencedColumnName = "id")
     UserType type;
 
