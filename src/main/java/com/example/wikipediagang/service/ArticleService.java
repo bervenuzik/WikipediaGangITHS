@@ -148,7 +148,7 @@ public class ArticleService {
     }
 
     private void readAnArticle(List<Article> articlesList) {
-        System.out.println("Choose one of the following articles: ");
+        System.out.println("\nChoose one of the following articles to read: ");
         for (int i = 0; i < articlesList.size(); i++) {
             System.out.println(i + ". " + articlesList.get(i).getTitle());
         }
@@ -160,7 +160,7 @@ public class ArticleService {
         articleRepo.save(chosenArticle);
         System.out.println("!! You can now read the desired article below !!");
         System.out.println("------------------------------------------------------------------------------------------");
-        System.out.println(chosenArticle.getTitle().toUpperCase() + "\nWritten by: " + chosenArticle.getPerson().getFirstName() +
+        System.out.println("Title: " + chosenArticle.getTitle().toUpperCase() + "\nWritten by: " + chosenArticle.getPerson().getFirstName() +
                 " " + chosenArticle.getPerson().getLastName() + "\n\n" + chosenArticle.getContent());
         System.out.println("\n------------------------------------------------------------------------------------------");
     }
