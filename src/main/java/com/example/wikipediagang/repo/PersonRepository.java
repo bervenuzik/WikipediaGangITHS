@@ -1,5 +1,7 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.repo;
 
+import com.example.wikipediagang.model.Person;
+import com.example.wikipediagang.model.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -7,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PersonRepository extends JpaRepository < Person ,Integer > {
+public interface PersonRepository extends JpaRepository <Person,Integer > {
 
     List<Person> findByFirstName(String firstName);
     List<Person> findByLastName(String secondName);

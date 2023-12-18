@@ -1,4 +1,4 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.model;
 
 import jakarta.persistence.*;
 

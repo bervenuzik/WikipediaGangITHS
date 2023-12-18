@@ -1,8 +1,8 @@
 package com.example.wikipediagang.service;
 
 
-import com.example.wikipediagang.Person;
-import com.example.wikipediagang.PersonRepository;
+import com.example.wikipediagang.model.Person;
+import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleCategory;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @Component
 public class ArticleService {
