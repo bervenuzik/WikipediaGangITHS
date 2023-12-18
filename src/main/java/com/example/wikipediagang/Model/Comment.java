@@ -15,12 +15,13 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
-    @Column(name = "person_id")
+
     @ManyToOne (fetch = FetchType.EAGER)
+    @JoinColumn( name = "person_id")
     private Person person;
 
-    @Column(name = "article_id")
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "article_id")
     private Article article;
 
     private Date date;
