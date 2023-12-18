@@ -14,14 +14,18 @@ public class ErroLog {
     String text;
     @Temporal(TemporalType.DATE)
     Date date;
+    int amount;
+    String status;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id")
     Person person;
 
-    public ErroLog(int id, String text, Date date, Person person) {
-        this.id = id;
+    public ErroLog(String text, Date date, int amount, String status, Person person) {
         this.text = text;
         this.date = date;
+        this.amount = amount;
+        this.status = status;
         this.person = person;
     }
 
@@ -34,6 +38,8 @@ public class ErroLog {
                 "id=" + id +
                 ", text='" + text + '\'' +
                 ", date=" + date +
+                ", amount=" + amount +
+                ", status='" + status + '\'' +
                 ", person=" + person +
                 '}';
     }
@@ -68,5 +74,21 @@ public class ErroLog {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

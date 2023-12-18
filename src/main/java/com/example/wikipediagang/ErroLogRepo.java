@@ -18,6 +18,8 @@ public interface ErroLogRepo extends JpaRepository<ErroLog, Integer> {
     List<ErroLog> findByPersonId(int person_id);
     List<ErroLog> findByText(String text);
 
+    @Query("select e.text from ErroLog e")
+    List<String> findByErroLog(String text);
 
     boolean existsByPerson_id(int id);
 
