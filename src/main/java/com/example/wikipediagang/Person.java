@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     @Column(name = "firstname")
     private String firstName;
     @Column(name = "lastname")
@@ -39,7 +39,7 @@ public class Person {
         this.type = type;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
