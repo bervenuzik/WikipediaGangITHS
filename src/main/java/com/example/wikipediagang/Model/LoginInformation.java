@@ -75,8 +75,27 @@ public class LoginInformation {
             System.out.println("password can't be enpty");
             return false;
         }
-        // check here that the password is sequere enough, exempelvis att den ska vara av en viss längd och att den ska innhålle minst 1 siffra och ett special tecken.
-        return true;
+        char tempChar;
+        boolean upperCaseFlag = false;
+        boolean lowererCaseFlag = false;
+        boolean numberFlag = false;
+
+        for(int i= 0; i < password.length(); i++){
+            tempChar = password.charAt(i);
+            if(Character.isDigit(tempChar)){
+                numberFlag = true;
+            }
+            if(Character.isUpperCase(tempChar)){
+                upperCaseFlag = true;
+            }
+            if(Character.isLowerCase(tempChar)){
+                lowererCaseFlag = true;
+            }
+            if(numberFlag && upperCaseFlag && lowererCaseFlag){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -86,3 +105,4 @@ public class LoginInformation {
     }
 
 }
+
