@@ -1,5 +1,6 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.repo;
 
+import com.example.wikipediagang.model.ErroLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,13 +1,11 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.service;
 
-import javax.naming.AuthenticationException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.ScannerHelper;
+import com.example.wikipediagang.model.ErroLog;
+import com.example.wikipediagang.repo.ErroLogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
