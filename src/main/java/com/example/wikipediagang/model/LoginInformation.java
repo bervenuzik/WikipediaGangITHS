@@ -1,6 +1,5 @@
-package com.example.wikipediagang.Model;
+package com.example.wikipediagang.model;
 
-import com.example.wikipediagang.Model.Person;
 import jakarta.persistence.*;
 
 @Entity

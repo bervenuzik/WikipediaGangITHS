@@ -1,7 +1,7 @@
 package com.example.wikipediagang.repo;
 
-import com.example.wikipediagang.Model.LoginInformation;
-import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.model.LoginInformation;
+import com.example.wikipediagang.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

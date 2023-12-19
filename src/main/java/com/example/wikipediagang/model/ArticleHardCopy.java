@@ -1,4 +1,4 @@
-package com.example.wikipediagang.Model;
+package com.example.wikipediagang.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import  com.example.wikipediagang.Model.Article;
 
 @Entity
 @Table(name="article_hard_copy")

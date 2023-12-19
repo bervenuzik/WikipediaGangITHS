@@ -1,6 +1,6 @@
 package com.example.wikipediagang;
 
-import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.service.ArticleService;
 import com.example.wikipediagang.service.MassageHandlerService;
