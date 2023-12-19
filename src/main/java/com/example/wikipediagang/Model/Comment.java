@@ -1,4 +1,4 @@
-package com.example.wikipediagang.Model;
+package com.example.wikipediagang.model;
 
 import com.example.wikipediagang.Person;
 import jakarta.persistence.*;

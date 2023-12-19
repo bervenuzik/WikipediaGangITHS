@@ -1,11 +1,10 @@
-package com.example.wikipediagang.Model;
+package com.example.wikipediagang.model;
 
 import com.example.wikipediagang.Person;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "login_info")
-
 public class LoginInformation {
 
     // autogener id från databasen.

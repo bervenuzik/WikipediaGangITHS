@@ -41,9 +41,23 @@ public class ScannerHelper {
     public static String getStringInput() {               //to handle invalid user-input instead of a String
         String s;
         do {
-            s = sc.nextLine().toLowerCase().trim();
+            s = sc.nextLine().trim();
         } while (s.trim().isEmpty());
         return s;
+    }
+
+    public static String getTextInput(){
+        String input = "";
+        while (sc.hasNextLine()){
+            String line = sc.nextLine();
+            if(!line.equals("THE-END")){
+                input = input + line + "\n";
+            } else {
+                break;
+            }
+
+        }
+        return input;
     }
     public static void close(){
         sc.close();

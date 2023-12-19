@@ -1,6 +1,5 @@
 package com.example.wikipediagang.model;
 
-import com.example.wikipediagang.Person;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
