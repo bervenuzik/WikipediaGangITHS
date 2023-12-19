@@ -1,8 +1,10 @@
 package com.example.wikipediagang;
 
-import com.example.wikipediagang.model.Person;
+import com.example.wikipediagang.Model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.service.ArticleService;
+import com.example.wikipediagang.service.MassageHandlerService;
+import com.example.wikipediagang.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,10 @@ public class MyMain implements CommandLineRunner {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private PersonService pService;
+    private Optional<Person> currentUser = Optional.empty();
+    private final MassageHandlerService log = new MassageHandlerService();
 
 
     @Override
@@ -25,20 +31,28 @@ public class MyMain implements CommandLineRunner {
         boolean isDone = true;
 
         do {
-            System.out.println("""
-                ----------------------------------------------------------------------------------------
-                \nHey, Welcome to ITHS Wikipedia!
-                \nChoose from the following tasks-
-                To EXIT, enter 0
-                1. Create New User Account
-                2. Login""");
+            log.menu(" ----------------------------------------------------------------------------------------");
+            log.menu("\nHey, Welcome to ITHS Wikipedia!\nChoose from the following tasks-\nTo EXIT, enter 0");
+
+            if(currentUser.isPresent())log.menu("1. To login out");
+            else log.menu("1. To Login");
+
             System.out.print("\nEnter your choice: ");
             int userInput = ScannerHelper.getIntInput(2);
             switch (userInput) {
                 case 0 -> isDone = false;
-                case 1 -> createUserAccount();
-                case 2 -> login();
+                case 1 -> {
+                    if (currentUser.isPresent()) {
+                        loginOut();
+                    } else {
+                        login();
+                    }
+                }
                 default -> System.out.println("Invalid Input");
+            }
+
+            if(currentUser.isPresent()){
+                showUserMenu();
             }
         } while (isDone);
 
@@ -55,43 +69,42 @@ public class MyMain implements CommandLineRunner {
     }
 
     private void login(){
-        //TODO add code to validate username and password
-        // If valid user, then get the User from the PersonRepo and
-        // call showUserMenu() with the User
-
-        Optional<Person> opPerson = personRepo.findById(3);
-        if (opPerson.isPresent()) {
-            Person p = opPerson.get();
-            showUserMenu(p);
+        Optional<Person> user;
+        user = pService.login();
+        if(user.isPresent()){
+            currentUser = user;
         }
-
-
+    }
+    private void loginOut(){
+        currentUser = Optional.empty();
+        log.warning("You now is logged out");
     }
 
-    private void showUserMenu(Person loggedInPerson){
+    private void showUserMenu(){
         boolean isDone = true;
+        if(currentUser.isPresent()) {
+            do {
+                log.menu("""
+                        ----------------------------------------------------------------------------------------
+                        \n
+                        To EXIT, enter 0
+                        1. Edit Account
+                        2. See Article Menu
+                        \nEnter your choice:""");
 
-        do {
-            System.out.println("""
-                ----------------------------------------------------------------------------------------
-                \nHello Friend, Welcome back!
-                Choose from the following tasks-
-                To EXIT, enter 0
-                1. Edit Account
-                2. See Article Menu""");
-            System.out.print("\nEnter your choice: ");
-            int userInput = ScannerHelper.getIntInput(2);
-            switch (userInput) {
-                case 0 -> isDone = false;
-                case 1 -> editUserAccount(loggedInPerson);           //update first name, last name, email
-                case 2 -> showArticleMenu(loggedInPerson);
-                default -> System.out.println("Invalid Input");
-            }
-        } while (isDone);
+                int userInput = ScannerHelper.getIntInput(2);
+                switch (userInput) {
+                    case 0 -> isDone = false;
+                    case 1 -> editUserAccount(currentUser.get());           //update first name, last name, email
+                    case 2 -> showArticleMenu(currentUser.get());
+                    default -> System.out.println("Invalid Input");
+                }
+            } while (isDone);
+        }
     }
 
     private void editUserAccount(Person p) {
-
+        //pService.createUser();
     }
 
     private void showArticleMenu(Person p) {

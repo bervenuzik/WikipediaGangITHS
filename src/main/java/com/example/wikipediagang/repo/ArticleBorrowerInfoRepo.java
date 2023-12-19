@@ -1,6 +1,6 @@
 package com.example.wikipediagang.repo;
 
-import com.example.wikipediagang.model.ArticleBorrowerInfo;
+import com.example.wikipediagang.Model.ArticleBorrowerInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
