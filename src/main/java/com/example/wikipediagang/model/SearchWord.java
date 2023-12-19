@@ -3,8 +3,7 @@ package com.example.wikipediagang.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "serach_words")
-
+@Table(name = "search_words")
 public class SearchWord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
