@@ -1,5 +1,6 @@
 package com.example.wikipediagang.Model;
 
+import com.example.wikipediagang.Person;
 import jakarta.persistence.*;
 
 @Entity
@@ -23,11 +24,10 @@ public class LoginInformation {
     public LoginInformation() {
     }
 
-    public LoginInformation(int id, String userName, String password, Person person) {
-        this.id = id;
+    public LoginInformation(String userName, String password, Person person) {
         this.userName = userName;
         this.password = password;
-      this.person = person;
+        this.person = person;
     }
 
     public int getId() {
@@ -62,7 +62,7 @@ public class LoginInformation {
     this.person = person;
     }
 
-    private boolean userNameValidator(String userName){
+    public static boolean userNameValidator(String userName){
         if(userName.isEmpty()){
             System.out.println("username can't be empty.");
             return false;
@@ -70,7 +70,7 @@ public class LoginInformation {
         return true;
     }
 
-    private boolean passwordValidator(String password){
+    public static boolean passwordValidator(String password){
         if(password.isEmpty()){
             System.out.println("password can't be enpty");
             return false;
