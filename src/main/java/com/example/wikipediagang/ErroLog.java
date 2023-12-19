@@ -1,7 +1,8 @@
 package com.example.wikipediagang;
 
-import jakarta.persistence.*;
 
+import jakarta.persistence.*;
+import com.example.wikipediagang.Model.Person;
 import java.util.Date;
 import java.util.List;
 

@@ -1,6 +1,8 @@
-package com.example.wikipediagang.model;
+package com.example.wikipediagang.Model;
 
+import com.example.wikipediagang.Model.LoginInformation;
 import jakarta.persistence.*;
+import com.example.wikipediagang.model.UserType;
 
 @Entity
 @Table(name = "person")
@@ -16,6 +18,10 @@ public class Person {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id" , referencedColumnName = "id")
     UserType type;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id" , referencedColumnName = "id")
+    LoginInformation loginInfo;
 
 
     public Person() {
@@ -92,8 +98,13 @@ public class Person {
     public void setType(UserType type) {
         this.type = type;
     }
+    public void setLoginInfo(Person person , LoginInformation loginInfo){
+        if(person.getType().getName().equals("admin")){
+            this.loginInfo = loginInfo;
+        }
+    }
 
-    public boolean firstNameValidator(String firstName){
+    public static boolean firstNameValidator(String firstName){
 
         if (firstName.isEmpty()) {
             System.err.println("First name can't be empty");
@@ -110,7 +121,7 @@ public class Person {
 
     }
 
-    public boolean lastNameValidator(String secondName){
+    public static boolean lastNameValidator(String secondName){
 
         if (secondName.isEmpty()) {
             System.err.println("Last name can't be empty");
@@ -127,7 +138,7 @@ public class Person {
 
     }
 
-    public boolean emailValidator(String email){
+    public static boolean emailValidator(String email){
 
         if (email.isEmpty()) {
             System.err.println("Email can't be empty");
@@ -141,6 +152,8 @@ public class Person {
             System.err.println("Wrong format of email");
             return false;
         }
+
+
 
     }
 }
