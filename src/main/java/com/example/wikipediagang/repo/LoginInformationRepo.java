@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface LoginInformationRepo  extends JpaRepository<LoginInformation, Integer> {
 
-
     List<LoginInformation> findByUserNameAndPassword(String userName , String password);
     Optional<Person> findLoginInformationByUserNameAndPassword(String userName , String password);
 

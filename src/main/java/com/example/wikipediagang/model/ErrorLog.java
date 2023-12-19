@@ -1,13 +1,23 @@
 package com.example.wikipediagang.model;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "error_log")
-public class ErroLog {
+public class ErrorLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
@@ -19,20 +29,19 @@ public class ErroLog {
     @JoinColumn(name = "person_id")
     Person person;
 
-    public ErroLog(String text, Date date, String status,Person person) {
+    public ErrorLog(String text, Date date, String status, Person person) {
         this.text = text;
         this.date = date;
         this.status = status;
         this.person = person;
     }
 
-    public ErroLog() {
+    public ErrorLog() {
     }
 
     @Override
     public String toString() {
-        return "ErroLog{" +
-                "id=" + id +
+        return "ErrorLog{" +
                 ", text='" + text + '\'' +
                 ", date=" + date +
                 ", status=" + status +

@@ -36,11 +36,11 @@ public class ArticleBorrowerInfo {
     public ArticleBorrowerInfo() {
     }
 
-    public ArticleBorrowerInfo(Article article, Person person, LocalDate borrowDate) {
+    public ArticleBorrowerInfo(Article article, Person person) {
         this.article = article;
         this.person = person;
-        this.borrowDate = borrowDate;
-        this.returnDate = borrowDate.plusWeeks(2);               //adds two weeks to borrow date,
+        this.borrowDate = LocalDate.now();
+        this.returnDate = borrowDate.plusWeeks(2);              // adds two weeks to borrow date,
                                                                             // which makes loan period = 2 weeks/person
     }
 
@@ -83,9 +83,8 @@ public class ArticleBorrowerInfo {
     @Override
     public String toString() {
         return "ArticleBorrowerInfo{" +
-                "id=" + id +
                 ", article=" + article.getTitle() +
-                ", person=" + person +
+                ", person=" + person.getFirstName() + " " + person.getLastName() +
                 ", borrowDate=" + borrowDate +
                 ", returnDate=" + returnDate +
                 '}' + "\n";

@@ -15,12 +15,12 @@ import java.util.Scanner;
 @Component
 public class PersonService {
     @Autowired
-    PersonRepository     personRepo;
+    PersonRepository personRepo;
     @Autowired
     UserTypeRepository userTypeRepo;
     @Autowired
     LoginInformationRepo loginRepo;
-    MassageHandlerService log = new MassageHandlerService();
+    MessageHandlerService log = new MessageHandlerService();
     Scanner input = new Scanner(System.in);
 
 
