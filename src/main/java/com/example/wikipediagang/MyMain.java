@@ -1,5 +1,7 @@
 package com.example.wikipediagang;
 
+import com.example.wikipediagang.model.Person;
+import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
