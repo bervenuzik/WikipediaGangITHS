@@ -1,10 +1,10 @@
 package com.example.wikipediagang.service;
 
 
-import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.ScannerHelper;
-import com.example.wikipediagang.Model.Article;
+import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleCategory;
 import com.example.wikipediagang.repo.ArticleCategoryRepo;
 import com.example.wikipediagang.repo.ArticleRepo;

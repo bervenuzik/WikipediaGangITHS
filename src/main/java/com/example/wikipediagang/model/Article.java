@@ -1,4 +1,4 @@
-package com.example.wikipediagang.Model;
+package com.example.wikipediagang.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,8 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import com.example.wikipediagang.Model.Person;
-import com.example.wikipediagang.model.ArticleCategory;
 
 @Entity
 @Table(name="article")

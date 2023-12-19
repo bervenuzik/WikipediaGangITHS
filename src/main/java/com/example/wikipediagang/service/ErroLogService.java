@@ -2,7 +2,7 @@ package com.example.wikipediagang.service;
 
 import java.util.Date;
 import java.util.Optional;
-import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.ErroLog;
 import com.example.wikipediagang.repo.ErroLogRepo;

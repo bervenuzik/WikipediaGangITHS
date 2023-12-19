@@ -2,7 +2,7 @@ package com.example.wikipediagang.service;
 
 
 import com.example.wikipediagang.menu.*;
-import com.example.wikipediagang.model.ScannerHelper;
+import com.example.wikipediagang.ScannerHelper;
 
 public class MenuService {
     public void startMenu() {

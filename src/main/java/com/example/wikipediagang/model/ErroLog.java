@@ -2,9 +2,8 @@ package com.example.wikipediagang.model;
 
 
 import jakarta.persistence.*;
-import com.example.wikipediagang.Model.Person;
+
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "error_log")
