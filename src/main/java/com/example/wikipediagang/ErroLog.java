@@ -29,6 +29,7 @@ public class ErroLog {
     public ErroLog() {
     }
 
+
     @Override
     public String toString() {
         return "ErroLog{" +
