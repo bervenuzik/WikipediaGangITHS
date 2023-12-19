@@ -298,6 +298,8 @@ public class ArticleService {
             }
         } while (isDone);
     }
+
+    //TODO - max 6 hard copies of an article are allowed
     private void orderHardCopy(Article article) {
         ArticleHardCopy articleHardCopy = new ArticleHardCopy(article);
         hardCopyRepo.save(articleHardCopy);
@@ -307,15 +309,23 @@ public class ArticleService {
     }
 
     private void reserveHardCopy(Article article, Person person) {
-        ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(article, person);
-        List<ArticleBorrowerInfo> articleBorrowerInfoList =
-                borrowerInfoRepo.findByArticleIdAndPersonId(article.getId(), person.getId());
-        if (articleBorrowerInfoList.size() == 1) {
-            System.out.println("You've already reserved a copy of this article on " +
-                    borrowerInfo.getBorrowDate() + ")");
+        List<ArticleHardCopy> availableHardCopies = hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "available");
+        if (availableHardCopies.isEmpty()) {
+            System.out.println("!! No hard-copies available !!");
             return;
         }
+        ArticleHardCopy hardCopyToBeReserved = availableHardCopies.get(0);
+        hardCopyToBeReserved.setStatus("reserved");
+        ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(hardCopyToBeReserved, person);
+//        List<ArticleBorrowerInfo> articleBorrowerInfoList =
+//                borrowerInfoRepo.findByArticleHardCopyAndAndPerson(hardCopyToBeReserved, person);
+//        if (articleBorrowerInfoList.size() == 1) {
+//            System.out.println("You've already reserved a copy of this article on " +
+//                    borrowerInfo.getBorrowDate() + ")");
+//            return;
+//        }
         borrowerInfoRepo.save(borrowerInfo);
+        hardCopyRepo.save(hardCopyToBeReserved);
         System.out.println("!! A hard-copy has been RESERVED successfully till the following date " +
                 borrowerInfo.getReturnDate() + " !!");
     }
