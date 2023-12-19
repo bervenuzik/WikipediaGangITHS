@@ -1,17 +1,17 @@
 package com.example.wikipediagang.service;
 
 
+import com.example.wikipediagang.ScannerHelper;
+import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleBorrowerInfo;
+import com.example.wikipediagang.model.ArticleCategory;
 import com.example.wikipediagang.model.ArticleHardCopy;
 import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.ArticleBorrowerInfoRepo;
-import com.example.wikipediagang.repo.ArticleHardCopyRepo;
-import com.example.wikipediagang.repo.PersonRepository;
-import com.example.wikipediagang.ScannerHelper;
-import com.example.wikipediagang.model.Article;
-import com.example.wikipediagang.model.ArticleCategory;
 import com.example.wikipediagang.repo.ArticleCategoryRepo;
+import com.example.wikipediagang.repo.ArticleHardCopyRepo;
 import com.example.wikipediagang.repo.ArticleRepo;
+import com.example.wikipediagang.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +55,7 @@ public class ArticleService {
     private int receiveUserInput() {
         System.out.println("""
                 ----------------------------------------------------------------------------------------
-                \nHey, Welcome to ITHS Wikipedia!
+                \n****  ARTICLE MENU  ****
                 \nChoose from the following tasks-
                 To EXIT, enter 0
                 1. Search/Read an Article
@@ -201,7 +201,7 @@ public class ArticleService {
         }
         boolean isDone = true;
         do {
-            System.out.print("""
+            System.out.println("""
                     Edit one of the following:
                     1. Title
                     2. Content

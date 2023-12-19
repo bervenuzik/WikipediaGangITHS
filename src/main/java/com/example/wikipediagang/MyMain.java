@@ -1,9 +1,9 @@
 package com.example.wikipediagang;
 
-import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.service.ArticleService;
-import com.example.wikipediagang.service.MassageHandlerService;
+import com.example.wikipediagang.service.MessageHandlerService;
 import com.example.wikipediagang.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +22,7 @@ public class MyMain implements CommandLineRunner {
     @Autowired
     private PersonService pService;
     private Optional<Person> currentUser = Optional.empty();
-    private final MassageHandlerService log = new MassageHandlerService();
+    private final MessageHandlerService log = new MessageHandlerService();
 
 
     @Override
@@ -42,7 +42,7 @@ public class MyMain implements CommandLineRunner {
             switch (userInput) {
                 case 0 -> isDone = false;
                 case 1 -> {
-                    if (currentUser.isPresent()) {
+                    if (currentUser.isPresent()) {                //TODO - contardictory
                         loginOut();
                     } else {
                         login();
@@ -51,7 +51,7 @@ public class MyMain implements CommandLineRunner {
                 default -> System.out.println("Invalid Input");
             }
 
-            if(currentUser.isPresent()){
+            if(currentUser.isPresent()){              //TODO - it shouldn't be present here, after the switch case, in do-while loop
                 showUserMenu();
             }
         } while (isDone);

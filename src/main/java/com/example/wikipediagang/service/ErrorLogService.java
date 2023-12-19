@@ -1,6 +1,9 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.service;
 
+import com.example.wikipediagang.ScannerHelper;
+import com.example.wikipediagang.model.ErrorLog;
 import com.example.wikipediagang.model.Person;
+import com.example.wikipediagang.repo.ErrorLogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,6 @@
-package com.example.wikipediagang;
+package com.example.wikipediagang.model;
 
 
-import com.example.wikipediagang.model.Person;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

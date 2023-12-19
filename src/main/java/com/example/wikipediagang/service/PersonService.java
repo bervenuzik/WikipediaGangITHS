@@ -1,7 +1,7 @@
 package com.example.wikipediagang.service;
 
-import com.example.wikipediagang.Model.LoginInformation;
-import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.model.LoginInformation;
+import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.model.UserType;
 import com.example.wikipediagang.repo.UserTypeRepository;
@@ -15,12 +15,12 @@ import java.util.Scanner;
 @Component
 public class PersonService {
     @Autowired
-    PersonRepository     personRepo;
+    PersonRepository personRepo;
     @Autowired
     UserTypeRepository userTypeRepo;
     @Autowired
     LoginInformationRepo loginRepo;
-    MassageHandlerService log = new MassageHandlerService();
+    MessageHandlerService log = new MessageHandlerService();
     Scanner input = new Scanner(System.in);
 
 
