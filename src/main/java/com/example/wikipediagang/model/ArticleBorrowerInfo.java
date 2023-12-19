@@ -1,4 +1,5 @@
-package com.example.wikipediagang.model;
+package com.example.wikipediagang.Model;
+import com.example.wikipediagang.Model.Article;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import  com.example.wikipediagang.Model.Person;
 
 import java.time.LocalDate;
 

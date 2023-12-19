@@ -1,14 +1,13 @@
 package com.example.wikipediagang.service;
 
 import com.example.wikipediagang.Model.LoginInformation;
-import com.example.wikipediagang.Model.LoginInformationRepo;
-import com.example.wikipediagang.Person;
-import com.example.wikipediagang.PersonRepository;
-import com.example.wikipediagang.UserType;
-import com.example.wikipediagang.UserTypeRepository;
+import com.example.wikipediagang.Model.Person;
+import com.example.wikipediagang.repo.PersonRepository;
+import com.example.wikipediagang.model.UserType;
+import com.example.wikipediagang.repo.UserTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import com.example.wikipediagang.repo.LoginInformationRepo;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -18,7 +17,7 @@ public class PersonService {
     @Autowired
     PersonRepository     personRepo;
     @Autowired
-    UserTypeRepository   userTypeRepo;
+    UserTypeRepository userTypeRepo;
     @Autowired
     LoginInformationRepo loginRepo;
     MassageHandlerService log = new MassageHandlerService();

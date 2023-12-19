@@ -1,6 +1,6 @@
 package com.example.wikipediagang;
 
-import com.example.wikipediagang.model.Person;
+import com.example.wikipediagang.Model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import com.example.wikipediagang.service.ArticleService;
 import com.example.wikipediagang.service.MassageHandlerService;
@@ -22,7 +22,7 @@ public class MyMain implements CommandLineRunner {
     @Autowired
     private PersonService pService;
     private Optional<Person> currentUser = Optional.empty();
-    private MassageHandlerService log = new MassageHandlerService();
+    private final MassageHandlerService log = new MassageHandlerService();
 
 
     @Override
@@ -84,13 +84,14 @@ public class MyMain implements CommandLineRunner {
         boolean isDone = true;
         if(currentUser.isPresent()) {
             do {
-                System.out.println("""
+                log.menu("""
                         ----------------------------------------------------------------------------------------
                         \n
                         To EXIT, enter 0
                         1. Edit Account
-                        2. See Article Menu""");
-                System.out.print("\nEnter your choice: ");
+                        2. See Article Menu
+                        \nEnter your choice:""");
+
                 int userInput = ScannerHelper.getIntInput(2);
                 switch (userInput) {
                     case 0 -> isDone = false;

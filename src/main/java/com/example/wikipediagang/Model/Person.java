@@ -1,7 +1,8 @@
-package com.example.wikipediagang.model;
+package com.example.wikipediagang.Model;
 
 import com.example.wikipediagang.Model.LoginInformation;
 import jakarta.persistence.*;
+import com.example.wikipediagang.model.UserType;
 
 @Entity
 @Table(name = "person")
