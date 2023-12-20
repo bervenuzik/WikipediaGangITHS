@@ -22,6 +22,8 @@ import java.util.List;
 @Component
 public class ArticleService {
 
+    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 6;
+
     @Autowired
     private ArticleRepo articleRepo;
 
@@ -261,7 +263,7 @@ public class ArticleService {
             System.out.println("""
                 \nChoose one of the following:
                 1. Read Online
-                2. Reserve a Hard-Copy
+                2. Reserve a Hard-Copy            
                 ENTER 0, to exit""");
             System.out.print("Enter your choice: ");
             int readingChoice = ScannerHelper.getIntInput(2);
@@ -272,55 +274,18 @@ public class ArticleService {
                     readAnArticleOnline(article);
                     isDone = false;
                 }
-                case 2 -> {
-                    String hardCopyIsAvailable = article.getAvailableAsHardCopy();
-                    if (hardCopyIsAvailable.equalsIgnoreCase("no")) {
-                        System.out.println("\n!! Unfortunately, a Hard-copy of this article does NOT exist !!");
-                        System.out.print("Choose one of the following:\n1. To Order A Hard-Copy \nENTER 0, to exit " +
-                                "\nEnter your choice: ");
-                        int userChoice = ScannerHelper.getIntInput(1);
-                        if (userChoice == 1) {
-                            orderHardCopy(article);
-                        } else {
-                            return;
-                        }
-                    }
-                    int totalNumOfHardCopies = hardCopyRepo.findNumberOfHardCopiesByArticleId(article.getId());
-                    System.out.println("Total no. of hard-copies in the system: " + totalNumOfHardCopies);
-                    System.out.print("\nChoose one of the following:\n1. To Reserve a Hard-Copy \nENTER 0, to exit " +
-                            "\nEnter your choice: ");
-                    int userChoice = ScannerHelper.getIntInput(1);
-                    if (userChoice == 1) {
-                        reserveHardCopy(article, person);
-                        isDone = false;
-                    }
-                }
+                case 2 -> reserveHardCopy(article, person);
                 default -> System.out.println("Invalid Input");
             }
         } while (isDone);
     }
 
-    // the following method allows to create max 6 hard-copies per article,
-    // so that we avoid creating new hard-copy everytime a user wants one
-    private void orderHardCopy(Article article) {
-        int numOfHardCopiesInSystem = hardCopyRepo.findNumberOfHardCopiesByArticleId(article.getId());
-        if (numOfHardCopiesInSystem == 6) {
-            System.out.println("!! There are 6 hard-copies of the desired article in the system -Can NOT create more !!");
-            System.out.println("!! Recommended: Reserve a hard-copy by standing in a queue !!");
-            return;
-        }
-        ArticleHardCopy articleHardCopy = new ArticleHardCopy(article);
-        hardCopyRepo.save(articleHardCopy);
-        article.setAvailableAsHardCopy("yes");
-        articleRepo.save(article);
-        System.out.println("\n!! A hard-copy for the desired article has been ORDERED successfully !!");
-    }
-
+    /*
     private void reserveHardCopy(Article article, Person person) {
         List<ArticleHardCopy> availableHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "available");
         if (availableHardCopies.isEmpty()) {
             LocalDate latestDateToReserveHardCopy = getLatestReturnDateFromReservedHardCopiesOfAnArticle(article).plusDays(1);
-            System.out.println("!! No hard-copies available but you can reserve one on " + latestDateToReserveHardCopy + " !!");
+            System.out.println("!! No hard-copies available now but you can reserve one on " + latestDateToReserveHardCopy + " !!");
             return;
         }
         ArticleHardCopy hardCopyToBeReserved = availableHardCopies.get(0);
@@ -331,6 +296,8 @@ public class ArticleService {
         System.out.println("!! A hard-copy has been RESERVED successfully till the following date " +
                 borrowerInfo.getReturnDate() + " !!");
     }
+
+     */
 
     //get latest return date from all 6 reservations of an article's hard-copies
     private LocalDate getLatestReturnDateFromReservedHardCopiesOfAnArticle(Article article) {
@@ -343,5 +310,33 @@ public class ArticleService {
 
         List<ArticleBorrowerInfo> borrowerInfoList = borrowerInfoRepo.sortHardCopiesByReturnDate(article);
         return borrowerInfoList.get(0).getReturnDate();
+    }
+
+    private void reserveHardCopy(Article article, Person person) {
+        //int totalNumOfHardCopies = hardCopyRepo.findNumberOfHardCopiesByArticleId(article.getId());
+        List<ArticleHardCopy> listOfAvailableHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "available");
+        List<ArticleHardCopy> listOfReservedHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "reserved");
+
+        if (!listOfAvailableHardCopies.isEmpty()) {
+            ArticleHardCopy articleHardCopyToBeReserved = listOfAvailableHardCopies.get(0);
+            articleHardCopyToBeReserved.setStatus("reserved");
+            hardCopyRepo.save(articleHardCopyToBeReserved);
+            ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopyToBeReserved, person);
+            borrowerInfoRepo.save(articleBorrowerInfo);
+            System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
+                    articleBorrowerInfo.getReturnDate() + " !!");
+        } else if (!listOfReservedHardCopies.isEmpty() && listOfReservedHardCopies.size() == MAX_NUM_HARD_COPIES_PER_ARTICLE) {
+            // TODO- handle reserve copy queue
+        } else {
+            ArticleHardCopy articleHardCopy = new ArticleHardCopy(article);
+            articleHardCopy.setStatus("reserved");
+            hardCopyRepo.save(articleHardCopy);
+            article.setAvailableAsHardCopy("yes");
+            articleRepo.save(article);
+            ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopy, person);
+            borrowerInfoRepo.save(articleBorrowerInfo);
+            System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
+                    articleBorrowerInfo.getReturnDate() + " !!");
+        }
     }
 }
