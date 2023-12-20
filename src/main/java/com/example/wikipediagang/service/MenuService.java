@@ -20,7 +20,7 @@ public class MenuService {
     @Autowired
     MessageHandlerService log;
 
-   // private final MessageHandlerService log = new MessageHandlerService();
+    //private final MessageHandlerService log = new MessageHandlerService();
 
     public void startMenu() {
         log.menu("""
@@ -40,18 +40,25 @@ public class MenuService {
             }
         }
 
+        if(currentUser.get().getType().getName().equals("admin")){
+            adminMenu();
+        } else if (currentUser.get().getType().getName().equals("developer")) {
+            developerMenu();
+        }
+        else {
+            userMenu();
+        }
 
 
-        // pService.createUser(currentUser);
+        //pService.createUser(currentUser);
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 
-    public void adminMenu(Person person) {
+    public void adminMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
-                Welcome to the Admin view! 
-                
+                Welcome to the Admin view!              
                 """);
         boolean LoggedOut = false;
         while (!LoggedOut) {
@@ -62,26 +69,25 @@ public class MenuService {
                 //case REMOVE_USER -> removeUser();
                 //case EDIT_USER -> editUser();
                 //case CHANGE_PRIVILEGES -> changePrivilages();
-                case ARTICLE -> adminArticleMenu(person);
+                case ARTICLE -> adminArticleMenu();
             }
         }
 
     }
 
-    public void adminArticleMenu(Person person) {
+    public void adminArticleMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
-                Welcome to the Admin Article view!
-                
+                Welcome to the Admin Article view!                
                 """);
         boolean returnToAdminMenu = false;
         while (!returnToAdminMenu) {
             AdminArticleMenu userChoice = getUserchoice(AdminArticleMenu.values());
             switch (userChoice) {
                 case RETURN -> returnToAdminMenu = true;
-                case SEARCH -> articleService.searchAnArticle(person);
-                case WRITE -> articleService.createArticle(person);
+                case SEARCH -> articleService.searchAnArticle(currentUser.get());
+                case WRITE -> articleService.createArticle(currentUser.get());
                 case CHANGE ->  articleService.editAnArticle();
                 case DELETE -> articleService.deleteAnArticle();
 //                case REVIEW ->  reviewArticle();
@@ -91,12 +97,11 @@ public class MenuService {
 
     }
 
-    public void userMenu(Person person) {
+    public void userMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
                                
-                Welcome to the user view!
-                
+                Welcome to the user view!                
                 """);
         boolean loggout = false;
         while (!loggout) {
@@ -105,37 +110,35 @@ public class MenuService {
                 case LOUGOUT -> loggout = true;
 //                case CHANGE_PASSWORD -> changePassword();
 //                case CHANGE_EMAIL -> changeEmail();
-               case ARTICLE -> userArticleMenu(person);
+               case ARTICLE -> userArticleMenu();
             }
         }
     }
 
-    public void userArticleMenu(Person person) {
+    public void userArticleMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
-                Welome to the user Article view!
-                
+                Welcome to the user Article view!                
                 """);
         boolean returnToUserMenu = false;
         while (!returnToUserMenu) {
             UserArticleMenu userChoice = getUserchoice(UserArticleMenu.values());
             switch (userChoice) {
                 case RETURN -> returnToUserMenu = true;
-                case SEARCH -> articleService.searchAnArticle(person);
-                case WRITE -> articleService.createArticle(person);
+                case SEARCH -> articleService.searchAnArticle(currentUser.get());
+                case WRITE -> articleService.createArticle(currentUser.get());
                 case CHANGE ->  articleService.editAnArticle();
             }
 
         }
     }
 
-    public void developerMenu(Person person){
+    public void developerMenu(){
         log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
-                Welome to the developer view!
-                
+                Welcome to the developer view!                
                 """);
         boolean logout = false;
         while (!logout){
@@ -154,10 +157,9 @@ public class MenuService {
     }
 
     private <T extends MenuOption> T getUserchoice(T[] options) {
-        System.out.println();;
-        log.menu("Choose from the following tasks-");
+        log.menu("Choose from the following tasks- \n");
         printchoices(options);
-        log.menu("Enter your choice:");
+        log.menu("\nEnter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);
         return options[userChoice - 1];
 
