@@ -285,6 +285,31 @@ public class PersonService {
             }
         }
     }
+    public void editAuthor(){
+        System.out.println("input id to find edit which author");
+        int id = input.nextInt();
+        input.nextLine();
+        Optional<Person> findAuthor = personRepo.findById(id);
+        if(findAuthor.isPresent()){
+            Person author = findAuthor.get();
+            System.out.println("input ny info");
+            System.out.print("email: ");
+            String email = input.nextLine();
+            author.setEmail(email);
+            System.out.print("Lastname: ");
+            String lastname = input.nextLine();
+            author.setLastName(lastname);
+            System.out.print("Firstname: ");
+            String firstname = input.nextLine();
+            author.setFirstName(firstname);
+            UserType type = new UserType();
+            String typename = input.nextLine();
+            type.setName(typename);
+            author.setType(type);
+            personRepo.save(author);
+        }
+
+    }
 
     public  List<Person> getAllUsers(){
         return personRepo.findAll();
