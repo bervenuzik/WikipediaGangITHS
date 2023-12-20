@@ -6,9 +6,7 @@ public enum AdminArticleMenu implements MenuOption{
     CHANGE("Update an article."),
     REVIEW("Review an article."),
     DELETE("Delete an article."),
-    SEARCH("Search for an article."),
-    RESERVE("Reserve a hard-copy of an article to borrow."),
-    ORDER("Order an hard-copy of an article.");
+    SEARCH("Search for an article.");
 
     private final String displayText;
     AdminArticleMenu(String displayText){

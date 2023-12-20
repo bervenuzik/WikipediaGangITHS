@@ -20,8 +20,10 @@ public class MenuService {
     @Autowired
     MessageHandlerService log;
 
+    private final MessageHandlerService log = new MessageHandlerService();
+
     public void startMenu() {
-        System.out.println("""
+        log.menu("""
                 ----------------------------------------------------------------------------------------
                 \nHey, Welcome to ITHS Wikipedia!
                 
@@ -43,7 +45,7 @@ public class MenuService {
     }
 
     public void adminMenu(Person person) {
-        System.out.println("""
+        log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
                 Welcome to the Admin view! 
@@ -65,7 +67,7 @@ public class MenuService {
     }
 
     public void adminArticleMenu(Person person) {
-        System.out.println("""
+        log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
                 Welcome to the Admin Article view!
@@ -88,7 +90,7 @@ public class MenuService {
     }
 
     public void userMenu(Person person) {
-        System.out.println("""
+        log.menu("""
                 ----------------------------------------------------------------------------------------
                                
                 Welcome to the user view!
@@ -107,7 +109,7 @@ public class MenuService {
     }
 
     public void userArticleMenu(Person person) {
-        System.out.println("""
+        log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
                 Welome to the user Article view!
@@ -127,7 +129,7 @@ public class MenuService {
     }
 
     public void developerMenu(Person person){
-        System.out.println("""
+        log.menu("""
                 ----------------------------------------------------------------------------------------
                                 
                 Welome to the developer view!
@@ -150,10 +152,10 @@ public class MenuService {
     }
 
     private <T extends MenuOption> T getUserchoice(T[] options) {
-        System.out.println();
-        System.out.println("Choose from the following tasks-");
+        System.out.println();;
+        log.menu("Choose from the following tasks-");
         printchoices(options);
-        System.out.println("Enter your choice:");
+        log.menu("Enter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);
         return options[userChoice - 1];
 
@@ -162,7 +164,7 @@ public class MenuService {
     private <T extends MenuOption> void printchoices(T[] options) {
         int choicenumber = 1;
         for (T menuChoice : options) {
-            System.out.println(choicenumber + ". " + menuChoice.getDisplayText());
+            log.menu(choicenumber + ". " + menuChoice.getDisplayText());
             choicenumber++;
         }
     }
