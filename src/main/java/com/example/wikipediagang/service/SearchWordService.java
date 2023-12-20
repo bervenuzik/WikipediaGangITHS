@@ -29,8 +29,9 @@ public class SearchWordService {
         }
     }
     private boolean checkIfWordExists(String word){
-        SearchWord searchWord = searchWordsRepo.findByText(word);
-        if(searchWord == null){
+
+        List<SearchWord> searchWordList = searchWordsRepo.findByText(word);
+        if(searchWordList.isEmpty()){
             return false;
         } else{
         return true;
@@ -44,9 +45,14 @@ public class SearchWordService {
     }
 
     private void uppdateCount(String word){
-        SearchWord searchWord = searchWordsRepo.findByText(word);
-        searchWord.setCount(searchWord.getCount()+1);
-        searchWordsRepo.save(searchWord);
+        List<SearchWord> searchWordList = searchWordsRepo.findByText(word);
+        if(searchWordList.size()== 1){
+            for(SearchWord searchWord: searchWordList){
+                searchWord.setCount(searchWord.getCount()+1);
+                searchWordsRepo.save(searchWord);
+            }
+        }
+
     }
 
     public static void printAllSearchWords(SearchWordsRepo searchWordsRepo){
