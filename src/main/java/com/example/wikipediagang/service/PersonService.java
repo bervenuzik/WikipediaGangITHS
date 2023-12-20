@@ -1,13 +1,10 @@
 package com.example.wikipediagang.service;
 
-import com.example.wikipediagang.model.LoginInformation;
-import com.example.wikipediagang.model.Person;
-import com.example.wikipediagang.repo.PersonRepository;
-import com.example.wikipediagang.model.UserType;
-import com.example.wikipediagang.repo.UserTypeRepository;
+import com.example.wikipediagang.model.*;
+import com.example.wikipediagang.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.example.wikipediagang.repo.LoginInformationRepo;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -20,6 +17,13 @@ public class PersonService {
     UserTypeRepository userTypeRepo;
     @Autowired
     LoginInformationRepo loginRepo;
+    @Autowired
+    CommentRepo commentRepo;
+    @Autowired
+    ErrorLogRepo errorLogRepo;
+    @Autowired
+    ArticleRepo articleRepo;
+
     MessageHandlerService log = new MessageHandlerService();
     Scanner input = new Scanner(System.in);
 
@@ -35,7 +39,7 @@ public class PersonService {
         List<LoginInformation> loginInfo;
 
         while (true) {
-            System.out.println("Write in your login :");
+            System.out.println("\nWrite in your login :");
             login = input.nextLine().trim();
             System.out.println("Write in your password:");
             password = input.nextLine().trim();
@@ -54,6 +58,8 @@ public class PersonService {
                     tryAgain = log.tryAgain();
                     if (!tryAgain) return Optional.empty();
                 }
+            }else {
+                log.error("There is no such user. Control login and password");
             }
         }
     }
@@ -71,22 +77,22 @@ public class PersonService {
 
         //System.out.println(admin.get().getType().getName());
         if (admin.isPresent() && admin.get().getType().getName().equals("admin")) {
-            firstName = getNewFirstName();
+            firstName = inputNewFirstName();
             if( firstName.isEmpty()) return  Optional.empty();
 
-            lastName = getNewLastName();
+            lastName = inputLastName();
             if( lastName.isEmpty()) return  Optional.empty();
 
-            email = getNewEmail();
+            email = inputNewEmail();
             if( email.isEmpty()) return  Optional.empty();
 
-            type =  getNewUserType();
+            type =  inputUserType();
             if(type.isEmpty()) return  Optional.empty();
 
-            login = getNewLogin();
+            login = inputNewLogin();
             if(login.isEmpty()) return Optional.empty();
 
-            password = getNewPassword();
+            password = inputNewPassword();
             if (password.isEmpty())return  Optional.empty();
             loginInfo = new LoginInformation(login, password);
             loginInfo = loginRepo.save(loginInfo);
@@ -101,11 +107,88 @@ public class PersonService {
     }
 
 
-    private String getNewFirstName() {
+    public Optional<Person> deleteUser(Person currentUser){
+        List<Comment> comments;
+        List<ErrorLog> errorLogs;
+        List<Article> articles;
+        Optional<Person> defaultUser = Optional.empty();
+        Optional<Person> userToDelete = Optional.empty();
+        List<Person> admins;
+        defaultUser = personRepo.findByEmail("default@mail.com");
+        if(defaultUser.isEmpty()){
+            log.error("Opssss, we have a little problem with servern. Try later");
+            return Optional.empty();
+        }
+        System.out.println(defaultUser);
+
+        while (true) {
+            log.message("Write in user's email , that you want to delete");
+            String email = inputNewEmail();
+            if (email.isEmpty()) return Optional.empty();
+            if(email.equals(defaultUser.get().getEmail())){
+                log.error("You can't delete this user, try again");
+                continue;
+            }
+            userToDelete = personRepo.findByEmail(email);
+
+            if (userToDelete.isEmpty()) {
+                log.error("There is no user with such email");
+                if (!log.tryAgain()) return Optional.empty();
+                continue;
+            }
+
+            if(userToDelete.get().getType().getName().equals("admin")) {
+                if (userToDelete.get().getEmail().equals(currentUser.getEmail())) {
+                    log.error("You can't delete yourself");
+                    continue;
+                }
+                admins = personRepo.findByType(currentUser.getType());
+                if(admins.size() == 1){
+                    log.error("You can't delete the last admin");
+                    continue;
+                }
+            }
+            break;
+        }
+
+        System.out.println(userToDelete);
+
+            comments = commentRepo.findCommentByPerson(userToDelete.get());
+            if(!comments.isEmpty()){
+                for (Comment comment: comments) {
+                    System.out.println(comment.toString());
+                    comment.setPerson(defaultUser.get());
+                    commentRepo.save(comment);
+                }
+            }
+
+            errorLogs = errorLogRepo.findByPerson(userToDelete.get());
+            if(!errorLogs.isEmpty()){
+                for (ErrorLog logg: errorLogs) {
+                    logg.setPerson(defaultUser.get());
+                    errorLogRepo.save(logg);
+                }
+            }
+
+        articles = articleRepo.findArticleByPerson(userToDelete.get());
+        if(!articles.isEmpty()){
+            for (Article article: articles) {
+                article.setPerson(defaultUser.get());
+                articleRepo.save(article);
+            }
+        }
+
+        personRepo.delete(userToDelete.get());
+
+        return userToDelete;
+    }
+
+
+    private String inputNewFirstName() {
         String firstName;
         boolean tryAgain;
         while (true) {
-            log.question("Write in first name for new user");
+            log.question("Write in first name");
             firstName = input.nextLine().trim();
             if (Person.firstNameValidator(firstName)) {
                 return firstName;
@@ -119,11 +202,11 @@ public class PersonService {
     }
 
 
-    private String getNewLastName(){
+    private String inputLastName(){
         String lastName;
         boolean tryAgain;
         while (true) {
-            log.question("Write in last name for new user");
+            log.question("Write in last name");
             lastName = input.nextLine().trim();
             if (Person.lastNameValidator(lastName)) return lastName;
             log.error("Wrong format of last name");
@@ -134,11 +217,11 @@ public class PersonService {
         }
     }
 
-    private String getNewEmail(){
+    private String inputNewEmail(){
         String email;
         boolean tryAgain;
         while (true) {
-            log.question("Write in email for new user");
+            log.question("Write in email");
             email = input.nextLine().trim();
             if (Person.emailValidator(email)) return email;
             log.error("Wrong format of email");
@@ -150,7 +233,7 @@ public class PersonService {
     }
 
 
-    private  Optional<UserType> getNewUserType (){
+    private  Optional<UserType> inputUserType(){
         String choise;
         Optional<UserType> typeSearch;
         List<UserType> types;
@@ -173,7 +256,7 @@ public class PersonService {
         }
     }
 
-    private  String getNewLogin (){
+    private  String inputNewLogin(){
         String login;
         boolean tryAgain;
         while (true) {
@@ -188,7 +271,7 @@ public class PersonService {
         }
     }
 
-    private String getNewPassword (){
+    private String inputNewPassword(){
         String password;
         boolean tryAgain;
         while (true) {
