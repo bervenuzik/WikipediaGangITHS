@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 
 public interface SearchWordsRepo extends JpaRepository<SearchWord, Integer> {
-    List<SearchWord> findByText(String text);
+    SearchWord findByText(String text);
 
 }
