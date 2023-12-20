@@ -38,7 +38,6 @@ public class MenuService {
             }
         }
 
-        pService.createUser(currentUser);
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 

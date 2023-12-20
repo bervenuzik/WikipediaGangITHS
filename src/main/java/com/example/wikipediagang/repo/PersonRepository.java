@@ -15,7 +15,7 @@ public interface PersonRepository extends JpaRepository <Person,Integer > {
 
     List<Person> findByFirstName(String firstName);
     List<Person> findByLastName(String secondName);
-    Person findByEmail(String email);
+    Optional<Person> findByEmail(String email);
     List<Person> findByType(UserType type);
     @Query(
         value = "SELECT * from person where type_id =: type",
