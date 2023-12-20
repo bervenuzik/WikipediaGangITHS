@@ -181,7 +181,7 @@ public class ArticleService {
         System.out.println("\n------------------------------------------------------------------------------------------");
     }
 
-    private void editAnArticle() {
+    public void editAnArticle() {
         List<Article> articlesList = findArticleByTitle();
         if (articlesList.isEmpty()) {
             System.out.println("!! Article NOT found !!");
@@ -229,7 +229,7 @@ public class ArticleService {
         } while (isDone);
     }
 
-    private void deleteAnArticle() {
+    public void deleteAnArticle() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
         if (listOfAllArticlesWithSameName.isEmpty()) {
             System.out.println("!! Article NOT found !!");

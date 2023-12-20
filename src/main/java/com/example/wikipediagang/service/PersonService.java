@@ -25,15 +25,18 @@ public class PersonService {
 
 
     public Optional<Person> login() {
+
         String login;
         String password;
         boolean tryAgain;
         List<LoginInformation> loginInfo;
 
+
         while (true) {
             System.out.println("Write in your login :");
+
             login = input.nextLine().trim();
-            System.out.println("Write in your password :");
+            System.out.println("Write in your password:");
             password = input.nextLine().trim();
             loginInfo = loginRepo.findByUserNameAndPassword(login, password);
             if (loginInfo.size() == 1) {

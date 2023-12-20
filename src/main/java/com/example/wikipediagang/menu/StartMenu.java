@@ -2,9 +2,8 @@ package com.example.wikipediagang.menu;
 
 public enum StartMenu implements  MenuOption {
     EXIT ("Exit the program"),
-    ADMIN ("Login as Admin"),
-    USER("Login as user"),
-    DEVELOPER ("Login as developer");
+    LOGIN ("Login");
+
 
     private final String displayText;
     StartMenu(String displayText){
