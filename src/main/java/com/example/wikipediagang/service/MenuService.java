@@ -20,7 +20,7 @@ public class MenuService {
     @Autowired
     MessageHandlerService log;
 
-    private final MessageHandlerService log = new MessageHandlerService();
+   // private final MessageHandlerService log = new MessageHandlerService();
 
     public void startMenu() {
         log.menu("""
@@ -40,7 +40,9 @@ public class MenuService {
             }
         }
 
-        pService.createUser(currentUser);
+
+
+        // pService.createUser(currentUser);
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 
