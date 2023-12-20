@@ -40,6 +40,7 @@ public class MenuService {
             }
         }
 
+
         if(currentUser.get().getType().getName().equals("admin")){
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
@@ -50,7 +51,7 @@ public class MenuService {
         }
 
 
-        //pService.createUser(currentUser);
+
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 

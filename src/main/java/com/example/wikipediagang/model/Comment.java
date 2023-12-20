@@ -98,6 +98,6 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "Comment from "+ person.getFirstName() +" "+ person.getLastName() + " On article :" + article.getTitle() +" comment: " + text + "Date: " + date;
+        return id + " Comment from "+ person.getFirstName() +" "+ person.getLastName() + " On article: " + article.getTitle() +" comment: " + text + "Date: " + date;
     }
 }

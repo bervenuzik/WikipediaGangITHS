@@ -1,14 +1,6 @@
 package com.example.wikipediagang.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "person")
@@ -25,7 +17,7 @@ public class Person {
     @JoinColumn(name = "type_id" , referencedColumnName = "id")
     UserType type;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY ,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "login_info" )
     LoginInformation loginInfo;
 
@@ -116,7 +108,7 @@ public class Person {
         if (firstName.isEmpty()) {
             System.err.println("First name can't be empty");
             return false;
-        };
+        }
 
         String expression = "^[a-zA-ZöÖåÅäÄ ]+";
         if(firstName.matches(expression)){
@@ -133,7 +125,7 @@ public class Person {
         if (secondName.isEmpty()) {
             System.err.println("Last name can't be empty");
             return false;
-        };
+        }
 
         String expression =  "^[a-zA-ZöÖåÅäÄ][a-zA-ZöÖåÅäÄ\\-.']*[a-zA-ZöÖåÅäÄ]$";
         if(secondName.matches(expression)){
@@ -150,7 +142,7 @@ public class Person {
         if (email.isEmpty()) {
             System.err.println("Email can't be empty");
             return false;
-        };
+        }
 
         String expression =  "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
         if(email.matches(expression)){
