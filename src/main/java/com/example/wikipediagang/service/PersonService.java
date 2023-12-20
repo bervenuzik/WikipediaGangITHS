@@ -308,7 +308,6 @@ public class PersonService {
             author.setType(type);
             personRepo.save(author);
         }
-
     }
 
     public  List<Person> getAllUsers(){
