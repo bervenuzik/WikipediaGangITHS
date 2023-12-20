@@ -25,7 +25,7 @@ public class MyMain implements CommandLineRunner {
 
     @Autowired
     private MenuService menuService;
-    private Optional<Person> currentUser = Optional.empty();
+
     private final MessageHandlerService log = new MessageHandlerService();
 
 
