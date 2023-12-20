@@ -26,7 +26,7 @@ public class Person {
     UserType type;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id" , referencedColumnName = "id")
+    @JoinColumn(name = "login_info" )
     LoginInformation loginInfo;
 
 
@@ -44,11 +44,12 @@ public class Person {
                  ,id ,  firstName ,lastName,email,type.getName()) ;
     }
 
-    public Person(String firstName, String lastName, String email, UserType type) {
+    public Person(String firstName, String lastName, String email, UserType type, LoginInformation loginInfo) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.type = type;
+        this.loginInfo = loginInfo;
     }
 
     public int getId() {

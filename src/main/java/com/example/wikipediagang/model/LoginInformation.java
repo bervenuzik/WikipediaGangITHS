@@ -21,19 +21,16 @@ public class LoginInformation {
     @Column(name = "username" )
      private String userName;
      private String password;
-     @OneToOne(cascade= CascadeType.ALL)
-     @JoinColumn(name = "person_id")
-     private Person person;
+
 
    /* @Column(name = "person_id")
     private int personId;*/
     public LoginInformation() {
     }
 
-    public LoginInformation(String userName, String password, Person person) {
+    public LoginInformation(String userName, String password) {
         this.userName = userName;
         this.password = password;
-        this.person = person;
     }
 
     public int getId() {
@@ -58,14 +55,6 @@ public class LoginInformation {
         if(passwordValidator(password)){
             this.password = password;
         }
-    }
-
-   public Person getPerson() {
-    return person;
-    }
-
-    public void setPerson(Person person) {
-    this.person = person;
     }
 
     public static boolean userNameValidator(String userName){
@@ -106,8 +95,7 @@ public class LoginInformation {
 
     @Override
     public String toString() {
-        return "user: " + person.getFirstName()+ " "+ person.getLastName() +" \n userName:" + userName + '\n' +
-                "password:" + password ;
+        return userName;
     }
 
 }

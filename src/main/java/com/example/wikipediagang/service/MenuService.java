@@ -16,6 +16,9 @@ public class MenuService {
     PersonService pService;
     @Autowired
     ArticleService articleService;
+    Optional<Person> currentUser = Optional.empty();
+    @Autowired
+    MessageHandlerService log;
 
     public void startMenu() {
         System.out.println("""
@@ -24,17 +27,18 @@ public class MenuService {
                 
                 """);
 
-        boolean exitMenu = false;
 
-        while (!exitMenu) {
+        while (currentUser.isEmpty()) {
+            System.out.println(pService.getAllUsers());
             StartMenu userChoice = getUserchoice(StartMenu.values());
             switch (userChoice) {
-                case EXIT -> exitMenu = true;
-                case LOGIN ->  loginChooseAuto();
-
+                case EXIT -> System.exit(1);
+                case LOGIN ->  login();
+                default -> log.error("wrong input");
             }
-
         }
+
+        pService.createUser(currentUser);
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 
@@ -163,19 +167,17 @@ public class MenuService {
         }
     }
 
-    private void loginChooseAuto() {
-        Optional<Person> opPerson = pService.login();
+    private void login() {
+        Optional<Person> opPerson = Optional.empty();
+        if(currentUser.isEmpty()) opPerson = pService.login();
+        else {
+            log.error("You are already in-logged");
+            return;
+        }
         if (opPerson.isPresent()) {
-            Person person = opPerson.get();
-            String usertype = person.getType().toString();
-            if (usertype.equalsIgnoreCase("admin")) {
-                adminMenu(person);
-            } else if (usertype.equalsIgnoreCase("developer")) {
-                developerMenu(person);
-            } else {
-                userMenu(person);
-            }
+            currentUser = opPerson;
         }
 
     }
 }
+
