@@ -14,5 +14,6 @@ public interface ArticleHardCopyRepo extends JpaRepository<ArticleHardCopy, Inte
             value = "select count(article_id) from article_hard_copy a group by article_id having article_id=:articleId")
     int findNumberOfHardCopiesByArticleId(Integer articleId);
 
-    List<ArticleHardCopy> findArticleHardCopiesByArticleAndStatus(Article article,String status);
+    List<ArticleHardCopy> findNumOfHardCopiesByArticleAndStatus(Article article, String status);
+
 }
