@@ -89,8 +89,7 @@ public class MenuService {
                 case RETURN -> returnToAdminMenu = true;
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE ->  articleService.editAnArticle();
-                case DELETE -> articleService.deleteAnArticle();
+                case DELETE -> articleService.deleteAnArticleByAdmin();
 //                case REVIEW ->  reviewArticle();
 
             }
@@ -129,7 +128,9 @@ public class MenuService {
                 case RETURN -> returnToUserMenu = true;
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE ->  articleService.editAnArticle();
+                case CHANGE ->  articleService.editAnArticleByUser(currentUser.get());
+                case SHOW_RESERVED -> articleService.showReservedArticles(currentUser.get());
+                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
             }
 
         }
@@ -171,6 +172,7 @@ public class MenuService {
 
     }
 
+    /*
     public void editArticleMenu(Article article){
         boolean exit = false;
         while(!exit){
@@ -179,14 +181,16 @@ public class MenuService {
                     
                     Here you can edit an article!
                     """);
-            EditArticle userchoice = getUserchoice(EditArticle.values());
-            switch (userchoice){
+            EditArticleMenu userChoice = getUserchoice(EditArticleMenu.values());
+            switch (userChoice){
                 case EXIT -> exit= true;
                 case TITLE -> articleService.editTitle(article);
                 case CONTENT -> articleService.editContent(article);
             }
         }
     }
+
+     */
 
     public <T extends MenuOption> T getUserchoice(T[] options) {
         log.menu("Choose from the following tasks- \n");
