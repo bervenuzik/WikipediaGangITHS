@@ -20,8 +20,6 @@ public class MenuService {
     @Autowired
     MessageHandlerService log;
 
-    //private final MessageHandlerService log = new MessageHandlerService();
-
     public void startMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
@@ -50,9 +48,7 @@ public class MenuService {
             userMenu();
         }
 
-
-
-        System.out.println("Thank you for using ITHS wikipedia! ");
+        System.out.println("Thank you for using ITHS Wikipedia! ");
     }
 
     public void adminMenu() {
@@ -69,7 +65,7 @@ public class MenuService {
                 //case ADD_USER -> addUser(
                 //case REMOVE_USER -> removeUser();
                 //case EDIT_USER -> editUser();
-                //case CHANGE_PRIVILEGES -> changePrivilages();
+                //case CHANGE_PRIVILEGES -> changePrivileges();
                 case ARTICLE -> adminArticleMenu();
             }
         }
@@ -89,8 +85,7 @@ public class MenuService {
                 case RETURN -> returnToAdminMenu = true;
                 case SEARCH -> articleService.searchAnArticle(currentUser.get());
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE ->  articleService.editAnArticle();
-                case DELETE -> articleService.deleteAnArticle();
+                case DELETE -> articleService.deleteAnArticleByAdmin();
 //                case REVIEW ->  reviewArticle();
 
             }
@@ -129,7 +124,9 @@ public class MenuService {
                 case RETURN -> returnToUserMenu = true;
                 case SEARCH -> articleService.searchAnArticle(currentUser.get());
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE ->  articleService.editAnArticle();
+                case CHANGE ->  articleService.editAnArticleByUser(currentUser.get());
+                case SHOW_RESERVED -> articleService.showReservedArticles(currentUser.get());
+                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
             }
 
         }
