@@ -6,20 +6,25 @@ import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleBorrowerInfo;
 import com.example.wikipediagang.model.ArticleCategory;
 import com.example.wikipediagang.model.ArticleHardCopy;
+import com.example.wikipediagang.model.ArticleReservationQueue;
 import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.ArticleBorrowerInfoRepo;
 import com.example.wikipediagang.repo.ArticleCategoryRepo;
 import com.example.wikipediagang.repo.ArticleHardCopyRepo;
 import com.example.wikipediagang.repo.ArticleRepo;
+import com.example.wikipediagang.repo.ArticleReservationQueueRepo;
 import com.example.wikipediagang.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class ArticleService {
+
+    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 6;
 
     @Autowired
     private ArticleRepo articleRepo;
@@ -42,35 +47,8 @@ public class ArticleService {
     @Autowired
     private MenuService menuService;
 
- /*   public void startMenu(Person loggedInPerson){
-        boolean isDone = true;
-
-        do {
-            int userInput = receiveUserInput();
-            switch (userInput) {
-                case 0 -> isDone = false;
-                case 1 -> searchAnArticle(loggedInPerson);
-                case 2 -> createArticle(loggedInPerson);
-                case 3 -> editAnArticle();
-                case 4 -> deleteAnArticle();
-                default -> System.out.println("Invalid Input");
-            }
-        } while (isDone);
-    }*/
-/*
-    private int receiveUserInput() {
-        System.out.println("""
-                ----------------------------------------------------------------------------------------
-                \n****  ARTICLE MENU  ****
-                \nChoose from the following tasks-
-                To EXIT, enter 0
-                1. Search/Read an Article
-                2. Write an Article
-                3. Edit an Article
-                4. Delete an Article""");
-        System.out.print("\nEnter your choice: ");
-        return ScannerHelper.getIntInput(4);
-    }*/
+    @Autowired
+    private ArticleReservationQueueRepo queueRepo;
 
     public void createArticle(Person loggedInPerson){
 
@@ -202,9 +180,9 @@ public class ArticleService {
         log.menu(message);
         printOptions(articlesList);
         log.message("Enter article number: ");
-        int choosenArticleNum = ScannerHelper.getIntInput(articlesList.size()-1);
+        int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size()-1);
 
-        return articlesList.get(choosenArticleNum-1);
+        return articlesList.get(chosenArticleNum-1);
     }
     private void printOptions(List<Article> articleList){
         for (int i = 0; i < articleList.size(); i++) {
@@ -224,22 +202,23 @@ public class ArticleService {
         log.success("\n------------------------------------------------------------------------------------------");
     }
 
-    public void editAnArticle() {
-        List<Article> articlesList = findArticleByTitle();
+    public void editAnArticleByUser(Person person) {
+        List<Article> articlesList  = articleRepo.findArticleByPerson(person);
+
         if (articlesList.isEmpty()) {
-            System.out.println("!! Article NOT found !!");
+            System.out.println("!! Article(s) NOT found !!");
             return;
         }
         Article chosenArticle;
         if (articlesList.size() > 1) {
-            chosenArticle = chooseAnArticleFromAList("choose one of the following", articlesList);
+            chooseAnArticleFromAList("Choose one of the following", articlesList);
             System.out.println("Choose one of the following: ");
-         /*   for (int i = 0; i < articlesList.size(); i++) {
+            for (int i = 0; i < articlesList.size(); i++) {
                 System.out.println(i + ". " + articlesList.get(i).getTitle());
             }
             System.out.print("Enter article number: ");
             int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size() - 1);
-            chosenArticle = articlesList.get(chosenArticleNum);*/
+            chosenArticle = articlesList.get(chosenArticleNum);
         } else {
             chosenArticle = articlesList.get(0);
         }
@@ -277,8 +256,7 @@ public class ArticleService {
         log.success("!! Article's CONTENT is successfully updated !!");
     }
 
-
-    public void deleteAnArticle() {
+    public void deleteAnArticleByAdmin() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
         if (listOfAllArticlesWithSameName.isEmpty()) {
             System.out.println("!! Article NOT found !!");
@@ -321,52 +299,85 @@ public class ArticleService {
                     readAnArticleOnline(article);
                     isDone = false;
                 }
-                case 2 -> {
-                    String hardCopyIsAvailable = article.getAvailableAsHardCopy();
-                    if (hardCopyIsAvailable.equalsIgnoreCase("no")) {
-                        System.out.println("\n!! Unfortunately, a Hard-copy of this article does NOT exist !!");
-                        System.out.print("Choose one of the following:\n1. To Order A Hard-Copy \nENTER 0, to exit " +
-                                "\nEnter your choice: ");
-                        int userChoice = ScannerHelper.getIntInput(1);
-                        if (userChoice == 1) {
-                            orderHardCopy(article);
-                        } else {
-                            return;
-                        }
-                    }
-                    int totalNumOfHardCopies = hardCopyRepo.findNumberOfHardCopiesByArticleId(article.getId());
-                    System.out.println("Total no. of hard-copies in the system: " + totalNumOfHardCopies);
-                    System.out.print("\nChoose one of the following:\n1. To Reserve a Hard-Copy \nENTER 0, to exit " +
-                            "\nEnter your choice: ");
-                    int userChoice = ScannerHelper.getIntInput(1);
-                    if (userChoice == 1) {
-                        reserveHardCopy(article, person);
-                        isDone = false;
-                    }
-                }
+                case 2 -> reserveHardCopy(article, person);
                 default -> System.out.println("Invalid Input");
             }
         } while (isDone);
     }
-    private void orderHardCopy(Article article) {
-        ArticleHardCopy articleHardCopy = new ArticleHardCopy(article);
-        hardCopyRepo.save(articleHardCopy);
-        article.setAvailableAsHardCopy("yes");
-        articleRepo.save(article);
-        System.out.println("\n!! A hard-copy for the desired article has been ORDERED successfully !!");
+
+    /*
+    private void reserveHardCopy(Article article, Person person) {
+        List<ArticleHardCopy> availableHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "available");
+        if (availableHardCopies.isEmpty()) {
+            LocalDate latestDateToReserveHardCopy = getLatestReturnDateFromReservedHardCopiesOfAnArticle(article).plusDays(1);
+            System.out.println("!! No hard-copies available now but you can reserve one on " + latestDateToReserveHardCopy + " !!");
+            return;
+        }
+        ArticleHardCopy hardCopyToBeReserved = availableHardCopies.get(0);
+        hardCopyToBeReserved.setStatus("reserved");
+        ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(hardCopyToBeReserved, person);
+        borrowerInfoRepo.save(borrowerInfo);
+        hardCopyRepo.save(hardCopyToBeReserved);
+        System.out.println("!! A hard-copy has been RESERVED successfully till the following date " +
+                borrowerInfo.getReturnDate() + " !!");
+    }
+
+     */
+
+    //get latest return date from all 6 reservations of an article's hard-copies
+    private LocalDate getLatestReturnDateFromReservedHardCopiesOfAnArticle(Article article) {
+        List<ArticleHardCopy> numOfReservedHardCopies =
+                hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "reserved");
+        if (numOfReservedHardCopies.size() < 6) {
+            int numOfAvailableHardCopies = 6 - numOfReservedHardCopies.size();
+            System.out.println("No. of hard-copies available to reserve: " + numOfAvailableHardCopies);
+        }
+
+        List<ArticleBorrowerInfo> borrowerInfoList = borrowerInfoRepo.sortHardCopiesByReturnDate(article);
+        return borrowerInfoList.get(0).getReturnDate();
     }
 
     private void reserveHardCopy(Article article, Person person) {
-        ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(article, person);
-        List<ArticleBorrowerInfo> articleBorrowerInfoList =
-                borrowerInfoRepo.findByArticleIdAndPersonId(article.getId(), person.getId());
-        if (articleBorrowerInfoList.size() == 1) {
-            System.out.println("You've already reserved a copy of this article on " +
-                    borrowerInfo.getBorrowDate() + ")");
-            return;
+        //int totalNumOfHardCopies = hardCopyRepo.findNumberOfHardCopiesByArticleId(article.getId());
+        List<ArticleHardCopy> listOfAvailableHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "available");
+        List<ArticleHardCopy> listOfReservedHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "reserved");
+
+        if (!listOfAvailableHardCopies.isEmpty()) {
+            ArticleHardCopy articleHardCopyToBeReserved = listOfAvailableHardCopies.get(0);
+            articleHardCopyToBeReserved.setStatus("reserved");
+            hardCopyRepo.save(articleHardCopyToBeReserved);
+            ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopyToBeReserved, person);
+            borrowerInfoRepo.save(articleBorrowerInfo);
+            System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
+                    articleBorrowerInfo.getReturnDate() + " !!");
+
+        } else if (!listOfReservedHardCopies.isEmpty() && listOfReservedHardCopies.size() == MAX_NUM_HARD_COPIES_PER_ARTICLE) {
+            ArticleReservationQueue articleReservationQueue = new ArticleReservationQueue(article, person);
+            queueRepo.save(articleReservationQueue);
+            System.out.println("""
+                    NOTE- 
+                    No hard-copy is available right now!
+                    You've been added in a queue & 
+                    a RESERVATION will be made as soon 
+                    as any hard-copy gets available. \n""");
+        } else {
+            ArticleHardCopy articleHardCopy = new ArticleHardCopy(article);
+            articleHardCopy.setStatus("reserved");
+            hardCopyRepo.save(articleHardCopy);
+            article.setAvailableAsHardCopy("yes");
+            articleRepo.save(article);
+            ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopy, person);
+            borrowerInfoRepo.save(articleBorrowerInfo);
+            System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
+                    articleBorrowerInfo.getReturnDate() + " !!");
         }
-        borrowerInfoRepo.save(borrowerInfo);
-        System.out.println("!! A hard-copy has been RESERVED successfully till the following date " +
-                borrowerInfo.getReturnDate() + " !!");
+    }
+
+    public void showReservedArticles(Person person) {
+
+    }
+
+    public void returnReservedArticle(Person person) {
+
     }
 }
