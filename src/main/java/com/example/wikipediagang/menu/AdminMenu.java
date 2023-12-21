@@ -6,7 +6,10 @@ public enum AdminMenu implements MenuOption{
     REMOVE_USER("Remove a user"),
     EDIT_USER("Update a user"),
     CHANGE_PRIVILEGES("Change privilages of a user"),
-    ARTICLE("Go to the Article Menu");
+    WRITE("Write an article."),
+    REVIEW("Review an article."),
+    DELETE("Delete an article."),
+    SEARCH("Search/read an article.");
 
     private final String displayText;
     AdminMenu(String displaytext){
