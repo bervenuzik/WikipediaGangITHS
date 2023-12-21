@@ -34,6 +34,8 @@ public class ArticleService {
 
     @Autowired
     private ArticleReservationQueueRepo queueRepo;
+    @Autowired
+    private SearchWordService searchWordService;
  /*   public void startMenu(Person loggedInPerson){
         boolean isDone = true;
 
@@ -176,15 +178,18 @@ public class ArticleService {
     private List<Article> findArticleByTitle() {
         log.message("Enter title of the article: ");
         String chosenTitle = ScannerHelper.getStringInput();
+        searchWordService.searchWordsInDataBase(chosenTitle);
         return articleRepo.findArticleByTitle(chosenTitle);
     }
 
     private List<Person> findAuthorByName() {
         log.message("Enter author's first name: ");
         String firstName = ScannerHelper.getStringInput();
+        searchWordService.searchWordsInDataBase(firstName);
 
         log.message("Enter author's last name: ");
         String lastName = ScannerHelper.getStringInput();
+        searchWordService.searchWordsInDataBase(lastName);
 
         return personRepo.allAuthorsWithSameName(firstName, lastName);
     }
