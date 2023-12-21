@@ -6,11 +6,13 @@ import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleBorrowerInfo;
 import com.example.wikipediagang.model.ArticleCategory;
 import com.example.wikipediagang.model.ArticleHardCopy;
+import com.example.wikipediagang.model.ArticleReservationQueue;
 import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.ArticleBorrowerInfoRepo;
 import com.example.wikipediagang.repo.ArticleCategoryRepo;
 import com.example.wikipediagang.repo.ArticleHardCopyRepo;
 import com.example.wikipediagang.repo.ArticleRepo;
+import com.example.wikipediagang.repo.ArticleReservationQueueRepo;
 import com.example.wikipediagang.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,35 +41,8 @@ public class ArticleService {
     @Autowired
     private PersonRepository personRepo;
 
-    public void startMenu(Person loggedInPerson){
-        boolean isDone = true;
-
-        do {
-            int userInput = receiveUserInput();
-            switch (userInput) {
-                case 0 -> isDone = false;
-                case 1 -> searchAnArticle(loggedInPerson);
-                case 2 -> createArticle(loggedInPerson);
-                case 3 -> editAnArticle();
-                case 4 -> deleteAnArticle();
-                default -> System.out.println("Invalid Input");
-            }
-        } while (isDone);
-    }
-
-    private int receiveUserInput() {
-        System.out.println("""
-                ----------------------------------------------------------------------------------------
-                \n****  ARTICLE MENU  ****
-                \nChoose from the following tasks-
-                To EXIT, enter 0
-                1. Search/Read an Article
-                2. Write an Article
-                3. Edit an Article
-                4. Delete an Article""");
-        System.out.print("\nEnter your choice: ");
-        return ScannerHelper.getIntInput(4);
-    }
+    @Autowired
+    private ArticleReservationQueueRepo queueRepo;
 
     public void createArticle(Person loggedInPerson){
 
@@ -184,10 +159,11 @@ public class ArticleService {
         System.out.println("\n------------------------------------------------------------------------------------------");
     }
 
-    public void editAnArticle() {
-        List<Article> articlesList = findArticleByTitle();
+    public void editAnArticleByUser(Person person) {
+        List<Article> articlesList  = articleRepo.findArticleByPerson(person);
+
         if (articlesList.isEmpty()) {
-            System.out.println("!! Article NOT found !!");
+            System.out.println("!! Article(s) NOT found !!");
             return;
         }
         Article chosenArticle;
@@ -232,7 +208,7 @@ public class ArticleService {
         } while (isDone);
     }
 
-    public void deleteAnArticle() {
+    public void deleteAnArticleByAdmin() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
         if (listOfAllArticlesWithSameName.isEmpty()) {
             System.out.println("!! Article NOT found !!");
@@ -326,7 +302,14 @@ public class ArticleService {
             System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
                     articleBorrowerInfo.getReturnDate() + " !!");
         } else if (!listOfReservedHardCopies.isEmpty() && listOfReservedHardCopies.size() == MAX_NUM_HARD_COPIES_PER_ARTICLE) {
-            // TODO- handle reserve copy queue
+            ArticleReservationQueue articleReservationQueue = new ArticleReservationQueue(article, person);
+            queueRepo.save(articleReservationQueue);
+            System.out.println("""
+                    NOTE- 
+                    No hard-copy is available right now!
+                    You've been added in a queue & 
+                    a RESERVATION will be made as soon 
+                    as any hard-copy gets available. \n""");
         } else {
             ArticleHardCopy articleHardCopy = new ArticleHardCopy(article);
             articleHardCopy.setStatus("reserved");
@@ -338,5 +321,13 @@ public class ArticleService {
             System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
                     articleBorrowerInfo.getReturnDate() + " !!");
         }
+    }
+
+    public void showReservedArticles(Person person) {
+
+    }
+
+    public void returnReservedArticle(Person person) {
+
     }
 }
