@@ -4,6 +4,7 @@ package com.example.wikipediagang.service;
 import com.example.wikipediagang.menu.*;
 import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.Article;
+import com.example.wikipediagang.model.ArticleReservationQueue;
 import com.example.wikipediagang.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -70,26 +71,9 @@ public class MenuService {
                 //case REMOVE_USER -> pService.deleteUser(curentUser);
                 //case EDIT_USER -> pService.editAuthor();
                 //case CHANGE_PRIVILEGES -> changePrivilages();
-                case ARTICLE -> adminArticleMenu();
-            }
-        }
-
-    }
-
-    public void adminArticleMenu() {
-        log.menu("""
-                ----------------------------------------------------------------------------------------
-                                
-                Welcome to the Admin Article view!                
-                """);
-        boolean returnToAdminMenu = false;
-        while (!returnToAdminMenu) {
-            AdminArticleMenu userChoice = getUserchoice(AdminArticleMenu.values());
-            switch (userChoice) {
-                case RETURN -> returnToAdminMenu = true;
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case DELETE -> articleService.deleteAnArticleByAdmin();
+                // case DELETE -> articleService.deleteAnArticleByAdmin();
 //                case REVIEW ->  reviewArticle();
 
             }
@@ -110,31 +94,22 @@ public class MenuService {
                 case LOUGOUT -> loggout = true;
 //                case CHANGE_PASSWORD -> changePassword();
 //                case CHANGE_EMAIL -> changeEmail();
-               case ARTICLE -> userArticleMenu();
-            }
-        }
-    }
-
-    public void userArticleMenu() {
-        log.menu("""
-                ----------------------------------------------------------------------------------------
-                                
-                Welcome to the user Article view!                
-                """);
-        boolean returnToUserMenu = false;
-        while (!returnToUserMenu) {
-            UserArticleMenu userChoice = getUserchoice(UserArticleMenu.values());
-            switch (userChoice) {
-                case RETURN -> returnToUserMenu = true;
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE ->  articleService.editAnArticleByUser(currentUser.get());
-                case SHOW_RESERVED -> articleService.showReservedArticles(currentUser.get());
-                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
+                case CHANGE -> { Article article = articleService.editAnArticleByUser(currentUser.get());
+                    if ( article != null){
+                        editArticleMenu(article);
+                    }
+                }
+                // case SHOW_RESERVED -> articleService.showReservedArticles(currentUser.get());
+                //case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
             }
 
         }
+
     }
+
+
 
     public void developerMenu(){
         log.menu("""
@@ -172,7 +147,7 @@ public class MenuService {
 
     }
 
-    /*
+
     public void editArticleMenu(Article article){
         boolean exit = false;
         while(!exit){
@@ -189,8 +164,6 @@ public class MenuService {
             }
         }
     }
-
-     */
 
     public <T extends MenuOption> T getUserchoice(T[] options) {
         log.menu("Choose from the following tasks- \n");
