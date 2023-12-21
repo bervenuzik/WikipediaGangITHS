@@ -18,7 +18,7 @@ public class MessageHandlerService {
 
 
     public void error(String text){
-        System.err.println(text);
+        System.out.println(ANSI_RED + text + ANSI_RESET);
     }
     public void warning(String text){
         System.out.println(ANSI_YELLOW + text + ANSI_RESET);

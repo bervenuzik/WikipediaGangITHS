@@ -180,9 +180,9 @@ public class ArticleService {
         log.menu(message);
         printOptions(articlesList);
         log.message("Enter article number: ");
-        int choosenArticleNum = ScannerHelper.getIntInput(articlesList.size()-1);
+        int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size()-1);
 
-        return articlesList.get(choosenArticleNum-1);
+        return articlesList.get(chosenArticleNum-1);
     }
     private void printOptions(List<Article> articleList){
         for (int i = 0; i < articleList.size(); i++) {
@@ -211,14 +211,14 @@ public class ArticleService {
         }
         Article chosenArticle;
         if (articlesList.size() > 1) {
-            chosenArticle = chooseAnArticleFromAList("Choose one of the following", articlesList);
+            chooseAnArticleFromAList("Choose one of the following", articlesList);
             System.out.println("Choose one of the following: ");
-         /*   for (int i = 0; i < articlesList.size(); i++) {
+            for (int i = 0; i < articlesList.size(); i++) {
                 System.out.println(i + ". " + articlesList.get(i).getTitle());
             }
             System.out.print("Enter article number: ");
             int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size() - 1);
-            chosenArticle = articlesList.get(chosenArticleNum);*/
+            chosenArticle = articlesList.get(chosenArticleNum);
         } else {
             chosenArticle = articlesList.get(0);
         }
@@ -255,7 +255,6 @@ public class ArticleService {
         articleRepo.save(chosenArticle);
         log.success("!! Article's CONTENT is successfully updated !!");
     }
-
 
     public void deleteAnArticleByAdmin() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
@@ -351,6 +350,7 @@ public class ArticleService {
             borrowerInfoRepo.save(articleBorrowerInfo);
             System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
                     articleBorrowerInfo.getReturnDate() + " !!");
+
         } else if (!listOfReservedHardCopies.isEmpty() && listOfReservedHardCopies.size() == MAX_NUM_HARD_COPIES_PER_ARTICLE) {
             ArticleReservationQueue articleReservationQueue = new ArticleReservationQueue(article, person);
             queueRepo.save(articleReservationQueue);
