@@ -20,7 +20,6 @@ public class MenuService {
     @Autowired
     MessageHandlerService log;
 
-    //private final MessageHandlerService log = new MessageHandlerService();
 
     public void startMenu() {
         log.menu("""
@@ -30,27 +29,33 @@ public class MenuService {
                 """);
 
 
-        while (currentUser.isEmpty()) {
-            System.out.println(pService.getAllUsers());
-            StartMenu userChoice = getUserchoice(StartMenu.values());
-            switch (userChoice) {
-                case EXIT -> System.exit(1);
-                case LOGIN ->  login();
-                default -> log.error("wrong input");
+       main: while (true) {
+            while (currentUser.isEmpty()) {
+                System.out.println(pService.getAllUsers());
+                StartMenu userChoice = getUserchoice(StartMenu.values());
+                switch (userChoice) {
+                    case EXIT -> {break main;}
+                    case LOGIN ->  currentUser = pService.login();
+                    default -> log.error("wrong input");
+                }
             }
+
+            if(currentUser.isPresent() && currentUser.get().getType().getName().equals("admin")){
+                adminMenu();
+            } else if (currentUser.get().getType().getName().equals("developer")) {
+                developerMenu();
+            }
+            else {
+                userMenu();
+            }
+
         }
 
-
-        if(currentUser.get().getType().getName().equals("admin")){
-            adminMenu();
-        } else if (currentUser.get().getType().getName().equals("developer")) {
-            developerMenu();
-        }
-        else {
-            userMenu();
-        }
-
-
+        log.menu("""
+    
+    Thanks for using Wikipedia ITHS , see you later.
+    --------------------GOOD BY---------------------
+    """);
 
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
@@ -61,16 +66,16 @@ public class MenuService {
                                 
                 Welcome to the Admin view!              
                 """);
-        boolean LoggedOut = false;
-        while (!LoggedOut) {
+        while (currentUser.isPresent() && currentUser.get().getType().getName().equals("admin")) {
             AdminMenu userchoice = getUserchoice(AdminMenu.values());
             switch (userchoice) {
-                case LOGOUT -> LoggedOut = true;
-                //case ADD_USER -> addUser(
-                //case REMOVE_USER -> removeUser();
-                //case EDIT_USER -> editUser();
+                case LOGOUT -> currentUser = pService.loginOut();
+                case ADD_USER -> pService.createUser(currentUser);
+                //case REMOVE_USER -> pService.deleteUser(curentUser);
+                //case EDIT_USER -> pService.editAuthor();
                 //case CHANGE_PRIVILEGES -> changePrivilages();
                 case ARTICLE -> adminArticleMenu();
+                default -> log.error("\nWrong input, try again\n");
             }
         }
 
@@ -104,11 +109,11 @@ public class MenuService {
                                
                 Welcome to the user view!                
                 """);
-        boolean loggout = false;
-        while (!loggout) {
+
+        while (currentUser.isPresent() && currentUser.get().getType().getName().equals("reader")){
             UserMenu userChoice = getUserchoice(UserMenu.values());
             switch (userChoice) {
-                case LOUGOUT -> loggout = true;
+                case LOUGOUT -> currentUser = pService.loginOut();
 //                case CHANGE_PASSWORD -> changePassword();
 //                case CHANGE_EMAIL -> changeEmail();
                case ARTICLE -> userArticleMenu();
@@ -141,11 +146,11 @@ public class MenuService {
                                 
                 Welcome to the developer view!                
                 """);
-        boolean logout = false;
-        while (!logout){
+
+        while (currentUser.isPresent() && currentUser.get().getType().getName().equals("author")){
             DeveloperMenu userChoice = getUserchoice(DeveloperMenu.values());
             switch (userChoice){
-                case LOGOUT -> logout= true;
+                case LOGOUT -> currentUser = pService.loginOut();
 //                case ERROR_LOG -> printErrors();
 //                case ERROR_HANDLE -> handleErrors();
             }
@@ -174,17 +179,6 @@ public class MenuService {
         }
     }
 
-    private void login() {
-        Optional<Person> opPerson = Optional.empty();
-        if(currentUser.isEmpty()) opPerson = pService.login();
-        else {
-            log.error("You are already in-logged");
-            return;
-        }
-        if (opPerson.isPresent()) {
-            currentUser = opPerson;
-        }
 
-    }
 }
 
