@@ -303,7 +303,7 @@ public class PersonService {
             }
         }
     }
-    public void editAuthor(){
+    public void editUSer(){
         System.out.println("input id to find edit which author");
         int id = input.nextInt();
         input.nextLine();
