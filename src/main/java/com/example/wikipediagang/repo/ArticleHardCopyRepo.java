@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ArticleHardCopyRepo extends JpaRepository<ArticleHardCopy, Integer> {
@@ -15,5 +16,7 @@ public interface ArticleHardCopyRepo extends JpaRepository<ArticleHardCopy, Inte
     int findNumberOfHardCopiesByArticleId(Integer articleId);
 
     List<ArticleHardCopy> findNumOfHardCopiesByArticleAndStatus(Article article, String status);
+
+    Optional<ArticleHardCopy> findArticleHardCopyById(Integer hardCopyId);
 
 }
