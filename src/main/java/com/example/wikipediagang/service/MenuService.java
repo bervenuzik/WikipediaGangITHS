@@ -3,6 +3,7 @@ package com.example.wikipediagang.service;
 
 import com.example.wikipediagang.menu.*;
 import com.example.wikipediagang.ScannerHelper;
+import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ public class MenuService {
     Optional<Person> currentUser = Optional.empty();
     @Autowired
     MessageHandlerService log;
+
 
     public void startMenu() {
         log.menu("""
@@ -48,7 +50,9 @@ public class MenuService {
             userMenu();
         }
 
-        System.out.println("Thank you for using ITHS Wikipedia! ");
+
+
+        System.out.println("Thank you for using ITHS wikipedia! ");
     }
 
     public void adminMenu() {
@@ -62,10 +66,10 @@ public class MenuService {
             AdminMenu userchoice = getUserchoice(AdminMenu.values());
             switch (userchoice) {
                 case LOGOUT -> LoggedOut = true;
-                //case ADD_USER -> addUser(
-                //case REMOVE_USER -> removeUser();
-                //case EDIT_USER -> editUser();
-                //case CHANGE_PRIVILEGES -> changePrivileges();
+                case ADD_USER -> pService.createUser(currentUser);
+                //case REMOVE_USER -> pService.deleteUser(curentUser);
+                //case EDIT_USER -> pService.editAuthor();
+                //case CHANGE_PRIVILEGES -> changePrivilages();
                 case ARTICLE -> adminArticleMenu();
             }
         }
@@ -83,9 +87,10 @@ public class MenuService {
             AdminArticleMenu userChoice = getUserchoice(AdminArticleMenu.values());
             switch (userChoice) {
                 case RETURN -> returnToAdminMenu = true;
-                case SEARCH -> articleService.searchAnArticle(currentUser.get());
+                case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case DELETE -> articleService.deleteAnArticleByAdmin();
+                case CHANGE ->  articleService.editAnArticle();
+                case DELETE -> articleService.deleteAnArticle();
 //                case REVIEW ->  reviewArticle();
 
             }
@@ -122,11 +127,9 @@ public class MenuService {
             UserArticleMenu userChoice = getUserchoice(UserArticleMenu.values());
             switch (userChoice) {
                 case RETURN -> returnToUserMenu = true;
-                case SEARCH -> articleService.searchAnArticle(currentUser.get());
+                case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE ->  articleService.editAnArticleByUser(currentUser.get());
-                case SHOW_RESERVED -> articleService.showReservedArticles(currentUser.get());
-                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
+                case CHANGE ->  articleService.editAnArticle();
             }
 
         }
@@ -150,14 +153,45 @@ public class MenuService {
 
     }
 
-    public void studentMenu(){
+    public void searchArticleMenu(){
+        boolean exit = false;
+        while(!exit){
+            log.menu("""
+                    ----------------------------------------------------------------------------------------
+                    
+                    Here you can search an article!
+                    """);
+             SearchArticleMenu userChoice =getUserchoice(SearchArticleMenu.values());
+            switch (userChoice){
+                case EXIT -> exit = true;
+                case TITLE -> articleService.searchArticleByTitle(currentUser.get());
+                case AUTHOR -> articleService.searchArticleByAuthor(currentUser.get());
+            }
+        }
 
     }
 
-    private <T extends MenuOption> T getUserchoice(T[] options) {
+    public void editArticleMenu(Article article){
+        boolean exit = false;
+        while(!exit){
+            log.menu("""
+                    ----------------------------------------------------------------------------------------
+                    
+                    Here you can edit an article!
+                    """);
+            EditArticle userchoice = getUserchoice(EditArticle.values());
+            switch (userchoice){
+                case EXIT -> exit= true;
+                case TITLE -> articleService.editTitle(article);
+                case CONTENT -> articleService.editContent(article);
+            }
+        }
+    }
+
+    public <T extends MenuOption> T getUserchoice(T[] options) {
         log.menu("Choose from the following tasks- \n");
         printchoices(options);
-        log.menu("\nEnter your choice:");
+        log.message("\nEnter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);
         return options[userChoice - 1];
 
