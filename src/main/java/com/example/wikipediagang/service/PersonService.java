@@ -221,7 +221,7 @@ public class PersonService {
         }
     }
 
-    private String inputNewEmail(){
+    public String inputNewEmail(){
         String email;
         boolean tryAgain;
         Optional<Person> isInUse;
@@ -292,7 +292,7 @@ public class PersonService {
         }
     }
 
-    private String inputNewPassword(){
+    public String inputNewPassword(){
         String password;
         boolean tryAgain;
         while (true) {

@@ -45,7 +45,7 @@ public class MenuService {
         if(currentUser.get().getType().getName().equals("admin")){
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
-            developerMenu();
+            //developerMenu();
         }
         else {
             userMenu();
@@ -68,8 +68,8 @@ public class MenuService {
             switch (userchoice) {
                 case LOGOUT -> LoggedOut = true;
                 case ADD_USER -> pService.createUser(currentUser);
-                //case REMOVE_USER -> pService.deleteUser(curentUser);
-                //case EDIT_USER -> pService.editAuthor();
+                //case REMOVE_USER -> pService.deleteUser(currentUser);
+                case EDIT_USER -> pService.editAuthor();
                 //case CHANGE_PRIVILEGES -> changePrivilages();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
@@ -92,8 +92,8 @@ public class MenuService {
             UserMenu userChoice = getUserchoice(UserMenu.values());
             switch (userChoice) {
                 case LOUGOUT -> loggout = true;
-//                case CHANGE_PASSWORD -> changePassword();
-//                case CHANGE_EMAIL -> changeEmail();
+                case CHANGE_PASSWORD -> pService.inputNewPassword();
+                case CHANGE_EMAIL -> pService.inputNewEmail();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case CHANGE -> { Article article = articleService.editAnArticleByUser(currentUser.get());
@@ -105,26 +105,6 @@ public class MenuService {
                 //case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
             }
 
-        }
-
-    }
-
-
-
-    public void developerMenu(){
-        log.menu("""
-                ----------------------------------------------------------------------------------------
-                                
-                Welcome to the developer view!                
-                """);
-        boolean logout = false;
-        while (!logout){
-            DeveloperMenu userChoice = getUserchoice(DeveloperMenu.values());
-            switch (userChoice){
-                case LOGOUT -> logout= true;
-//                case ERROR_LOG -> printErrors();
-//                case ERROR_HANDLE -> handleErrors();
-            }
         }
 
     }
