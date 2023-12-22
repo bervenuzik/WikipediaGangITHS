@@ -25,7 +25,6 @@ public class PersonService {
     @Autowired
     ArticleRepo articleRepo;
 
-
     MessageHandlerService log = new MessageHandlerService();
     Scanner input = new Scanner(System.in);
 
