@@ -70,7 +70,6 @@ public class MenuService {
                 case ADD_USER -> pService.createUser(currentUser);
                 //case REMOVE_USER -> pService.deleteUser(currentUser);
                 case EDIT_USER -> pService.editAuthor();
-                //case CHANGE_PRIVILEGES -> changePrivilages();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 // case DELETE -> articleService.deleteAnArticleByAdmin();
