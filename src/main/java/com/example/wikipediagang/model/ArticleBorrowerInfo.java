@@ -20,8 +20,8 @@ public class ArticleBorrowerInfo {
     private int id;
 
     @OneToOne
-    @JoinColumn(name="article_id")
-    private Article article;
+    @JoinColumn(name="article_hard_copy_id")
+    private ArticleHardCopy articleHardCopy;
 
     @OneToOne
     @JoinColumn(name="borrower_id")
@@ -36,8 +36,8 @@ public class ArticleBorrowerInfo {
     public ArticleBorrowerInfo() {
     }
 
-    public ArticleBorrowerInfo(Article article, Person person) {
-        this.article = article;
+    public ArticleBorrowerInfo(ArticleHardCopy articleHardCopy, Person person) {
+        this.articleHardCopy = articleHardCopy;
         this.person = person;
         this.borrowDate = LocalDate.now();
         this.returnDate = borrowDate.plusWeeks(2);              // adds two weeks to borrow date,
@@ -48,12 +48,12 @@ public class ArticleBorrowerInfo {
         return id;
     }
 
-    public Article getArticle() {
-        return article;
+    public ArticleHardCopy getArticleHardCopy() {
+        return articleHardCopy;
     }
 
-    public void setArticle(Article article) {
-        this.article = article;
+    public void setArticleHardCopy(ArticleHardCopy articleHardCopy) {
+        this.articleHardCopy = articleHardCopy;
     }
 
     public Person getPerson() {
@@ -83,7 +83,7 @@ public class ArticleBorrowerInfo {
     @Override
     public String toString() {
         return "ArticleBorrowerInfo{" +
-                ", article=" + article.getTitle() +
+                ", article=" + articleHardCopy.getArticle().getTitle() +
                 ", person=" + person.getFirstName() + " " + person.getLastName() +
                 ", borrowDate=" + borrowDate +
                 ", returnDate=" + returnDate +

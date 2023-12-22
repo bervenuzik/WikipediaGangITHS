@@ -16,14 +16,14 @@ public class ScannerHelper {
         do {
             try {
                 number = sc.nextInt();
-                if (number < 0 || number > maxValue) {
-                    log.error("Invalid Input! Try again: ");
+                if (number < 1 || number > maxValue) {
+                    log.error("Invalid Input! 0 again: ");
                 }
             } catch (InputMismatchException e) {
                 sc.nextLine();
                 log.error("Not an integer! Try Again: ");
             }
-        } while (number < 0 || number > maxValue);
+        } while (number < 1|| number > maxValue);
         return number;
     }
     public static int getIntInput() {

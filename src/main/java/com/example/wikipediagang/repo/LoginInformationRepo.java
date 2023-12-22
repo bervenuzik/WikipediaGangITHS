@@ -13,5 +13,6 @@ public interface LoginInformationRepo  extends JpaRepository<LoginInformation, I
 
     List<LoginInformation> findByUserNameAndPassword(String userName , String password);
     Optional<Person> findLoginInformationByUserNameAndPassword(String userName , String password);
+    Optional<LoginInformation> findByUserName(String userName);
 
 }

@@ -3,6 +3,7 @@ package com.example.wikipediagang.service;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
+
 @Component
 public class MessageHandlerService {
     private static final String ANSI_RESET = "\u001B[0m";
@@ -18,7 +19,7 @@ public class MessageHandlerService {
 
 
     public void error(String text){
-        System.err.println(text);
+        System.out.println(ANSI_RED + text + ANSI_RESET);
     }
     public void warning(String text){
         System.out.println(ANSI_YELLOW + text + ANSI_RESET);
