@@ -28,8 +28,8 @@ public class PersonService {
     Scanner input = new Scanner(System.in);
 
 
-    public void loginOut(Optional<Person> currentUser){
-        currentUser = Optional.empty();
+    public Optional<Person> loginOut(){
+        return Optional.empty();
     }
     public Optional<Person> login() {
 
@@ -61,6 +61,7 @@ public class PersonService {
                 }
             }else {
                 log.error("There is no such user. Control login and password");
+                if(!log.tryAgain()) return Optional.empty();
                 System.out.flush();
             }
         }
