@@ -173,6 +173,35 @@ public class ArticleService {
         articleRepo.save(chosenArticle);
         log.success("!! Article's CONTENT is successfully updated !!");
     }
+
+    public void editCategory(Article chosenArticle) {
+        log.message("Current category: " + chosenArticle.getCategory());
+        List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
+        if (articleCategoryList.isEmpty()) {
+            log.error("!! No Category available !!");
+            return;
+        }
+        log.message("Available categories: ");
+        for (int i = 0; i < articleCategoryList.size(); i++) {
+            System.out.println(i + 1 + ". " + articleCategoryList.get(i));
+        }
+        log.message("1. Choose from the available categories\n2. Add a new category\nEnter a number: ");
+        int userChoice = ScannerHelper.getIntInput(2);
+        if (userChoice == 1) {
+            log.message("Enter category number: ");
+            int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
+            chosenArticle.setCategory(articleCategoryList.get(desiredCategory));
+        } else {
+            log.message("Enter new category: ");
+            String newCategory = ScannerHelper.getStringInput();
+            ArticleCategory category = new ArticleCategory(newCategory);
+            categoryRepo.save(category);
+            chosenArticle.setStatus(newCategory);
+        }
+        articleRepo.save(chosenArticle);
+        log.success("!! Article's Category has been UPDATED successfully !!");
+    }
+
     public void deleteAnArticle() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
         if (listOfAllArticlesWithSameName.isEmpty()) {
