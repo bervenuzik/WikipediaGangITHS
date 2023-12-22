@@ -175,31 +175,45 @@ public class ArticleService {
     }
 
     public void editCategory(Article chosenArticle) {
-        log.message("Current category: " + chosenArticle.getCategory());
         List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
-        if (articleCategoryList.isEmpty()) {
-            log.error("!! No Category available !!");
-            return;
+
+        log.message("Current category: " + chosenArticle.getCategory().getName());
+        if (articleCategoryList.size() == 1) {
+            log.message("!! No other Category available !!");
+            log.message("Choose from the following:\n1.Back to Edit Article Menu\n2. Add a new category\nEnter a number: ");
+            int userChoice = ScannerHelper.getIntInput(2);
+            if (userChoice == 1) {
+                log.message("!! Article Category remains the SAME !!");
+            } else {
+                chosenArticle.setCategory(createNewArticleCategory());
+                articleRepo.save(chosenArticle);
+                log.success("!! Article's Category has been UPDATED successfully !!");
+            }
+        } else if (articleCategoryList.size() > 1) {
+            log.message("Available categories: ");
+            for (int i = 0; i < articleCategoryList.size(); i++) {
+                System.out.println(i + 1 + ". " + articleCategoryList.get(i).getName());
+            }
+            log.menu("\nYou wish to\n1. Choose from the available categories\n2. Add a new category\nEnter a number: ");
+            int userChoice = ScannerHelper.getIntInput(2);
+            if (userChoice == 1) {
+                log.message("Enter category number: ");
+                int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
+                chosenArticle.setCategory(articleCategoryList.get(desiredCategory));
+            } else {
+                chosenArticle.setCategory(createNewArticleCategory());
+                articleRepo.save(chosenArticle);
+            }
+            articleRepo.save(chosenArticle);
+            log.success("!! Article's Category has been UPDATED successfully !!");
         }
-        log.message("Available categories: ");
-        for (int i = 0; i < articleCategoryList.size(); i++) {
-            System.out.println(i + 1 + ". " + articleCategoryList.get(i));
-        }
-        log.message("1. Choose from the available categories\n2. Add a new category\nEnter a number: ");
-        int userChoice = ScannerHelper.getIntInput(2);
-        if (userChoice == 1) {
-            log.message("Enter category number: ");
-            int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
-            chosenArticle.setCategory(articleCategoryList.get(desiredCategory));
-        } else {
-            log.message("Enter new category: ");
-            String newCategory = ScannerHelper.getStringInput();
-            ArticleCategory category = new ArticleCategory(newCategory);
-            categoryRepo.save(category);
-            chosenArticle.setStatus(newCategory);
-        }
-        articleRepo.save(chosenArticle);
-        log.success("!! Article's Category has been UPDATED successfully !!");
+    }
+
+    private ArticleCategory createNewArticleCategory() {
+        log.message("Enter new category: ");
+        String newCategory = ScannerHelper.getStringInput();
+        ArticleCategory category = new ArticleCategory(newCategory);
+        return categoryRepo.save(category);
     }
 
     public void deleteAnArticle() {
