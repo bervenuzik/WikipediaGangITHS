@@ -1,5 +1,6 @@
 package com.example.wikipediagang.service;
 
+import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.*;
 import com.example.wikipediagang.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -304,28 +305,30 @@ public class PersonService {
             }
         }
     }
-    public void editUSer(){
-        System.out.println("input id to find edit which author");
-        int id = input.nextInt();
-        input.nextLine();
+    public void editAuthor(){
+        log.menu("Input userId which you want to edit: ");
+        int id = ScannerHelper.getIntInput();
         Optional<Person> findAuthor = personRepo.findById(id);
         if(findAuthor.isPresent()){
             Person author = findAuthor.get();
-            System.out.println("input ny info");
-            System.out.print("email: ");
-            String email = input.nextLine();
-            author.setEmail(email);
-            System.out.print("Lastname: ");
-            String lastname = input.nextLine();
-            author.setLastName(lastname);
-            System.out.print("Firstname: ");
-            String firstname = input.nextLine();
-            author.setFirstName(firstname);
-            UserType type = new UserType();
-            String typename = input.nextLine();
-            type.setName(typename);
-            author.setType(type);
-            personRepo.save(author);
+            boolean flag = false;
+            while (!flag) {
+                log.menu("Which part do you want to update: ");
+                log.menu("1.Email");
+                log.menu("2.Firstname");
+                log.menu("3.Lastname");
+                log.menu("4.Type");
+                log.menu("5.Quit");
+                log.menu("input ny choice: ");
+                int choice = ScannerHelper.getIntInput(5);
+                switch (choice){
+                    case 0 ->inputNewEmail();
+                    case 1 ->inputNewFirstName();
+                    case 2 ->inputLastName();
+                    case 3 ->inputUserType();
+                    case 4 ->flag = true;
+                }
+            }
         }
     }
 
