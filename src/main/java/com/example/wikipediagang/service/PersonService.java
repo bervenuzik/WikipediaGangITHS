@@ -1,5 +1,6 @@
 package com.example.wikipediagang.service;
 
+import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.*;
 import com.example.wikipediagang.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class PersonService {
     ErrorLogRepo errorLogRepo;
     @Autowired
     ArticleRepo articleRepo;
+
 
     MessageHandlerService log = new MessageHandlerService();
     Scanner input = new Scanner(System.in);
@@ -286,43 +288,29 @@ public class PersonService {
         }
     }
     public void editAuthor(){
-        System.out.println("input id to find edit which author");
-        int id = input.nextInt();
-        input.nextLine();
+        log.menu("Input userId which you want to edit: ");
+        int id = ScannerHelper.getIntInput();
         Optional<Person> findAuthor = personRepo.findById(id);
         if(findAuthor.isPresent()){
             Person author = findAuthor.get();
             boolean flag = false;
             while (!flag) {
-                System.out.println("Which part do you want to update: ");
-                System.out.println("1.Email");
-                System.out.println("2.Firstname");
-                System.out.println("3.Lastname");
-                System.out.println("4.Type");
-                System.out.println("5.quite");
-                System.out.print("input ny choice: ");
-                int choice = input.nextInt();
-                input.nextLine();
-                if(choice ==1){
-                    inputNewEmail();
-                }
-                else if(choice ==2){
-                    inputNewFirstName();
-                }
-                else if(choice ==3){
-                    inputLastName();
-                }
-                else if(choice ==4){
-                    inputUserType();
-
-                }else if(choice == 5){
-                    flag = true;
-                    break;
-                }else{
-                    System.out.println("wrong input, try again!");
+                log.menu("Which part do you want to update: ");
+                log.menu("1.Email");
+                log.menu("2.Firstname");
+                log.menu("3.Lastname");
+                log.menu("4.Type");
+                log.menu("5.Quit");
+                log.menu("input ny choice: ");
+                int choice = ScannerHelper.getIntInput(5);
+                switch (choice){
+                    case 0 ->inputNewEmail();
+                    case 1 ->inputNewFirstName();
+                    case 2 ->inputLastName();
+                    case 3 ->inputUserType();
+                    case 4 ->flag = true;
                 }
             }
-
         }
     }
 
