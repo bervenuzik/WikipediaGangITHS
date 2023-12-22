@@ -285,6 +285,68 @@ public class PersonService {
             }
         }
     }
+    public void editAuthor(){
+        System.out.println("input id to find edit which author");
+        int id = input.nextInt();
+        input.nextLine();
+        Optional<Person> findAuthor = personRepo.findById(id);
+        if(findAuthor.isPresent()){
+            Person author = findAuthor.get();
+            boolean flag = false;
+            while (!flag) {
+                System.out.println("Which part do you want to update: ");
+                System.out.println("1.Email");
+                System.out.println("2.Firstname");
+                System.out.println("3.Lastname");
+                System.out.println("4.Type");
+                System.out.println("5.quite");
+                System.out.print("input ny choice: ");
+                int choice = input.nextInt();
+                input.nextLine();
+                if(choice ==1){
+                    System.out.print("input new email:");
+                    String email = input.nextLine();
+                    author.setEmail(email);
+                    personRepo.save(author);
+                }
+                else if(choice ==2){
+                    System.out.print("input new firstname:");
+                    String firstname = input.nextLine();
+                    author.setEmail(firstname);
+                    personRepo.save(author);
+                }
+                else if(choice ==3){
+                    System.out.print("input new lastname:");
+                    String lastname = input.nextLine();
+                    author.setEmail(lastname);
+                    personRepo.save(author);
+                }
+                else if(choice ==4){
+                    System.out.println("administer kan change type");
+                    System.out.println("write in administers info:");
+                    System.out.print("name");
+                    String name = input.nextLine();
+                    System.out.print("password");
+                    String password = input.nextLine();
+                    if(!loginRepo.findByUserNameAndPassword(name,password).isEmpty()){
+                        UserType type = new UserType();
+                        String typename = input.nextLine();
+                        type.setName(typename);
+                        author.setType(type);
+                        personRepo.save(author);
+                    }else{
+                        System.out.println("Sorry, you cannot change type");
+                    }
+                }else if(choice == 5){
+                    flag = true;
+                    break;
+                }else{
+                    System.out.println("wrong input, try again!");
+                }
+            }
+
+        }
+    }
 
     public  List<Person> getAllUsers(){
         return personRepo.findAll();
