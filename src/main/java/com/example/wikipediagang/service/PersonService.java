@@ -304,39 +304,17 @@ public class PersonService {
                 int choice = input.nextInt();
                 input.nextLine();
                 if(choice ==1){
-                    System.out.print("input new email:");
-                    String email = input.nextLine();
-                    author.setEmail(email);
-                    personRepo.save(author);
+                    inputNewEmail();
                 }
                 else if(choice ==2){
-                    System.out.print("input new firstname:");
-                    String firstname = input.nextLine();
-                    author.setEmail(firstname);
-                    personRepo.save(author);
+                    inputNewFirstName();
                 }
                 else if(choice ==3){
-                    System.out.print("input new lastname:");
-                    String lastname = input.nextLine();
-                    author.setEmail(lastname);
-                    personRepo.save(author);
+                    inputLastName();
                 }
                 else if(choice ==4){
-                    System.out.println("administer kan change type");
-                    System.out.println("write in administers info:");
-                    System.out.print("name");
-                    String name = input.nextLine();
-                    System.out.print("password");
-                    String password = input.nextLine();
-                    if(!loginRepo.findByUserNameAndPassword(name,password).isEmpty()){
-                        UserType type = new UserType();
-                        String typename = input.nextLine();
-                        type.setName(typename);
-                        author.setType(type);
-                        personRepo.save(author);
-                    }else{
-                        System.out.println("Sorry, you cannot change type");
-                    }
+                    inputUserType();
+
                 }else if(choice == 5){
                     flag = true;
                     break;
