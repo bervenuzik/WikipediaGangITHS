@@ -25,7 +25,7 @@ import java.util.Optional;
 @Component
 public class ArticleService {
 
-    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 6;
+    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 3;
     @Autowired
     private ArticleRepo articleRepo;
 
@@ -46,6 +46,7 @@ public class ArticleService {
 
     @Autowired
     private ArticleReservationQueueRepo queueRepo;
+
     @Autowired
     private SearchWordService searchWordService;
 
@@ -234,7 +235,7 @@ public class ArticleService {
     public void deleteAnArticle() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
         if (listOfAllArticlesWithSameName.isEmpty()) {
-            System.out.println("!! Article NOT found !!");
+            log.error("!! Article NOT found !!");
             return;
         }
         Article chosenArticle;
@@ -252,7 +253,7 @@ public class ArticleService {
             chosenArticle = listOfAllArticlesWithSameName.get(0);
         }
 
-        System.out.println("!! Article '" + chosenArticle.getTitle() + "' is successfully DELETED !!");
+        log.success("!! Article '" + chosenArticle.getTitle() + "' is successfully DELETED !!");
         articleRepo.delete(chosenArticle);
     }
 
@@ -282,7 +283,7 @@ public class ArticleService {
     //get latest return date from all 6 reservations of an article's hard-copies
     private LocalDate getLatestReturnDateFromReservedHardCopiesOfAnArticle(Article article) {
         List<ArticleHardCopy> numOfReservedHardCopies =
-                hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "reserved");
+                hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "reserved");
         if (numOfReservedHardCopies.size() < 6) {
             int numOfAvailableHardCopies = 6 - numOfReservedHardCopies.size();
             System.out.println("No. of hard-copies available to reserve: " + numOfAvailableHardCopies);
@@ -294,8 +295,8 @@ public class ArticleService {
 
     private void reserveHardCopy(Article article, Person person) {
         //int totalNumOfHardCopies = hardCopyRepo.findNumberOfHardCopiesByArticleId(article.getId());
-        List<ArticleHardCopy> listOfAvailableHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "available");
-        List<ArticleHardCopy> listOfReservedHardCopies = hardCopyRepo.findNumOfHardCopiesByArticleAndStatus(article, "reserved");
+        List<ArticleHardCopy> listOfAvailableHardCopies = hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "available");
+        List<ArticleHardCopy> listOfReservedHardCopies = hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "reserved");
 
         if (!listOfAvailableHardCopies.isEmpty()) {
             ArticleHardCopy articleHardCopyToBeReserved = listOfAvailableHardCopies.get(0);
@@ -303,7 +304,7 @@ public class ArticleService {
             hardCopyRepo.save(articleHardCopyToBeReserved);
             ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopyToBeReserved, person);
             borrowerInfoRepo.save(articleBorrowerInfo);
-            System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
+            log.success("\n!! A hard-copy has been RESERVED successfully till the following date " +
                     articleBorrowerInfo.getReturnDate() + " !!");
 
         } else if (!listOfReservedHardCopies.isEmpty() && listOfReservedHardCopies.size() == MAX_NUM_HARD_COPIES_PER_ARTICLE) {
@@ -323,17 +324,31 @@ public class ArticleService {
             articleRepo.save(article);
             ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopy, person);
             borrowerInfoRepo.save(articleBorrowerInfo);
-            System.out.println("\n!! A hard-copy has been RESERVED successfully till the following date " +
+            log.success("\n!! A hard-copy has been RESERVED successfully till the following date " +
                     articleBorrowerInfo.getReturnDate() + " !!");
         }
     }
 
     public void showAllArticlesReservedByAPerson(Person person) {
         List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPerson(person);
-        System.out.println("You have RESERVED the following hard copies: ");
+        if (listOfHardCopiesReservedByAUser.isEmpty()) {
+            log.error("!! You haven't reserved any articles yet !!");
+            return;
+        }
+        log.message("You have RESERVED the following hard copies: ");
         for (ArticleBorrowerInfo ab : listOfHardCopiesReservedByAUser) {
             System.out.println("Hard Copy ID: " + ab.getArticleHardCopy().getId() + ", Article: " +
                     ab.getArticleHardCopy().getArticle().getTitle());
+        }
+
+        List<ArticleReservationQueue> listOfArticlesReservedByAUser = queueRepo.findArticleReservationQueueByPerson(person);
+        if (listOfArticlesReservedByAUser.isEmpty()) {
+            return;
+        }
+
+        log.message("RESERVATION(S) in queue: ");
+        for (ArticleReservationQueue ar : listOfArticlesReservedByAUser) {
+            System.out.println("Reserved On: " + ar.getTimestamp().toLocalDate() + ", Article: " + ar.getArticle().getTitle());
         }
     }
 
@@ -347,7 +362,7 @@ public class ArticleService {
         }
         int desiredHardCopyId;
         for (int attempt = 0; attempt < 3; attempt++) {                // allows max 3 chances to write correct ID
-            System.out.print("Enter hard copy id you wish to return: ");
+            System.out.print("\nEnter hard copy id you wish to return: ");
             desiredHardCopyId = ScannerHelper.getIntInput();
 
             if (listOfAllHardCopyIds.contains(desiredHardCopyId)) {
@@ -361,17 +376,50 @@ public class ArticleService {
                     }
                     hardCopy.setStatus("available");
                     hardCopyRepo.save(hardCopy);
+                    if (articleIsPresentInQueue(hardCopy)) {
+                        assignAvailableHardCopyToFirstPersonInQueue(hardCopy);
+                    }
                 }
-                System.out.println("!! Hard Copy has been RETURNED successfully !!");
+                log.success("!! Hard Copy has been RETURNED successfully !!");
                 break;
             } else {
-                System.out.println("!! Invalid Id !!");
+                log.error("!! Invalid Id !!");
             }
         }
-
     }
 
     public void orderPersonalHardCopy(Person person) {
 
+    }
+
+    private boolean hardCopyIsAvailable(Article article) {
+        List<ArticleHardCopy> listOfAvailableHardCopies = hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "available");
+        if (!listOfAvailableHardCopies.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    private void assignAvailableHardCopyToFirstPersonInQueue(ArticleHardCopy hardCopy) {
+        Article desiredArticle = hardCopy.getArticle();
+        List<ArticleReservationQueue> listOfAllReservationsOfAnArticle = queueRepo.findArticleReservationQueueByArticleOrderByTimestamp(desiredArticle);
+        if (hardCopyIsAvailable(desiredArticle)) {
+            ArticleReservationQueue firstReservationOfArticle = listOfAllReservationsOfAnArticle.get(0);
+            Person borrower = firstReservationOfArticle.getPerson();
+            ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(hardCopy, borrower);
+            borrowerInfoRepo.save(borrowerInfo);
+            hardCopy.setStatus("reserved");
+            hardCopyRepo.save(hardCopy);
+        }
+    }
+
+    private boolean articleIsPresentInQueue(ArticleHardCopy hardCopy) {
+        List<ArticleReservationQueue> listOfAllArticlesInQueue = queueRepo.findAll();
+        for (ArticleReservationQueue ar : listOfAllArticlesInQueue) {
+            if (ar.getArticle().getId() == hardCopy.getArticle().getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
