@@ -39,18 +39,19 @@ public class PersonService {
         List<LoginInformation> loginInfo;
 
         while (true) {
-            System.out.println("\nWrite in your login :");
+            log.message("\nWrite in your login :");
             login = input.nextLine().trim();
-            System.out.println("Write in your password:");
+            log.message("Write in your password:");
             password = input.nextLine().trim();
+            System.out.flush();
             loginInfo = loginRepo.findByUserNameAndPassword(login, password);
-
 
             if (loginInfo.size() == 1) {
                 Optional<Person> user = personRepo.findByLoginInfo(loginInfo.get(0));
                 if (user.isPresent()) {
                     log.success("Login is success ");
                     log.success("Welcome, " + user.get().getFirstName() + " " + user.get().getLastName());
+                    System.out.flush();
                     return user;
                 } else {
                     log.error("Login is failed ");
@@ -60,6 +61,7 @@ public class PersonService {
                 }
             }else {
                 log.error("There is no such user. Control login and password");
+                System.out.flush();
             }
         }
     }
@@ -194,8 +196,8 @@ public class PersonService {
                 return firstName;
             }
             log.error("Wrong format of first name");
-            tryAgain = log.tryAgain();
-            if (!tryAgain) {
+
+            if (!log.tryAgain()) {
                 return "";
             }
         }
@@ -210,8 +212,8 @@ public class PersonService {
             lastName = input.nextLine().trim();
             if (Person.lastNameValidator(lastName)) return lastName;
             log.error("Wrong format of last name");
-            tryAgain = log.tryAgain();
-            if (!tryAgain) {
+
+            if (!log.tryAgain()) {
                 return "";
             }
         }
@@ -220,10 +222,19 @@ public class PersonService {
     private String inputNewEmail(){
         String email;
         boolean tryAgain;
+        Optional<Person> isInUse;
         while (true) {
             log.question("Write in email");
             email = input.nextLine().trim();
-            if (Person.emailValidator(email)) return email;
+            if (Person.emailValidator(email)) {
+                isInUse = personRepo.findByEmail(email);
+                if(isInUse.isPresent()){
+                    log.error("Such email is already in use");
+                    if(log.tryAgain()) continue;
+                    return "";
+                }
+                return email;
+            }
             log.error("Wrong format of email");
             tryAgain = log.tryAgain();
             if (!tryAgain) {
@@ -259,13 +270,21 @@ public class PersonService {
     private  String inputNewLogin(){
         String login;
         boolean tryAgain;
+        Optional<LoginInformation> isInUse;
         while (true) {
             log.message("Write in a login");
             login = input.nextLine().trim();
-            if (LoginInformation.userNameValidator(login)) return login;
+            if (LoginInformation.userNameValidator(login)){
+                isInUse = loginRepo.findByUserName(login);
+                if(isInUse.isPresent()){
+                    log.error("Such login is already in use");
+                    if(log.tryAgain()) continue;
+                    return "";
+                }
+                return login;
+            }
             log.error("Wrong format of login");
-            tryAgain = log.tryAgain();
-            if (!tryAgain) {
+            if (!log.tryAgain()) {
                 return "";
             }
         }
@@ -279,50 +298,33 @@ public class PersonService {
             password = input.nextLine().trim();
             if (LoginInformation.passwordValidator(password)) return password;
             log.error("Wrong format of password");
-            tryAgain = log.tryAgain();
-            if (!tryAgain) {
+            if (!log.tryAgain()) {
                 return "";
             }
         }
     }
-    public void editAuthor(){
+    public void editUSer(){
         System.out.println("input id to find edit which author");
         int id = input.nextInt();
         input.nextLine();
         Optional<Person> findAuthor = personRepo.findById(id);
         if(findAuthor.isPresent()){
             Person author = findAuthor.get();
-            boolean flag = false;
-            while (!flag) {
-                System.out.println("Which part do you want to update: ");
-                System.out.println("1.Email");
-                System.out.println("2.Firstname");
-                System.out.println("3.Lastname");
-                System.out.println("4.Type");
-                System.out.println("5.quite");
-                System.out.print("input ny choice: ");
-                int choice = input.nextInt();
-                input.nextLine();
-                if(choice ==1){
-                    inputNewEmail();
-                }
-                else if(choice ==2){
-                    inputNewFirstName();
-                }
-                else if(choice ==3){
-                    inputLastName();
-                }
-                else if(choice ==4){
-                    inputUserType();
-
-                }else if(choice == 5){
-                    flag = true;
-                    break;
-                }else{
-                    System.out.println("wrong input, try again!");
-                }
-            }
-
+            System.out.println("input ny info");
+            System.out.print("email: ");
+            String email = input.nextLine();
+            author.setEmail(email);
+            System.out.print("Lastname: ");
+            String lastname = input.nextLine();
+            author.setLastName(lastname);
+            System.out.print("Firstname: ");
+            String firstname = input.nextLine();
+            author.setFirstName(firstname);
+            UserType type = new UserType();
+            String typename = input.nextLine();
+            type.setName(typename);
+            author.setType(type);
+            personRepo.save(author);
         }
     }
 

@@ -32,6 +32,9 @@ public class MyMain implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         menuService.startMenu();
+
+
+
     }
 
 

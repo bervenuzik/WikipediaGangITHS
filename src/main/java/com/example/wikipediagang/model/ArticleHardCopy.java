@@ -20,11 +20,14 @@ public class ArticleHardCopy {
     @JoinColumn(name="article_id")
     private Article article;
 
+    private String status;
+
     public ArticleHardCopy() {
     }
 
     public ArticleHardCopy(Article article) {
         this.article = article;
+        this.status = "available";
     }
 
     public int getId() {
@@ -39,11 +42,19 @@ public class ArticleHardCopy {
         this.article = article;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "ArticleHardCopy{" +
-                "id=" + id +
-                ", article=" + article.getTitle() +
-                '}';
+                ", article=" + article +
+                ", status='" + status + '\'' +
+                '}' + "\n";
     }
 }
