@@ -352,11 +352,11 @@ public class PersonService {
                 log.menu("input ny choice: ");
                 int choice = ScannerHelper.getIntInput(5);
                 switch (choice){
-                    case 0 ->changeEmail(userToChange);
-                    case 1 ->changeFirstName(userToChange);
-                    case 2 ->changeLastName(userToChange);
-                    case 3 ->changeUserType(userToChange);
-                    case 4 ->flag = true;
+                    case 1 ->changeEmail(userToChange);
+                    case 2 ->changeFirstName(userToChange);
+                    case 3 ->changeLastName(userToChange);
+                    case 4 ->changeUserType(userToChange);
+                    case 5 ->flag = true;
                 }
             }
         }

@@ -40,7 +40,7 @@ public class MenuService {
         }
 
 
-        if(currentUser.get().getType().getName().equals("admin")){
+        if(currentUser.get().getType().getName().equalsIgnoreCase("Admin")){
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
             developerMenu();
