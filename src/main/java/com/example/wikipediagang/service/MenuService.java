@@ -40,7 +40,7 @@ public class MenuService {
         }
 
 
-        if(currentUser.get().getType().getName().equals("admin")){
+        if(currentUser.get().getType().getName().equalsIgnoreCase("Admin")){
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
             developerMenu();
@@ -48,9 +48,6 @@ public class MenuService {
         else {
             userMenu();
         }
-
-
-
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 
@@ -67,8 +64,7 @@ public class MenuService {
                 case LOGOUT -> LoggedOut = true;
                 case ADD_USER -> pService.createUser(currentUser);
                 //case REMOVE_USER -> pService.deleteUser(currentUser);
-                //case EDIT_USER -> pService.editAuthor();
-                //case CHANGE_PRIVILEGES -> changePrivileges();
+                case EDIT_USER -> pService.editUser();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
@@ -90,8 +86,8 @@ public class MenuService {
             UserMenu userChoice = getUserChoice(UserMenu.values());
             switch (userChoice) {
                 case LOGOUT -> loggout = true;
-//                case CHANGE_PASSWORD -> changePassword();
-//                case CHANGE_EMAIL -> changeEmail();
+                case CHANGE_PASSWORD -> pService.changePassword(currentUser.get());
+                case CHANGE_EMAIL -> pService.changeEmail(currentUser.get());
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case EDIT -> {
