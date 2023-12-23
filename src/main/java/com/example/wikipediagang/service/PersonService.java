@@ -305,27 +305,57 @@ public class PersonService {
             }
         }
     }
-    public void editAuthor(){
+
+    public void changePassword(Person person){
+        String newPassword= inputNewPassword();
+        person.getLoginInfo().setPassword(newPassword);
+        personRepo.save(person);
+    }
+
+    private void changeFirstName(Person person){
+        String newFirstName = inputNewFirstName();
+        person.setFirstName(newFirstName);
+        personRepo.save(person);
+    }
+
+    private void changeLastName(Person person){
+        String newLastName = inputLastName();
+        person.setLastName(newLastName);
+        personRepo.save(person);
+    }
+
+    public void changeEmail(Person person){
+        String newEmail = inputNewEmail();
+        person.setEmail(newEmail);
+        personRepo.save(person);
+    }
+
+    private void changeUserType(Person person){
+        UserType newUSerType = inputUserType().get();
+        person.setType(newUSerType);
+        personRepo.save(person);
+    }
+    public void editUser(){
         log.menu("Input userId which you want to edit: ");
         int id = ScannerHelper.getIntInput();
-        Optional<Person> findAuthor = personRepo.findById(id);
-        if(findAuthor.isPresent()){
-            Person author = findAuthor.get();
+        Optional<Person> findUser = personRepo.findById(id);
+        if(findUser.isPresent()){
+            Person userToChange = findUser.get();
             boolean flag = false;
             while (!flag) {
                 log.menu("Which part do you want to update: ");
                 log.menu("1.Email");
                 log.menu("2.Firstname");
                 log.menu("3.Lastname");
-                log.menu("4.Type");
+                log.menu("4.Privilage");
                 log.menu("5.Quit");
                 log.menu("input ny choice: ");
                 int choice = ScannerHelper.getIntInput(5);
                 switch (choice){
-                    case 0 ->inputNewEmail();
-                    case 1 ->inputNewFirstName();
-                    case 2 ->inputLastName();
-                    case 3 ->inputUserType();
+                    case 0 ->changeEmail(userToChange);
+                    case 1 ->changeFirstName(userToChange);
+                    case 2 ->changeLastName(userToChange);
+                    case 3 ->changeUserType(userToChange);
                     case 4 ->flag = true;
                 }
             }

@@ -48,9 +48,6 @@ public class MenuService {
         else {
             userMenu();
         }
-
-
-
         System.out.println("Thank you for using ITHS wikipedia! ");
     }
 
@@ -67,7 +64,7 @@ public class MenuService {
                 case LOGOUT -> LoggedOut = true;
                 case ADD_USER -> pService.createUser(currentUser);
                 //case REMOVE_USER -> pService.deleteUser(currentUser);
-                case EDIT_USER -> pService.editAuthor();
+                case EDIT_USER -> pService.editUser();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
@@ -88,9 +85,9 @@ public class MenuService {
         while (!loggout) {
             UserMenu userChoice = getUserChoice(UserMenu.values());
             switch (userChoice) {
-                case LOUGOUT -> loggout = true;
-                case CHANGE_PASSWORD -> pService.inputNewPassword();
-                case CHANGE_EMAIL -> pService.inputNewEmail();
+                case LOGOUT -> loggout = true;
+                case CHANGE_PASSWORD -> pService.changePassword(currentUser.get());
+                case CHANGE_EMAIL -> pService.changeEmail(currentUser.get());
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case EDIT -> {
