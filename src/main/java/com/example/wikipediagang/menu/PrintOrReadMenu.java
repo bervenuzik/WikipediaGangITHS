@@ -2,8 +2,9 @@ package com.example.wikipediagang.menu;
 
 public enum PrintOrReadMenu implements MenuOption{
     EXIT("Exit"),
-    PRINT("Print a hard-copy of the article."),
-    READ("Read the article online.");
+    READ_ONLINE("Read the article online"),
+    RESERVE("Reserve a hard-copy of the article"),
+    PRINT("Order a personal hard-copy of the article");
 
     private final String displayText;
      PrintOrReadMenu(String displayText){

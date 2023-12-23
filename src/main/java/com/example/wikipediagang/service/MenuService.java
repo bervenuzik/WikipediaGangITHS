@@ -4,13 +4,11 @@ package com.example.wikipediagang.service;
 import com.example.wikipediagang.menu.*;
 import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.Article;
-import com.example.wikipediagang.model.ArticleReservationQueue;
 import com.example.wikipediagang.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-
 
 @Component
 public class MenuService {
@@ -33,7 +31,7 @@ public class MenuService {
 
         while (currentUser.isEmpty()) {
             System.out.println(pService.getAllUsers());
-            StartMenu userChoice = getUserchoice(StartMenu.values());
+            StartMenu userChoice = getUserChoice(StartMenu.values());
             switch (userChoice) {
                 case EXIT -> System.exit(1);
                 case LOGIN ->  login();
@@ -45,7 +43,7 @@ public class MenuService {
         if(currentUser.get().getType().getName().equals("admin")){
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
-            //developerMenu();
+            developerMenu();
         }
         else {
             userMenu();
@@ -64,15 +62,15 @@ public class MenuService {
                 """);
         boolean LoggedOut = false;
         while (!LoggedOut) {
-            AdminMenu userchoice = getUserchoice(AdminMenu.values());
-            switch (userchoice) {
+            AdminMenu userChoice = getUserChoice(AdminMenu.values());
+            switch (userChoice) {
                 case LOGOUT -> LoggedOut = true;
                 case ADD_USER -> pService.createUser(currentUser);
                 //case REMOVE_USER -> pService.deleteUser(currentUser);
                 case EDIT_USER -> pService.editAuthor();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                // case DELETE -> articleService.deleteAnArticleByAdmin();
+                case DELETE -> articleService.deleteAnArticle();
 //                case REVIEW ->  reviewArticle();
 
             }
@@ -88,22 +86,41 @@ public class MenuService {
                 """);
         boolean loggout = false;
         while (!loggout) {
-            UserMenu userChoice = getUserchoice(UserMenu.values());
+            UserMenu userChoice = getUserChoice(UserMenu.values());
             switch (userChoice) {
                 case LOUGOUT -> loggout = true;
                 case CHANGE_PASSWORD -> pService.inputNewPassword();
                 case CHANGE_EMAIL -> pService.inputNewEmail();
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
-                case CHANGE -> { Article article = articleService.editAnArticleByUser(currentUser.get());
-                    if ( article != null){
-                        editArticleMenu(article);
-                    }
+                case EDIT -> {
+                    Article article = articleService.editAnArticleByUser(currentUser.get());
+                    editArticleMenu(article);
                 }
-                // case SHOW_RESERVED -> articleService.showReservedArticles(currentUser.get());
-                //case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
+                case SHOW_RESERVED -> articleService.showAllArticlesReservedByAPerson(currentUser.get());
+                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
             }
 
+        }
+
+    }
+
+
+
+    public void developerMenu(){
+        log.menu("""
+                ----------------------------------------------------------------------------------------
+                                
+                Welcome to the developer view!                
+                """);
+        boolean logout = false;
+        while (!logout){
+            DeveloperMenu userChoice = getUserChoice(DeveloperMenu.values());
+            switch (userChoice){
+                case LOGOUT -> logout= true;
+//                case ERROR_LOG -> printErrors();
+//                case ERROR_HANDLE -> handleErrors();
+            }
         }
 
     }
@@ -114,13 +131,13 @@ public class MenuService {
             log.menu("""
                     ----------------------------------------------------------------------------------------
                     
-                    Here you can search an article!
+                    Here you can SEARCH an article!
                     """);
-             SearchArticleMenu userChoice =getUserchoice(SearchArticleMenu.values());
+             SearchArticleMenu userChoice = getUserChoice(SearchArticleMenu.values());
             switch (userChoice){
                 case EXIT -> exit = true;
                 case TITLE -> articleService.searchArticleByTitle(currentUser.get());
-                case AUTHOR -> articleService.searchArticleByAuthor(currentUser.get());
+                case AUTHOR -> articleService.searchArticleByPerson(currentUser.get());
             }
         }
 
@@ -133,9 +150,9 @@ public class MenuService {
             log.menu("""
                     ----------------------------------------------------------------------------------------
                     
-                    Here you can edit an article!
+                    Here you can EDIT an article!
                     """);
-            EditArticleMenu userChoice = getUserchoice(EditArticleMenu.values());
+            EditArticleMenu userChoice = getUserChoice(EditArticleMenu.values());
             switch (userChoice){
                 case EXIT -> exit= true;
                 case TITLE -> articleService.editTitle(article);
@@ -144,16 +161,16 @@ public class MenuService {
         }
     }
 
-    public <T extends MenuOption> T getUserchoice(T[] options) {
+    public <T extends MenuOption> T getUserChoice(T[] options) {
         log.menu("Choose from the following tasks- \n");
-        printchoices(options);
+        printChoices(options);
         log.message("\nEnter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);
         return options[userChoice - 1];
 
     }
 
-    private <T extends MenuOption> void printchoices(T[] options) {
+    private <T extends MenuOption> void printChoices(T[] options) {
         int choicenumber = 1;
         for (T menuChoice : options) {
             log.menu(choicenumber + ". " + menuChoice.getDisplayText());
