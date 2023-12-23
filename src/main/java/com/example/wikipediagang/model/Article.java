@@ -36,6 +36,9 @@ public class Article {
     @Column(name="num_views")
     private int numOfViews;
 
+    @Column(name="status")
+    private String status;
+
     public Article() {
     }
 
@@ -46,6 +49,7 @@ public class Article {
         this.category = category;
         this.availableAsHardCopy = "no";
         this.numOfViews = 0;
+        this.status = "under review";
     }
 
     public int getId() {
@@ -100,6 +104,14 @@ public class Article {
         this.numOfViews = numOfViews;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -108,6 +120,7 @@ public class Article {
                 ", category=" + category.getName() +
                 ", availableAsHardCopy='" + availableAsHardCopy + '\'' +
                 ", numOfViews=" + numOfViews +
+                ", status=" + status +
                 '}' + "\n";
     }
 }

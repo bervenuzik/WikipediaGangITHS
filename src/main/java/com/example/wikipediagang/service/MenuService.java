@@ -154,6 +154,7 @@ public class MenuService {
                 case EXIT -> exit= true;
                 case TITLE -> articleService.editTitle(article);
                 case CONTENT -> articleService.editContent(article);
+                case CATEGORY -> articleService.editCategory(article);
             }
         }
     }
