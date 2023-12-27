@@ -12,5 +12,6 @@ public interface ArticleRepo extends JpaRepository<Article, Integer> {
 
     List<Article> findArticleByTitle(String title);
     List<Article> findArticleByPerson(Person author);
+    List<Article> findAllByStatusIs(String status);
 
 }

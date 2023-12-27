@@ -52,25 +52,25 @@ public class ArticleService {
 
     public void createArticle(Person loggedInPerson){
 
-        log.message("Enter article's title: ");
+        log.message("\nEnter article's title: ");
         String title = ScannerHelper.getStringInput();
 
-        log.message("Enter article's content (please write THE-END at the end of your content): ");
+        log.message("\nEnter article's content (please write THE-END at the end of your content): ");
         String content =  ScannerHelper.getTextInput();
 
-        System.out.println("Input Received: \n" + content);
+        System.out.println("\nInput Received: \n" + content);
 
         System.out.println("Choose article's category from the following: ");
         List<ArticleCategory> availableCategories = categoryRepo.findAll();
 
-        for(int i=0; i< availableCategories.size(); i++){
-            System.out.println(i + ") " + availableCategories.get(i).getName());
+        for(int i = 0; i < availableCategories.size(); i++){
+            System.out.println(i + 1 + ". " + availableCategories.get(i).getName());
         }
 
         System.out.print("\nEnter category's number: ");
-        int categoryId = ScannerHelper.getIntInput(availableCategories.size()-1);
+        int categoryId = ScannerHelper.getIntInput(availableCategories.size());
 
-        ArticleCategory chosenCategory = availableCategories.get(categoryId);
+        ArticleCategory chosenCategory = availableCategories.get(categoryId - 1);
 
         Article newArticle = new Article(title, content, loggedInPerson, chosenCategory);
         articleRepo.save(newArticle);
@@ -129,11 +129,11 @@ public class ArticleService {
         log.message("Enter article number: ");
         int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size());
 
-        return articlesList.get(chosenArticleNum-1);
+        return articlesList.get(chosenArticleNum - 1);
     }
     private void printOptions(List<Article> articleList){
         for (int i = 0; i < articleList.size(); i++) {
-            log.menu(i+1 + ". " + articleList.get(i).getTitle());
+            log.menu(i + 1 + ". " + articleList.get(i).getTitle());
         }
     }
     public void readAnArticleOnline(Article chosenArticle) {
@@ -199,7 +199,7 @@ public class ArticleService {
             if (userChoice == 1) {
                 log.message("Enter category number: ");
                 int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
-                chosenArticle.setCategory(articleCategoryList.get(desiredCategory));
+                chosenArticle.setCategory(articleCategoryList.get(desiredCategory - 1));
             } else {
                 chosenArticle.setCategory(createNewArticleCategory());
                 articleRepo.save(chosenArticle);
@@ -228,11 +228,11 @@ public class ArticleService {
             for (int i = 0; i < listOfAllArticlesWithSameName.size(); i++) {
                 Person person = listOfAllArticlesWithSameName.get(i).getPerson();
                 String authorsFullName = person.getFirstName() + " " + person.getLastName();
-                System.out.println(i + ". " + authorsFullName);
+                System.out.println(i + 1 + ". " + authorsFullName);
             }
-            System.out.print("Enter number to remove article written by that author: ");
-            int userChoice = ScannerHelper.getIntInput(listOfAllArticlesWithSameName.size() - 1);
-            chosenArticle = listOfAllArticlesWithSameName.get(userChoice);
+            System.out.print("Enter number to remove an article written by that author: ");
+            int userChoice = ScannerHelper.getIntInput(listOfAllArticlesWithSameName.size());
+            chosenArticle = listOfAllArticlesWithSameName.get(userChoice - 1);
         } else {
             chosenArticle = listOfAllArticlesWithSameName.get(0);
         }
@@ -402,5 +402,51 @@ public class ArticleService {
             }
         }
         return false;
+    }
+
+    public void reviewArticle() {
+        List<Article> listOfArticlesToBeReviewed = articleRepo.findAllByStatusIs("review");
+        List<Article> listOfPublishedArticles = new ArrayList<>();
+
+        System.out.println("The following articles are waiting to be reviewed: ");
+        for (int i = 0; i < listOfArticlesToBeReviewed.size(); i++) {
+            System.out.println(i+1 + ". " + listOfArticlesToBeReviewed.get(i).getTitle());
+        }
+
+        while (listOfPublishedArticles.size() != listOfArticlesToBeReviewed.size()) {
+            System.out.print("\nENTER " + (listOfArticlesToBeReviewed.size() + 1) + ", to EXIT\nor\nEnter article number you want to review: ");
+            int adminChoice = ScannerHelper.getIntInput(listOfArticlesToBeReviewed.size() + 1);
+
+            if (adminChoice == (listOfArticlesToBeReviewed.size() + 1)) {
+                break;
+            }
+
+            Article chosenArticle = listOfArticlesToBeReviewed.get(adminChoice - 1);
+            if (chosenArticle.getStatus().equalsIgnoreCase("publish")) {
+                System.out.println("Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
+            } else {
+                System.out.println("---------------------------------------------------------------------------" + "\nTitle: " +
+                        chosenArticle.getTitle().toUpperCase() + "\n" + "Written By: " +
+                        chosenArticle.getPerson().getFirstName() + " " + chosenArticle.getPerson().getLastName() + "\n\n" +
+                        chosenArticle.getContent() + "\n---------------------------------------------------------------------------");
+                int numOfViews = chosenArticle.getNumOfViews();
+                chosenArticle.setNumOfViews(numOfViews + 1);
+                System.out.print("Do you want to publish the article? (y/n): ");
+                String userChoice = ScannerHelper.getStringInput();
+                if (userChoice.equalsIgnoreCase("y")) {
+                    chosenArticle.setStatus("publish");
+                    log.success("!! Article '" + chosenArticle.getTitle() + "' has been PUBLISHED successfully !!");
+                    listOfPublishedArticles.add(chosenArticle);
+                } else if (userChoice.equalsIgnoreCase("n")) {
+                    chosenArticle.setStatus("review");
+                    log.message("!! Article '" + chosenArticle.getTitle() + "' still needs to be REVIEWED !!");
+                } else {
+                    System.out.println("Invalid Input");
+                }
+
+                articleRepo.save(chosenArticle);
+            }
+        }
+
     }
 }

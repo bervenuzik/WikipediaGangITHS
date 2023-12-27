@@ -44,8 +44,7 @@ public class MenuService {
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
             developerMenu();
-        }
-        else {
+        } else {
             userMenu();
         }
         System.out.println("Thank you for using ITHS wikipedia! ");
@@ -68,7 +67,7 @@ public class MenuService {
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
-//                case REVIEW ->  reviewArticle();
+                case REVIEW ->  articleService.reviewArticle();
 
             }
         }

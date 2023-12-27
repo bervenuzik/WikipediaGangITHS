@@ -49,7 +49,7 @@ public class Article {
         this.category = category;
         this.availableAsHardCopy = "no";
         this.numOfViews = 0;
-        this.status = "under review";
+        this.status = "review";
     }
 
     public int getId() {
