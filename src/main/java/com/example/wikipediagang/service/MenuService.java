@@ -41,8 +41,9 @@ public class MenuService {
             }
         }
 
+        System.out.println(currentUser.get().getType().getName());
 
-        if(currentUser.get().getType().getName().equals("admin")){
+        if(currentUser.get().getType().getName().equals("Admin")){
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
             developerMenu();
@@ -68,7 +69,7 @@ public class MenuService {
             switch (userchoice) {
                 case LOGOUT -> LoggedOut = true;
                 case ADD_USER -> pService.createUser(currentUser);
-                //case REMOVE_USER -> pService.deleteUser(curentUser);
+                case REMOVE_USER -> pService.deleteUser(currentUser);
                 //case EDIT_USER -> pService.editAuthor();
                 //case CHANGE_PRIVILEGES -> changePrivilages();
                 case SEARCH -> searchArticleMenu();

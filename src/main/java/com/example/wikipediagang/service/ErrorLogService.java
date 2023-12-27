@@ -14,6 +14,21 @@ import java.util.Optional;
 public class ErrorLogService {
     @Autowired
     private ErrorLogRepo errorLogRepo;
+    @Autowired
+    MessageHandlerService log;
+
+    public Optional<ErrorLog> sendErrorLog(String text , Date date, String status , Person person){
+
+        ErrorLog errorLog = null;
+        try {
+            errorLog = new ErrorLog(text, date, status,  person);
+        } catch (Exception e) {
+            log.error("Error log wasn't created");
+            return  Optional.empty();
+        }
+
+        return Optional.of(errorLogRepo.save(errorLog));
+    }
 
     public void saveErroLog(){
         ErrorLog errorLog = new ErrorLog();
@@ -21,7 +36,7 @@ public class ErrorLogService {
             errorLog.setPerson(new Person());
             errorLog.setDate(new Date());
             errorLog.setText("Technical fail");
-            errorLog.setStatus("unchecked");
+           // errorLog.setStatus("unchecked");
             errorLogRepo.save(errorLog);
         }catch(Exception e){
             errorLog.setText("Error"+e.getStackTrace());
@@ -36,7 +51,7 @@ public class ErrorLogService {
             ErrorLog erro = erroLog.get();
             System.out.println("input status to uppdate");
             String newStatus = ScannerHelper.getStringInput();
-            erro.setStatus(newStatus);
+            //erro.setStatus(newStatus);
             errorLogRepo.save(erro);
         }
     }

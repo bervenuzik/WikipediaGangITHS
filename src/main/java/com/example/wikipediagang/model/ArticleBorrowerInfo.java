@@ -83,10 +83,11 @@ public class ArticleBorrowerInfo {
     @Override
     public String toString() {
         return "ArticleBorrowerInfo{" +
-                ", article=" + articleHardCopy.getArticle().getTitle() +
-                ", person=" + person.getFirstName() + " " + person.getLastName() +
-                ", borrowDate=" + borrowDate +
-                ", returnDate=" + returnDate +
+                " id= " + articleHardCopy.getId() +
+                ", article= " + articleHardCopy.getArticle().getTitle() +
+                ", person= " + person.getFirstName() + " " + person.getLastName() +
+                ", borrowDate= " + borrowDate +
+                ", returnDate= " + returnDate +
                 '}' + "\n";
     }
 }

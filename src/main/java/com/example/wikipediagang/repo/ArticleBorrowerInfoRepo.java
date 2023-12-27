@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface ArticleBorrowerInfoRepo extends JpaRepository<ArticleBorrowerInfo, Integer> {
     List<ArticleBorrowerInfo> findByArticleHardCopyAndAndPerson(ArticleHardCopy hardCopy, Person person);
+    List<ArticleBorrowerInfo> findByPerson(Person person);
 
     @Query(nativeQuery = true,
             value = "select ab.* from article_borrower_info ab " +
