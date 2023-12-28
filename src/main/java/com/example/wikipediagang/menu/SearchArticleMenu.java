@@ -1,7 +1,7 @@
 package com.example.wikipediagang.menu;
 
 public enum SearchArticleMenu implements MenuOption{
-    EXIT("Back to the Article Menu."),
+    EXIT("Back to the Article Menu"),
     TITLE("Search by Title"),
     AUTHOR("Search by Author");
 
