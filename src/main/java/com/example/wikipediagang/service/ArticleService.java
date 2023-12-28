@@ -17,7 +17,6 @@ import com.example.wikipediagang.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,8 @@ import java.util.Optional;
 @Component
 public class ArticleService {
 
-    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 3;
+    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 3;            //allows max 3 hard-copies of an article
+
     @Autowired
     private ArticleRepo articleRepo;
 
@@ -57,20 +57,9 @@ public class ArticleService {
 
         log.message("\nEnter article's content (please write THE-END at the end of your content): ");
         String content =  ScannerHelper.getTextInput();
-
         System.out.println("\nInput Received: \n" + content);
 
-        System.out.println("Choose article's category from the following: ");
-        List<ArticleCategory> availableCategories = categoryRepo.findAll();
-
-        for(int i = 0; i < availableCategories.size(); i++){
-            System.out.println(i + 1 + ". " + availableCategories.get(i).getName());
-        }
-
-        System.out.print("\nEnter category's number: ");
-        int categoryId = ScannerHelper.getIntInput(availableCategories.size());
-
-        ArticleCategory chosenCategory = availableCategories.get(categoryId - 1);
+        ArticleCategory chosenCategory = chooseCategoryFromAvailableCategoriesOrCreateNewCategory();
 
         Article newArticle = new Article(title, content, loggedInPerson, chosenCategory);
         articleRepo.save(newArticle);
@@ -140,7 +129,7 @@ public class ArticleService {
         int numOfViews = chosenArticle.getNumOfViews();
         chosenArticle.setNumOfViews(numOfViews + 1);
         articleRepo.save(chosenArticle);
-        log.success("!! You can now read the desired article below !!");
+        log.success("!! You can now READ the desired article below !!");
         log.success("------------------------------------------------------------------------------------------");
         log.message("Title: " + chosenArticle.getTitle().toUpperCase() + "\nWritten by: " +
                 chosenArticle.getPerson().getFirstName() +
@@ -167,11 +156,18 @@ public class ArticleService {
         log.success("!! Article's TITLE is successfully updated !!");
     }
     public void editContent(Article chosenArticle){
+        log.message("Original content: \n" + chosenArticle.getContent());
         log.message("Enter new content (please write THE-END at the end of your content): ");
         String updatedContent = ScannerHelper.getTextInput();
-        chosenArticle.setContent(updatedContent);
-        articleRepo.save(chosenArticle);
-        log.success("!! Article's CONTENT is successfully updated !!");
+        System.out.print("Choose 1 to save new content, 2 otherwise \nEnter your choice: ");
+        int userChoice = ScannerHelper.getIntInput(2);
+        if (userChoice == 1) {
+            chosenArticle.setContent(updatedContent);
+            articleRepo.save(chosenArticle);
+            log.success("!! Article's CONTENT is successfully updated !!");
+        } else {
+            log.message("!! Article's content is NOT updated !!");
+        }
     }
 
     public void editCategory(Article chosenArticle) {
@@ -190,22 +186,48 @@ public class ArticleService {
                 log.success("!! Article's Category has been UPDATED successfully !!");
             }
         } else if (articleCategoryList.size() > 1) {
-            log.message("Available categories: ");
-            for (int i = 0; i < articleCategoryList.size(); i++) {
-                System.out.println(i + 1 + ". " + articleCategoryList.get(i).getName());
-            }
-            log.menu("\nYou wish to\n1. Choose from the available categories\n2. Add a new category\nEnter a number: ");
-            int userChoice = ScannerHelper.getIntInput(2);
-            if (userChoice == 1) {
-                log.message("Enter category number: ");
-                int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
-                chosenArticle.setCategory(articleCategoryList.get(desiredCategory - 1));
-            } else {
-                chosenArticle.setCategory(createNewArticleCategory());
-                articleRepo.save(chosenArticle);
-            }
+            ArticleCategory desiredCategory = chooseCategoryFromAvailableCategoriesOrCreateNewCategory();
+            chosenArticle.setCategory(desiredCategory);
             articleRepo.save(chosenArticle);
             log.success("!! Article's Category has been UPDATED successfully !!");
+        }
+    }
+
+    public void updateNameOfAnExistingCategory() {
+        List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
+        if (articleCategoryList.isEmpty()) {
+            System.out.println("!! No category available !!");
+            return;
+        }
+        printAvailableCategories(articleCategoryList);
+
+        System.out.print("Enter category's number: ");
+        int categoryChoice = ScannerHelper.getIntInput(articleCategoryList.size());
+        ArticleCategory desiredCategory = articleCategoryList.get(categoryChoice - 1);
+
+        categoryRepo.save(desiredCategory);
+        log.success("!! Category Name has been UPDATED successfully !!");
+    }
+
+    private void printAvailableCategories(List<ArticleCategory> articleCategoryList) {
+        log.message("Available categories: ");
+        for (int i = 0; i < articleCategoryList.size(); i++) {
+            System.out.println(i + 1 + ". " + articleCategoryList.get(i).getName());
+        }
+    }
+
+    private ArticleCategory chooseCategoryFromAvailableCategoriesOrCreateNewCategory() {
+        List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
+        printAvailableCategories(articleCategoryList);
+        log.menu("\nYou wish to\n1. Choose from the available categories\n2. Add a new category\nEnter a number: ");
+        int userChoice = ScannerHelper.getIntInput(2);
+
+        if (userChoice == 1) {
+            log.message("Enter category number: ");
+            int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
+            return articleCategoryList.get(desiredCategory - 1);
+        } else {
+            return createNewArticleCategory();
         }
     }
 
@@ -312,38 +334,52 @@ public class ArticleService {
                     articleBorrowerInfo.getReturnDate() + " !!");
         }
     }
-    public void showAllArticlesReservedByAPerson(Person person) {
+    public void showHardCopiesReservedByAPerson(Person person) {
         List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPerson(person);
+
         if (listOfHardCopiesReservedByAUser.isEmpty()) {
-            log.error("!! You haven't reserved any articles yet !!");
+            log.error("!! No hard-copies reserved !!");
+            log.message("Recommended: To RESERVE a hard-copy, ENTER 6\n");
             return;
         }
+
         log.message("You have RESERVED the following hard copies: ");
         for (ArticleBorrowerInfo ab : listOfHardCopiesReservedByAUser) {
             System.out.println("Hard Copy ID: " + ab.getArticleHardCopy().getId() + ", Article: " +
                     ab.getArticleHardCopy().getArticle().getTitle());
         }
 
+    }
+    public void showArticlesReservedInQueue(Person person) {
         List<ArticleReservationQueue> listOfArticlesReservedByAUser = queueRepo.findArticleReservationQueueByPerson(person);
         if (listOfArticlesReservedByAUser.isEmpty()) {
+            log.error("!! No reservations found in queue !!");
             return;
         }
-
         log.message("RESERVATION(S) in queue: ");
         for (ArticleReservationQueue ar : listOfArticlesReservedByAUser) {
             System.out.println("Reserved On: " + ar.getTimestamp().toLocalDate() + ", Article: " + ar.getArticle().getTitle());
         }
     }
     public void returnReservedArticle(Person person) {
-        showAllArticlesReservedByAPerson(person);
-
         List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPerson(person);
+        if (listOfHardCopiesReservedByAUser.isEmpty()) {
+            log.error("!! You haven't reserved any articles yet !!");
+            return;
+        }
+
+        log.message("You have RESERVED the following hard copies: ");
+        for (ArticleBorrowerInfo ab : listOfHardCopiesReservedByAUser) {
+            System.out.println("Hard Copy ID: " + ab.getArticleHardCopy().getId() + ", Article: " +
+                    ab.getArticleHardCopy().getArticle().getTitle());
+        }
+
         List<Integer> listOfAllHardCopyIds = new ArrayList<>();
         for (ArticleBorrowerInfo ab : listOfHardCopiesReservedByAUser) {
             listOfAllHardCopyIds.add(ab.getArticleHardCopy().getId());
         }
         int desiredHardCopyId;
-        for (int attempt = 0; attempt < 3; attempt++) {                // allows max 3 chances to write correct ID
+        for (int attempt = 0; attempt < 3; attempt++) {                     // allows max 3 chances to write correct ID
             System.out.print("\nEnter hard copy id you wish to return: ");
             desiredHardCopyId = ScannerHelper.getIntInput();
 
@@ -356,11 +392,10 @@ public class ArticleService {
                         ArticleBorrowerInfo desiredBorrowerInfo = optionalBorrowerInfo.get();
                         borrowerInfoRepo.delete(desiredBorrowerInfo);
                     }
-
                     hardCopy.setStatus("available");
                     hardCopyRepo.save(hardCopy);
 
-                    if (thereIsAQueueOnArticle(hardCopy.getArticle())) {       //check if there is a queue on this article
+                    if (thereIsAQueueOnArticle(hardCopy.getArticle())) {        //check if there is a queue on this article
                         assignAvailableHardCopyToFirstPersonInQueue(hardCopy);
                     }
                 }
@@ -406,14 +441,14 @@ public class ArticleService {
 
     public void reviewArticle() {
         List<Article> listOfArticlesToBeReviewed = articleRepo.findAllByStatusIs("review");
-        List<Article> listOfPublishedArticles = new ArrayList<>();
+        int counter = 0;
 
         System.out.println("The following articles are waiting to be reviewed: ");
         for (int i = 0; i < listOfArticlesToBeReviewed.size(); i++) {
             System.out.println(i+1 + ". " + listOfArticlesToBeReviewed.get(i).getTitle());
         }
 
-        while (listOfPublishedArticles.size() != listOfArticlesToBeReviewed.size()) {
+        while (listOfArticlesToBeReviewed.size() >= counter) {
             System.out.print("\nENTER " + (listOfArticlesToBeReviewed.size() + 1) + ", to EXIT\nor\nEnter article number you want to review: ");
             int adminChoice = ScannerHelper.getIntInput(listOfArticlesToBeReviewed.size() + 1);
 
@@ -433,20 +468,19 @@ public class ArticleService {
                 chosenArticle.setNumOfViews(numOfViews + 1);
                 System.out.print("Do you want to publish the article? (y/n): ");
                 String userChoice = ScannerHelper.getStringInput();
+
                 if (userChoice.equalsIgnoreCase("y")) {
                     chosenArticle.setStatus("publish");
                     log.success("!! Article '" + chosenArticle.getTitle() + "' has been PUBLISHED successfully !!");
-                    listOfPublishedArticles.add(chosenArticle);
+                    counter++;
                 } else if (userChoice.equalsIgnoreCase("n")) {
                     chosenArticle.setStatus("review");
                     log.message("!! Article '" + chosenArticle.getTitle() + "' still needs to be REVIEWED !!");
                 } else {
-                    System.out.println("Invalid Input");
+                    log.error("!! Invalid Input !!");
                 }
-
                 articleRepo.save(chosenArticle);
             }
         }
-
     }
 }
