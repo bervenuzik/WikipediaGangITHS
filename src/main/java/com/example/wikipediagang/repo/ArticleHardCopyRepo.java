@@ -12,12 +12,11 @@ import java.util.Optional;
 @Repository
 public interface ArticleHardCopyRepo extends JpaRepository<ArticleHardCopy, Integer> {
     @Query(nativeQuery = true,
-            value = "select count(*) from article_hard_copy a where a.article_id=:articleId")
-    int findNumberOfHardCopiesByArticleId(Integer articleId);
+            value = "select * from article_hard_copy a where a.article_id=:articleId")
+    List<ArticleHardCopy> findHardCopiesByArticleId(Integer articleId);
 
     List<ArticleHardCopy> findArticleHardCopiesByArticleAndStatus(Article article, String status);
 
     Optional<ArticleHardCopy> findArticleHardCopyById(Integer hardCopyId);
-
 
 }
