@@ -169,7 +169,6 @@ public class ArticleService {
             log.message("!! Article's content is NOT updated !!");
         }
     }
-
     public void editCategory(Article chosenArticle) {
         List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
 
@@ -192,7 +191,6 @@ public class ArticleService {
             log.success("!! Article's Category has been UPDATED successfully !!");
         }
     }
-
     public void updateNameOfAnExistingCategory() {
         List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
         if (articleCategoryList.isEmpty()) {
@@ -208,14 +206,12 @@ public class ArticleService {
         categoryRepo.save(desiredCategory);
         log.success("!! Category Name has been UPDATED successfully !!");
     }
-
     private void printAvailableCategories(List<ArticleCategory> articleCategoryList) {
         log.message("Available categories: ");
         for (int i = 0; i < articleCategoryList.size(); i++) {
             System.out.println(i + 1 + ". " + articleCategoryList.get(i).getName());
         }
     }
-
     private ArticleCategory chooseCategoryFromAvailableCategoriesOrCreateNewCategory() {
         List<ArticleCategory> articleCategoryList = categoryRepo.findAll();
         printAvailableCategories(articleCategoryList);
@@ -230,14 +226,12 @@ public class ArticleService {
             return createNewArticleCategory();
         }
     }
-
     private ArticleCategory createNewArticleCategory() {
         log.message("Enter new category: ");
         String newCategory = ScannerHelper.getStringInput();
         ArticleCategory category = new ArticleCategory(newCategory);
         return categoryRepo.save(category);
     }
-
     public void deleteAnArticle() {
         List<Article> listOfAllArticlesWithSameName = findArticleByTitle();
         if (listOfAllArticlesWithSameName.isEmpty()) {
@@ -283,23 +277,6 @@ public class ArticleService {
             }
         } while (isDone);
     }
-
-    //get latest return date from all 6 reservations of an article's hard-copies
-    /*
-    private LocalDate getLatestReturnDateFromReservedHardCopiesOfAnArticle(Article article) {
-        List<ArticleHardCopy> numOfReservedHardCopies =
-                hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "reserved");
-        if (numOfReservedHardCopies.size() < 6) {
-            int numOfAvailableHardCopies = 6 - numOfReservedHardCopies.size();
-            System.out.println("No. of hard-copies available to reserve: " + numOfAvailableHardCopies);
-        }
-
-        List<ArticleBorrowerInfo> borrowerInfoList = borrowerInfoRepo.sortHardCopiesByReturnDate(article);
-        return borrowerInfoList.get(0).getReturnDate();
-    }
-
-     */
-
     private void reserveHardCopy(Article article, Person person) {
         List<ArticleHardCopy> listOfAvailableHardCopies = hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "available");
         List<ArticleHardCopy> listOfReservedHardCopies = hardCopyRepo.findArticleHardCopiesByArticleAndStatus(article, "reserved");
@@ -438,7 +415,6 @@ public class ArticleService {
         }
         return false;
     }
-
     public void reviewArticle() {
         List<Article> listOfArticlesToBeReviewed = articleRepo.findAllByStatusIs("review");
         int counter = 0;
