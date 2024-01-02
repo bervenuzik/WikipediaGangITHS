@@ -22,11 +22,10 @@ public class ArticleHardCopyDAOImpl implements ArticleHardCopyDAO {
                                   @Value("${spring.datasource.password}") String databasePassword) {
 
         try {
-            connection = DriverManager.getConnection(databaseUrl, databaseUsername,
-                    databasePassword);
+            connection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword);
             allHardCopiesOfAnArticlePS = connection.prepareStatement("select * from article_hard_copy a where a.article_id=?");
         } catch (SQLException e) {
-            throw new RuntimeException("TeamDAO constructor error: " + e);
+            throw new RuntimeException("ArticleHardCopyDAO constructor error: " + e);
         }
     }
 
