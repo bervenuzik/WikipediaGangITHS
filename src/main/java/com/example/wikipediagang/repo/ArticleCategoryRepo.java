@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ArticleCategoryRepo extends JpaRepository<ArticleCategory, Integer> {
-
     List<ArticleCategory> findAll();
 }

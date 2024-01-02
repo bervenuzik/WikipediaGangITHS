@@ -30,6 +30,9 @@ public class ArticleBorrowerInfo {
     @Column(name="borrow_date")
     private LocalDate borrowDate;
 
+    @Column(name="expected_return_date")
+    private LocalDate expectedReturnDate;
+
     @Column(name="return_date")
     private LocalDate returnDate;
 
@@ -40,7 +43,7 @@ public class ArticleBorrowerInfo {
         this.articleHardCopy = articleHardCopy;
         this.person = person;
         this.borrowDate = LocalDate.now();
-        this.returnDate = borrowDate.plusWeeks(2);              // adds two weeks to borrow date,
+        this.expectedReturnDate = borrowDate.plusWeeks(2);              // adds two weeks to borrow date,
                                                                             // which makes loan period = 2 weeks/person
     }
 
@@ -72,6 +75,14 @@ public class ArticleBorrowerInfo {
         this.borrowDate = borrowDate;
     }
 
+    public LocalDate getExpectedReturnDate() {
+        return expectedReturnDate;
+    }
+
+    public void setExpectedReturnDate(LocalDate expectedReturnDate) {
+        this.expectedReturnDate = expectedReturnDate;
+    }
+
     public LocalDate getReturnDate() {
         return returnDate;
     }
@@ -86,7 +97,7 @@ public class ArticleBorrowerInfo {
                 ", article=" + articleHardCopy.getArticle().getTitle() +
                 ", person=" + person.getFirstName() + " " + person.getLastName() +
                 ", borrowDate=" + borrowDate +
-                ", returnDate=" + returnDate +
+                ", expectedReturnDate=" + expectedReturnDate +
                 '}' + "\n";
     }
 }

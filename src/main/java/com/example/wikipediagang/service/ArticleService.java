@@ -17,6 +17,7 @@ import com.example.wikipediagang.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -133,7 +134,9 @@ public class ArticleService {
         log.success("------------------------------------------------------------------------------------------");
         log.message("Title: " + chosenArticle.getTitle().toUpperCase() + "\nWritten by: " +
                 chosenArticle.getPerson().getFirstName() +
-                " " + chosenArticle.getPerson().getLastName() + "\n\n" + chosenArticle.getContent());
+                " " + chosenArticle.getPerson().getLastName() + "\n\n" + chosenArticle.getContent() + "\n\n " +
+                "No. of views: " + chosenArticle.getNumOfViews() + "\n" + "No. of times borrowed: " +
+                numberOfTimesArticleIsBorrowed(chosenArticle) + "\n\n");
         log.success("\n------------------------------------------------------------------------------------------");
     }
     public Article editAnArticleByUser(Person person) {
@@ -367,7 +370,8 @@ public class ArticleService {
                     Optional<ArticleBorrowerInfo> optionalBorrowerInfo = borrowerInfoRepo.findArticleBorrowerInfoByArticleHardCopy(hardCopy);
                     if (optionalBorrowerInfo.isPresent()) {
                         ArticleBorrowerInfo desiredBorrowerInfo = optionalBorrowerInfo.get();
-                        borrowerInfoRepo.delete(desiredBorrowerInfo);
+                        desiredBorrowerInfo.setReturnDate(LocalDate.now());
+                        borrowerInfoRepo.save(desiredBorrowerInfo);
                     }
                     hardCopy.setStatus("available");
                     hardCopyRepo.save(hardCopy);
@@ -458,5 +462,14 @@ public class ArticleService {
                 articleRepo.save(chosenArticle);
             }
         }
+    }
+    private int numberOfTimesArticleIsBorrowed(Article article) {
+        int counter = 0;
+        List<ArticleHardCopy> hardCopyList = hardCopyRepo.findHardCopiesByArticleId(article.getId());
+
+        for (ArticleHardCopy a : hardCopyList) {
+            counter = counter + borrowerInfoRepo.numberOfTimesHardCopyIsBorrowed(a.getId());
+        }
+        return counter;
     }
 }
