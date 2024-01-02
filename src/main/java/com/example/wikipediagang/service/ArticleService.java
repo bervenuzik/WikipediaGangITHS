@@ -2,6 +2,7 @@ package com.example.wikipediagang.service;
 
 
 import com.example.wikipediagang.ScannerHelper;
+import com.example.wikipediagang.dao.ArticleHardCopyDAO;
 import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleBorrowerInfo;
 import com.example.wikipediagang.model.ArticleCategory;
@@ -50,6 +51,9 @@ public class ArticleService {
 
     @Autowired
     private SearchWordService searchWordService;
+
+    @Autowired
+    private ArticleHardCopyDAO articleHardCopyDAO;
 
     public void createArticle(Person loggedInPerson){
 
@@ -134,9 +138,9 @@ public class ArticleService {
         log.success("------------------------------------------------------------------------------------------");
         log.message("Title: " + chosenArticle.getTitle().toUpperCase() + "\nWritten by: " +
                 chosenArticle.getPerson().getFirstName() +
-                " " + chosenArticle.getPerson().getLastName() + "\n\n" + chosenArticle.getContent() + "\n\n " +
+                " " + chosenArticle.getPerson().getLastName() + "\n\n" + chosenArticle.getContent() + "\n\n" +
                 "No. of views: " + chosenArticle.getNumOfViews() + "\n" + "No. of times borrowed: " +
-                numberOfTimesArticleIsBorrowed(chosenArticle) + "\n\n");
+                numberOfTimesArticleIsBorrowed(chosenArticle));
         log.success("\n------------------------------------------------------------------------------------------");
     }
     public Article editAnArticleByUser(Person person) {
@@ -465,7 +469,8 @@ public class ArticleService {
     }
     private int numberOfTimesArticleIsBorrowed(Article article) {
         int counter = 0;
-        List<ArticleHardCopy> hardCopyList = hardCopyRepo.findHardCopiesByArticleId(article.getId());
+     //   List<ArticleHardCopy> hardCopyList = hardCopyRepo.findHardCopiesByArticleId(article.getId());
+        List<ArticleHardCopy> hardCopyList = articleHardCopyDAO.findHardCopiesByArticleId(article.getId());
 
         for (ArticleHardCopy a : hardCopyList) {
             counter = counter + borrowerInfoRepo.numberOfTimesHardCopyIsBorrowed(a.getId());
