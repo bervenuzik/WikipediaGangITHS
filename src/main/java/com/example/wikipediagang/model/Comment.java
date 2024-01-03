@@ -19,7 +19,7 @@ import java.sql.Date;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private int id;
+    private int id;
     @Column(name = "text")
     private String text;
 
@@ -98,6 +98,8 @@ public class Comment {
 
     @Override
     public String toString() {
-        return id + " Comment from "+ person.getFirstName() +" "+ person.getLastName() + " On article: " + article.getTitle() +" comment: " + text + "Date: " + date;
+        return id + " Comment from "+ person.getFirstName() +" "+
+                person.getLastName() + " On article: " + article.getTitle() +
+                " comment: " + text + "Date: " + date;
     }
 }
