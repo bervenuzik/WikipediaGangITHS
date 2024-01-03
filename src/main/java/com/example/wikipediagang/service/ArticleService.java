@@ -469,8 +469,8 @@ public class ArticleService {
     }
     private int numberOfTimesArticleIsBorrowed(Article article) {
         int counter = 0;
-     //   List<ArticleHardCopy> hardCopyList = hardCopyRepo.findHardCopiesByArticleId(article.getId());
-        List<ArticleHardCopy> hardCopyList = articleHardCopyDAO.findHardCopiesByArticleId(article.getId());
+     //   List<ArticleHardCopy> hardCopyList = hardCopyRepo.findHardCopiesByArticleId(article.getId());     //using JPA
+        List<ArticleHardCopy> hardCopyList = articleHardCopyDAO.findHardCopiesByArticleId(article.getId());  //using DAO
 
         for (ArticleHardCopy a : hardCopyList) {
             counter = counter + borrowerInfoRepo.numberOfTimesHardCopyIsBorrowed(a.getId());
