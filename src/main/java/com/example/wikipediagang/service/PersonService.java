@@ -308,8 +308,16 @@ public class PersonService {
 
     public void changePassword(Person person){
         String newPassword= inputNewPassword();
-        person.getLoginInfo().setPassword(newPassword);
-        personRepo.save(person);
+        String username = person.getLoginInfo().getUserName();
+        Optional<LoginInformation> opLoginInfo = loginRepo.findByUserName(username);
+        if (opLoginInfo.isPresent()) {
+            LoginInformation loginInfo = opLoginInfo.get();
+            loginInfo.setPassword(newPassword);
+            loginRepo.save(loginInfo);
+            log.success("!! Password has been CHANGED successfully !!");
+        }
+//        person.getLoginInfo().setPassword(newPassword);
+//        personRepo.save(person);
     }
 
     private void changeFirstName(Person person){
@@ -347,7 +355,7 @@ public class PersonService {
                 log.menu("1.Email");
                 log.menu("2.Firstname");
                 log.menu("3.Lastname");
-                log.menu("4.Privilage");
+                log.menu("4.Privilege");
                 log.menu("5.Quit");
                 log.menu("input ny choice: ");
                 int choice = ScannerHelper.getIntInput(5);
