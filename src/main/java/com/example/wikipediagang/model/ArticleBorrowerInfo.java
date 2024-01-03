@@ -34,7 +34,7 @@ public class ArticleBorrowerInfo {
     private LocalDate expectedReturnDate;
 
     @Column(name="actual_return_date")
-    private LocalDate returnDate;
+    private LocalDate actualReturnDate;
 
     public ArticleBorrowerInfo() {
     }
@@ -83,12 +83,12 @@ public class ArticleBorrowerInfo {
         this.expectedReturnDate = expectedReturnDate;
     }
 
-    public LocalDate getReturnDate() {
-        return returnDate;
+    public LocalDate getActualReturnDate() {
+        return actualReturnDate;
     }
 
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
+    public void setActualReturnDate(LocalDate returnDate) {
+        this.actualReturnDate = returnDate;
     }
 
     @Override
@@ -98,6 +98,7 @@ public class ArticleBorrowerInfo {
                 ", person=" + person.getFirstName() + " " + person.getLastName() +
                 ", borrowDate=" + borrowDate +
                 ", expectedReturnDate=" + expectedReturnDate +
+                ", actualReturnDate=" + actualReturnDate +
                 '}' + "\n";
     }
 }

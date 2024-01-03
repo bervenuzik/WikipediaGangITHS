@@ -5,7 +5,7 @@ public enum AdminMenu implements MenuOption{
     ADD_USER("Add a new user"),
     REMOVE_USER("Remove a user"),
     EDIT_USER("Update a user"),
-    SEARCH("Search/read an article"),
+    SEARCH("Search/Read an article"),
     WRITE("Write an article"),
     DELETE("Delete an article"),
     EDIT_CATEGORY_LIST("Edit an available category"),

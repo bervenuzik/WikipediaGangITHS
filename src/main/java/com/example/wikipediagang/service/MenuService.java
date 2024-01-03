@@ -69,7 +69,6 @@ public class MenuService {
                 case DELETE -> articleService.deleteAnArticle();
                 case EDIT_CATEGORY_LIST -> articleService.updateNameOfAnExistingCategory();
                 case REVIEW ->  articleService.reviewArticle();
-
             }
         }
 
@@ -96,7 +95,7 @@ public class MenuService {
                 }
                 case SHOW_RESERVED_HARD_COPIES -> articleService.showHardCopiesReservedByAPerson(currentUser.get());
                 case SHOW_RESERVATIONS_IN_QUEUE -> articleService.showArticlesReservedInQueue(currentUser.get());
-                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
+                case RETURN_RESERVED -> articleService.returnReservedHardCopyOfAnArticle(currentUser.get());
             }
 
         }
