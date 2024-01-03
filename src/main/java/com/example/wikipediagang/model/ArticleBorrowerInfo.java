@@ -33,7 +33,7 @@ public class ArticleBorrowerInfo {
     @Column(name="expected_return_date")
     private LocalDate expectedReturnDate;
 
-    @Column(name="return_date")
+    @Column(name="actual_return_date")
     private LocalDate returnDate;
 
     public ArticleBorrowerInfo() {
