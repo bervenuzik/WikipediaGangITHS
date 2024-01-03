@@ -55,6 +55,9 @@ public class ArticleService {
     @Autowired
     private ArticleHardCopyDAO articleHardCopyDAO;
 
+    @Autowired
+    private CommentService commentService;
+
     public void createArticle(Person loggedInPerson){
 
         log.message("\nEnter article's title: ");
@@ -120,7 +123,7 @@ public class ArticleService {
     private Article chooseAnArticleFromAList(String message, List<Article> articlesList) {
         log.menu(message);
         printOptions(articlesList);
-        log.message("Enter article number: ");
+        log.message("Enter article number you wish to edit: ");
         int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size());
 
         return articlesList.get(chosenArticleNum - 1);
@@ -150,7 +153,7 @@ public class ArticleService {
             chosenArticle = articlesList.get(0);
             System.out.println("You have written ONE article with the following title: \n" + chosenArticle.getTitle());
         } else {
-            chosenArticle = chooseAnArticleFromAList("Choose one of the following: ", articlesList);
+            chosenArticle = chooseAnArticleFromAList("\nYou have written the following articles: ", articlesList);
         }
         return chosenArticle;
     }
@@ -277,7 +280,12 @@ public class ArticleService {
 
             switch (readingChoice) {
                 case 1 -> isDone = false;
-                case 2 -> readAnArticleOnline(article);
+                case 2 -> {
+                    readAnArticleOnline(article);
+                    if(personWantsToLeaveACommentOnArticle()) {
+                        commentService.writeCommentOnAnArticle(article, person);
+                    }
+                }
                 case 3 -> reserveHardCopy(article, person);
                 case 4 -> orderPersonalHardCopy(article, person);
                 default -> System.out.println("!! Invalid Input !!");
@@ -295,7 +303,7 @@ public class ArticleService {
             ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopyToBeReserved, person);
             borrowerInfoRepo.save(articleBorrowerInfo);
             log.success("\n!! A hard-copy has been RESERVED successfully till the following date " +
-                    articleBorrowerInfo.getReturnDate() + " !!");
+                    articleBorrowerInfo.getExpectedReturnDate() + " !!");
 
         } else if (!listOfReservedHardCopies.isEmpty() && listOfReservedHardCopies.size() == MAX_NUM_HARD_COPIES_PER_ARTICLE) {
             ArticleReservationQueue articleReservationQueue = new ArticleReservationQueue(article, person);
@@ -315,7 +323,7 @@ public class ArticleService {
             ArticleBorrowerInfo articleBorrowerInfo = new ArticleBorrowerInfo(articleHardCopy, person);
             borrowerInfoRepo.save(articleBorrowerInfo);
             log.success("\n!! A hard-copy has been RESERVED successfully till the following date " +
-                    articleBorrowerInfo.getReturnDate() + " !!");
+                    articleBorrowerInfo.getExpectedReturnDate() + " !!");
         }
     }
     public void showHardCopiesReservedByAPerson(Person person) {
@@ -332,23 +340,24 @@ public class ArticleService {
             System.out.println("Hard Copy ID: " + ab.getArticleHardCopy().getId() + ", Article: " +
                     ab.getArticleHardCopy().getArticle().getTitle());
         }
-
+        System.out.println();
     }
     public void showArticlesReservedInQueue(Person person) {
         List<ArticleReservationQueue> listOfArticlesReservedByAUser = queueRepo.findArticleReservationQueueByPerson(person);
         if (listOfArticlesReservedByAUser.isEmpty()) {
-            log.error("!! No reservations found in queue !!");
+            log.error("!! No reservations found in queue !!\n");
             return;
         }
         log.message("RESERVATION(S) in queue: ");
         for (ArticleReservationQueue ar : listOfArticlesReservedByAUser) {
             System.out.println("Reserved On: " + ar.getTimestamp().toLocalDate() + ", Article: " + ar.getArticle().getTitle());
         }
+        System.out.println();
     }
-    public void returnReservedArticle(Person person) {
+    public void returnReservedHardCopyOfAnArticle(Person person) {
         List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPerson(person);
         if (listOfHardCopiesReservedByAUser.isEmpty()) {
-            log.error("!! You haven't reserved any articles yet !!");
+            log.error("!! You haven't reserved any hard-copies yet !!");
             return;
         }
 
@@ -368,13 +377,15 @@ public class ArticleService {
             desiredHardCopyId = ScannerHelper.getIntInput();
 
             if (listOfAllHardCopyIds.contains(desiredHardCopyId)) {
+                //Optional -> to verify if the given id is valid or not
                 Optional<ArticleHardCopy> optionalHardCopy = hardCopyRepo.findArticleHardCopyById(desiredHardCopyId);
+
                 if (optionalHardCopy.isPresent()) {
                     ArticleHardCopy hardCopy = optionalHardCopy.get();
                     Optional<ArticleBorrowerInfo> optionalBorrowerInfo = borrowerInfoRepo.findArticleBorrowerInfoByArticleHardCopy(hardCopy);
                     if (optionalBorrowerInfo.isPresent()) {
                         ArticleBorrowerInfo desiredBorrowerInfo = optionalBorrowerInfo.get();
-                        desiredBorrowerInfo.setReturnDate(LocalDate.now());
+                        desiredBorrowerInfo.setActualReturnDate(LocalDate.now());
                         borrowerInfoRepo.save(desiredBorrowerInfo);
                     }
                     hardCopy.setStatus("available");
@@ -398,7 +409,8 @@ public class ArticleService {
         hardCopyRepo.save(personalHardCopy);
 
         ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(personalHardCopy, person);
-        borrowerInfo.setReturnDate(null);                           // return-date => null, for personal hard-copy
+        borrowerInfo.setExpectedReturnDate(null);                   // expected-return-date => null, for personal hard-copy
+        borrowerInfo.setActualReturnDate(null);                           // actual-return-date => null, for personal hard-copy
         borrowerInfoRepo.save(borrowerInfo);
         log.success("\n!! A Personal Hard Copy of the article '" + article.getTitle() + "' has been ORDERED successfully !!");
     }
@@ -476,5 +488,13 @@ public class ArticleService {
             counter = counter + borrowerInfoRepo.numberOfTimesHardCopyIsBorrowed(a.getId());
         }
         return counter;
+    }
+    private boolean personWantsToLeaveACommentOnArticle() {
+        System.out.print("Do you wish to leave a comment/share your views? (Yes=1/No=2): ");
+        int userChoice = ScannerHelper.getIntInput(2);
+        if (userChoice == 1) {
+            return true;
+        }
+        return false;
     }
 }
