@@ -71,10 +71,10 @@ public class ArticleService {
 
         Article newArticle = new Article(title, content, loggedInPerson, chosenCategory);
         articleRepo.save(newArticle);
-        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is successfully saved !!");
+        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is SAVED successfully !!");
     }
     public void searchArticleByTitle(Person loggedInPerson){
-        List<Article> desiredArticles = findArticleByTitle();
+        List<Article> desiredArticles = findPublishedArticlesByTitle();     //user can search through "published" articles only
         Article chosenArticle;
         if (desiredArticles.isEmpty()) {
             log.error("!! Desired article NOT found !!");
@@ -95,8 +95,10 @@ public class ArticleService {
         }
         List<Article> desiredArticles = new ArrayList<>();
         for (Person p : listOfPersonsWithSameName) {
-            List<Article> allArticlesByAnAuthor = articleRepo.findArticleByPerson(p);
-            for (Article article : allArticlesByAnAuthor) {
+
+            //allows user-access to "published" articles only
+            List<Article> allPublishedArticlesByAnAuthor = articleRepo.findArticlesByPersonAndStatus(p, "publish");
+            for (Article article : allPublishedArticlesByAnAuthor) {
                 desiredArticles.add(article);
             }
         }
@@ -108,6 +110,12 @@ public class ArticleService {
         String chosenTitle = ScannerHelper.getStringInput();
         searchWordService.searchWordsInDataBase(chosenTitle);
         return articleRepo.findArticleByTitle(chosenTitle);
+    }
+    private List<Article> findPublishedArticlesByTitle() {
+        log.message("Enter title of the article: ");
+        String chosenTitle = ScannerHelper.getStringInput();
+        searchWordService.searchWordsInDataBase(chosenTitle);
+        return articleRepo.findArticleByTitleAndStatus(chosenTitle, "publish");
     }
     private List<Person> findPersonByName() {
         log.message("Enter author's first name: ");
@@ -123,7 +131,7 @@ public class ArticleService {
     private Article chooseAnArticleFromAList(String message, List<Article> articlesList) {
         log.menu(message);
         printOptions(articlesList);
-        log.message("Enter article number you wish to edit: ");
+        log.message("Enter article number: ");
         int chosenArticleNum = ScannerHelper.getIntInput(articlesList.size());
 
         return articlesList.get(chosenArticleNum - 1);
@@ -217,7 +225,7 @@ public class ArticleService {
         log.success("!! Category Name has been UPDATED successfully !!");
     }
     private void printAvailableCategories(List<ArticleCategory> articleCategoryList) {
-        log.message("Available categories: ");
+        log.menu("Available categories: ");
         for (int i = 0; i < articleCategoryList.size(); i++) {
             System.out.println(i + 1 + ". " + articleCategoryList.get(i).getName());
         }
@@ -229,7 +237,7 @@ public class ArticleService {
         int userChoice = ScannerHelper.getIntInput(2);
 
         if (userChoice == 1) {
-            log.message("Enter category number: ");
+            log.message("\nEnter category number: ");
             int desiredCategory = ScannerHelper.getIntInput(articleCategoryList.size());
             return articleCategoryList.get(desiredCategory - 1);
         } else {
@@ -327,7 +335,7 @@ public class ArticleService {
         }
     }
     public void showHardCopiesReservedByAPerson(Person person) {
-        List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPerson(person);
+        List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPersonAndActualReturnDate(person, null);
 
         if (listOfHardCopiesReservedByAUser.isEmpty()) {
             log.error("!! No hard-copies reserved !!");
@@ -355,7 +363,7 @@ public class ArticleService {
         System.out.println();
     }
     public void returnReservedHardCopyOfAnArticle(Person person) {
-        List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPerson(person);
+        List<ArticleBorrowerInfo> listOfHardCopiesReservedByAUser = borrowerInfoRepo.findArticleBorrowerInfoByPersonAndActualReturnDate(person, null);
         if (listOfHardCopiesReservedByAUser.isEmpty()) {
             log.error("!! You haven't reserved any hard-copies yet !!");
             return;
@@ -439,13 +447,14 @@ public class ArticleService {
         List<Article> listOfArticlesToBeReviewed = articleRepo.findAllByStatusIs("review");
         int counter = 0;
 
-        System.out.println("The following articles are waiting to be reviewed: ");
+        System.out.println("\nThe following articles are waiting to be reviewed: ");
         for (int i = 0; i < listOfArticlesToBeReviewed.size(); i++) {
             System.out.println(i+1 + ". " + listOfArticlesToBeReviewed.get(i).getTitle());
         }
 
         while (listOfArticlesToBeReviewed.size() >= counter) {
-            System.out.print("\nENTER " + (listOfArticlesToBeReviewed.size() + 1) + ", to EXIT\nor\nEnter article number you want to review: ");
+            System.out.print("\nENTER " + (listOfArticlesToBeReviewed.size() + 1) +
+                    ", back to Admin menu\nor\nEnter article number you want to review: ");
             int adminChoice = ScannerHelper.getIntInput(listOfArticlesToBeReviewed.size() + 1);
 
             if (adminChoice == (listOfArticlesToBeReviewed.size() + 1)) {
@@ -454,7 +463,7 @@ public class ArticleService {
 
             Article chosenArticle = listOfArticlesToBeReviewed.get(adminChoice - 1);
             if (chosenArticle.getStatus().equalsIgnoreCase("publish")) {
-                System.out.println("Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
+                log.error("Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
             } else {
                 System.out.println("---------------------------------------------------------------------------" + "\nTitle: " +
                         chosenArticle.getTitle().toUpperCase() + "\n" + "Written By: " +
