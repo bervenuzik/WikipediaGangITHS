@@ -24,7 +24,7 @@ public class CommentService {
         if (!allCommentsOnArticle.isEmpty()) {
             System.out.println("Available comments: " + allCommentsOnArticle);
         }
-        System.out.print("Enter your comment/view (write THE-END after last line): ");
+        System.out.print("\nNOTE: To save your comment,\nplease write THE-END in a separate line & press ENTER)\nEnter your comment/opinion:  ");
         String userText = ScannerHelper.getTextInput();
         if (!userText.isEmpty()) {
             Comment userComment = new Comment(userText, loggedInPerson, article);

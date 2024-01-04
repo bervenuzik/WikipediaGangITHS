@@ -5,10 +5,10 @@ public enum AdminMenu implements MenuOption{
     ADD_USER("Add a new user"),
     REMOVE_USER("Remove a user"),
     EDIT_USER("Update a user"),
-    SEARCH("Search/Read an article"),
+    SEARCH("Search/Read/Reserve an article"),
     WRITE("Write an article"),
     DELETE("Delete an article"),
-    EDIT_CATEGORY_LIST("Edit an available category"),
+    EDIT_CATEGORY_LIST("Edit name of an existing category"),
     REVIEW("Review an article");
 
     private final String displayText;

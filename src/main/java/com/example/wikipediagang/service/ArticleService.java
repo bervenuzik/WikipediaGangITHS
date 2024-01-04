@@ -26,7 +26,7 @@ import java.util.Optional;
 @Component
 public class ArticleService {
 
-    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 3;            //allows max 3 hard-copies of an article
+    private static final int MAX_NUM_HARD_COPIES_PER_ARTICLE = 3;            //to save paper -> allows max 3 hard-copies of an article
 
     @Autowired
     private ArticleRepo articleRepo;
@@ -152,7 +152,7 @@ public class ArticleService {
                 " " + chosenArticle.getPerson().getLastName() + "\n\n" + chosenArticle.getContent() + "\n\n" +
                 "No. of views: " + chosenArticle.getNumOfViews() + "\n" + "No. of times borrowed: " +
                 numberOfTimesArticleIsBorrowed(chosenArticle));
-        log.success("\n------------------------------------------------------------------------------------------");
+        log.success("------------------------------------------------------------------------------------------");
     }
     public Article editAnArticleByUser(Person person) {
         List<Article> articlesList  = articleRepo.findArticleByPerson(person);
@@ -217,10 +217,12 @@ public class ArticleService {
         }
         printAvailableCategories(articleCategoryList);
 
-        System.out.print("Enter category's number: ");
+        System.out.print("\nEnter category's number: ");
         int categoryChoice = ScannerHelper.getIntInput(articleCategoryList.size());
         ArticleCategory desiredCategory = articleCategoryList.get(categoryChoice - 1);
-
+        System.out.print("Enter category's new name: ");
+        String newName = ScannerHelper.getStringInput();
+        desiredCategory.setName(newName);
         categoryRepo.save(desiredCategory);
         log.success("!! Category Name has been UPDATED successfully !!");
     }
