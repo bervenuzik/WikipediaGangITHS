@@ -11,7 +11,9 @@ import java.util.List;
 public interface ArticleRepo extends JpaRepository<Article, Integer> {
 
     List<Article> findArticleByTitle(String title);
+    List<Article> findArticleByTitleAndStatus(String title, String status);
     List<Article> findArticleByPerson(Person author);
+    List<Article> findArticlesByPersonAndStatus(Person author, String status);
     List<Article> findAllByStatusIs(String status);
 
 }

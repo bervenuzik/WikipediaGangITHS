@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -19,11 +19,11 @@ public class ArticleBorrowerInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="article_hard_copy_id")
     private ArticleHardCopy articleHardCopy;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="borrower_id")
     private Person person;
 
