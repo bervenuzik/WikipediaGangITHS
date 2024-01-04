@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ArticleBorrowerInfoRepo extends JpaRepository<ArticleBorrowerInfo, Integer> {
 
-    List<ArticleBorrowerInfo> findArticleBorrowerInfoByPerson(Person person);
+    List<ArticleBorrowerInfo> findArticleBorrowerInfoByPersonAndActualReturnDate(Person person, LocalDate actualReturnDate);
     Optional<ArticleBorrowerInfo> findArticleBorrowerInfoByArticleHardCopy(ArticleHardCopy articleHardCopy);
     @Query(nativeQuery = true,
             value = "select count(*) from article_borrower_info ab where ab.article_hard_copy_id=:hardCopyId")
