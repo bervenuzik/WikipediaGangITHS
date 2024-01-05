@@ -17,13 +17,13 @@ public class ScannerHelper {
             try {
                 number = sc.nextInt();
                 if (number < 1 || number > maxValue) {
-                    log.error("Invalid Input! 0 again: ");
+                    log.error("Invalid Input! Try again: ");
                 }
             } catch (InputMismatchException e) {
                 sc.nextLine();
                 log.error("Not an integer! Try Again: ");
             }
-        } while (number < 1|| number > maxValue);
+        } while (number < 1 || number > maxValue);
         return number;
     }
     public static int getIntInput() {

@@ -44,8 +44,7 @@ public class MenuService {
             adminMenu();
         } else if (currentUser.get().getType().getName().equals("developer")) {
             developerMenu();
-        }
-        else {
+        } else {
             userMenu();
         }
         System.out.println("Thank you for using ITHS wikipedia! ");
@@ -68,8 +67,8 @@ public class MenuService {
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
-//                case REVIEW ->  reviewArticle();
-
+                case EDIT_CATEGORY_LIST -> articleService.updateNameOfAnExistingCategory();
+                case REVIEW ->  articleService.reviewArticle();
             }
         }
 
@@ -94,8 +93,9 @@ public class MenuService {
                     Article article = articleService.editAnArticleByUser(currentUser.get());
                     editArticleMenu(article);
                 }
-                case SHOW_RESERVED -> articleService.showAllArticlesReservedByAPerson(currentUser.get());
-                case RETURN_RESERVED -> articleService.returnReservedArticle(currentUser.get());
+                case SHOW_RESERVED_HARD_COPIES -> articleService.showHardCopiesReservedByAPerson(currentUser.get());
+                case SHOW_RESERVATIONS_IN_QUEUE -> articleService.showArticlesReservedInQueue(currentUser.get());
+                case RETURN_RESERVED -> articleService.returnReservedHardCopyOfAnArticle(currentUser.get());
             }
 
         }
@@ -160,7 +160,7 @@ public class MenuService {
     }
 
     public <T extends MenuOption> T getUserChoice(T[] options) {
-        log.menu("Choose from the following tasks- \n");
+        log.menu("\nChoose from the following tasks- \n");
         printChoices(options);
         log.message("\nEnter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);

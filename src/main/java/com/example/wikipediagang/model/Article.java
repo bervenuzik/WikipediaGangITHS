@@ -49,7 +49,7 @@ public class Article {
         this.category = category;
         this.availableAsHardCopy = "no";
         this.numOfViews = 0;
-        this.status = "under review";
+        this.status = "review";
     }
 
     public int getId() {
@@ -118,7 +118,7 @@ public class Article {
                 "title='" + title + '\'' + ",\n" +
                 " author=" + person.getFirstName() + " " + person.getLastName() +
                 ", category=" + category.getName() +
-                ", availableAsHardCopy='" + availableAsHardCopy + '\'' +
+                ", available as HardCopy='" + availableAsHardCopy + '\'' +
                 ", numOfViews=" + numOfViews +
                 ", status=" + status +
                 '}' + "\n";
