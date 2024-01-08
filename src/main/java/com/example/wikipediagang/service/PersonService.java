@@ -61,6 +61,12 @@ public class PersonService {
             if (loginInfo.size() == 1) {
                 Optional<Person> user = personRepo.findByLoginInfo(loginInfo.get(0));
                 if (user.isPresent()) {
+                    String defaultUserEmail = "default@mail.com";
+                    if(user.get().getEmail().equals(defaultUserEmail)){
+                        log.error("You try loggin as default user. It is not allowed");
+                        if (!log.tryAgain()) return Optional.empty();
+                        continue;
+                    }
                     log.success("Login is success ");
                     log.success("Welcome, " + user.get().getFirstName() + " " + user.get().getLastName());
                     System.out.flush();
@@ -68,8 +74,7 @@ public class PersonService {
                 } else {
                     log.error("Login is failed ");
                     log.error("Wrong login or password ");
-                    tryAgain = log.tryAgain();
-                    if (!tryAgain) return Optional.empty();
+                    if (!log.tryAgain()) return Optional.empty();
                 }
             }else {
                 log.error("There is no such user. Control login and password");
@@ -349,6 +354,8 @@ public class PersonService {
             typeSearch = userTypeRepo.findByName(choise);
             if (typeSearch.isPresent()) {
                 return typeSearch;
+            }else{
+                log.error("Wrong input , choose from list");
             }
             if (!log.tryAgain()) return Optional.empty();
         }
@@ -408,7 +415,7 @@ public class PersonService {
 
     private void changeFirstName(Person person){
         String newFirstName = inputNewFirstName();
-        if(!newFirstName.isEmpty()) {
+        if(!newFirstName.isEmpty() && Person.firstNameValidator(newFirstName)) {
             person.setFirstName(newFirstName);
             personRepo.save(person);
             log.success("First name is changed");
@@ -419,7 +426,7 @@ public class PersonService {
 
     private void changeLastName(Person person){
         String newLastName = inputNewLastName();
-        if(!newLastName.isEmpty()) {
+        if(!newLastName.isEmpty() && Person.lastNameValidator(newLastName)) {
             person.setLastName(newLastName);
             personRepo.save(person);
             log.success("Last name is changed");
@@ -430,7 +437,7 @@ public class PersonService {
 
     public void changeEmail(Person person){
         String newEmail = inputNewEmail();
-        if(!newEmail.isEmpty()){
+        if(!newEmail.isEmpty() && Person.emailValidator(newEmail)){
         person.setEmail(newEmail);
         personRepo.save(person);
         log.success("Email is changed");
