@@ -17,6 +17,10 @@ public class ArticleHardCopyDAOImpl implements ArticleHardCopyDAO {
     private Connection connection;
     private PreparedStatement allHardCopiesOfAnArticlePS;
 
+    /* to avoid using hard-coded values of database's name, username and password, one can use @Value annotation
+    directly in the constructor. In this way, it fetches respective values from the properties file and uses them instead.
+     */
+
     public ArticleHardCopyDAOImpl(@Value("${spring.datasource.url}") String databaseUrl,
                                   @Value("${spring.datasource.username}") String databaseUsername,
                                   @Value("${spring.datasource.password}") String databasePassword) {

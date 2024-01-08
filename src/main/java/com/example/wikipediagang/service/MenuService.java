@@ -165,7 +165,7 @@ public class MenuService {
     }
 
     public <T extends MenuOption> T getUserChoice(T[] options) {
-        log.menu("\nChoose from the following tasks- \n");
+        log.menu("Choose from the following tasks- \n");
         printChoices(options);
         log.message("\nEnter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);
