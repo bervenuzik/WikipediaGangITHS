@@ -6,6 +6,7 @@ import com.example.wikipediagang.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.Console;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,24 +35,27 @@ public class PersonService {
     Scanner input = new Scanner(System.in);
 
 
-    public Optional<Person> loginOut(){
-        return Optional.empty();
-    }
     public Optional<Person> login() {
 
         String login;
         String password;
         boolean tryAgain;
         List<LoginInformation> loginInfo;
+        Console console = System.console();
 
         while (true) {
-            log.message("\nWrite in your login :");
-            login = input.nextLine().trim();
-            input.nextLine();
-            log.message("Write in your password:");
-            password = input.nextLine().trim();
-            input.nextLine();
-            System.out.flush();
+
+                log.message("\nWrite in your login :");
+                login = input.nextLine().trim();
+                input.nextLine();
+                log.message("Write in your password:");
+                if(console == null) {
+                    password = input.nextLine().trim();
+                    input.nextLine();
+                }else {
+                    password = String.valueOf(console.readPassword());
+                }
+
             loginInfo = loginRepo.findByUserNameAndPassword(login, password);
 
             if (loginInfo.size() == 1) {
@@ -89,7 +93,7 @@ public class PersonService {
 
 
         //System.out.println(user.get().getType().getName());
-        if (user.isPresent() && user.get().getType().getName().equals("admin")) {
+        if (user.isPresent() && user.get().getType().getName().equals("Admin")) {
             firstName = inputNewFirstName();
             if( firstName.isEmpty()) return  Optional.empty();
 
@@ -404,26 +408,45 @@ public class PersonService {
 
     private void changeFirstName(Person person){
         String newFirstName = inputNewFirstName();
-        person.setFirstName(newFirstName);
-        personRepo.save(person);
+        if(!newFirstName.isEmpty()) {
+            person.setFirstName(newFirstName);
+            personRepo.save(person);
+            log.success("First name is changed");
+        }else {
+            log.error("Changing is unsuccessful");
+        }
     }
 
     private void changeLastName(Person person){
-        String newLastName = inputLastName();
-        person.setLastName(newLastName);
-        personRepo.save(person);
+        String newLastName = inputNewLastName();
+        if(!newLastName.isEmpty()) {
+            person.setLastName(newLastName);
+            personRepo.save(person);
+            log.success("Last name is changed");
+        }else {
+            log.error("Changing is unsuccessful");
+        }
     }
 
     public void changeEmail(Person person){
         String newEmail = inputNewEmail();
+        if(!newEmail.isEmpty()){
         person.setEmail(newEmail);
         personRepo.save(person);
+        log.success("Email is changed");
+        }else {
+            log.error("Changing is unsuccessful");
+        }
     }
 
     private void changeUserType(Person person){
-        UserType newUSerType = inputUserType().get();
-        person.setType(newUSerType);
-        personRepo.save(person);
+       Optional<UserType> newUserType = inputNewUserType();
+        if(newUserType.isPresent()) {
+            person.setType(newUserType.get());
+            personRepo.save(person);
+        }else {
+            log.error("Changing is unsuccessful");
+        }
     }
     public void editUser(){
         log.menu("Input userId which you want to edit: ");
