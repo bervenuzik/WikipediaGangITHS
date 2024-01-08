@@ -71,7 +71,7 @@ public class ArticleService {
 
         Article newArticle = new Article(title, content, loggedInPerson, chosenCategory);
         articleRepo.save(newArticle);
-        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is SAVED successfully !!");
+        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is successfully SAVED in the category '" + chosenCategory + "' !!");
     }
     public void searchArticleByTitle(Person loggedInPerson){
         List<Article> desiredArticles = findPublishedArticlesByTitle();     //user can search through "published" articles only
@@ -88,7 +88,7 @@ public class ArticleService {
         optionsForReadingAnArticle(chosenArticle, loggedInPerson);
     }
     public void searchArticleByPerson(Person loggedInPerson){
-        List<Person> listOfPersonsWithSameName = findPersonByName();    //more than one author can have the same name
+        List<Person> listOfPersonsWithSameName = findPersonByName();       //more than one author can have the same name
         if (listOfPersonsWithSameName.isEmpty()) {
             log.error("!! Desired author NOT found !!");
             return;
@@ -454,9 +454,9 @@ public class ArticleService {
             System.out.println(i+1 + ". " + listOfArticlesToBeReviewed.get(i).getTitle());
         }
 
-        while (listOfArticlesToBeReviewed.size() >= counter) {
+        while (listOfArticlesToBeReviewed.size() > counter) {
             System.out.print("\nENTER " + (listOfArticlesToBeReviewed.size() + 1) +
-                    ", back to Admin menu\nor\nEnter article number you want to review: ");
+                    ", go back to Admin menu OR\nEnter article number you want to review: ");
             int adminChoice = ScannerHelper.getIntInput(listOfArticlesToBeReviewed.size() + 1);
 
             if (adminChoice == (listOfArticlesToBeReviewed.size() + 1)) {
@@ -465,7 +465,7 @@ public class ArticleService {
 
             Article chosenArticle = listOfArticlesToBeReviewed.get(adminChoice - 1);
             if (chosenArticle.getStatus().equalsIgnoreCase("publish")) {
-                log.error("Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
+                log.error("Oops! Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
             } else {
                 System.out.println("---------------------------------------------------------------------------" + "\nTitle: " +
                         chosenArticle.getTitle().toUpperCase() + "\n" + "Written By: " +
@@ -488,6 +488,10 @@ public class ArticleService {
                 }
                 articleRepo.save(chosenArticle);
             }
+        }
+
+        if (listOfArticlesToBeReviewed.size() == counter) {
+            log.success("NOTE: All pending articles have been PUBLISHED successfully :)");
         }
     }
     private int numberOfTimesArticleIsBorrowed(Article article) {
