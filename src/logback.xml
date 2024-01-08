@@ -1,0 +1,38 @@
+<configuration>
+    <appender name ="CONSOLE"
+              class ="ch.qos.logback.core.ConsoleAppender" />
+    <appender name = "FILE"
+              class=" ch.qos.logback.core.FileAppender">
+        <file>logs/application.log</file>
+    </appender>
+    <appender name = "ERROR_APPENDER"
+              class = "wikipediagang.ErrorAppender" />
+    <appender name = "DATABASE"
+              class ="ch.qos.logback.classic.db.DBAppender">
+        <connectionSource class ="ch.qos.logback.core.db.DataSourceConnectionSource">
+            <dataSource class ="org.springframework.jdbc.datasource.DriverManagerDataSource">
+                <driverClass>${com.mysql.cj.jdbc.Driver}</driverClass>
+                <url>${jdbc:mysql://127.0.0.1:3306/WikiG}</url>
+                <user>${root}</user>
+                <password>${root123!}</password>
+            </dataSource>
+        </connectionSource>
+        <filter
+                class = "ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <logger name ="com.example.wikipediagang" level ="error">
+        <appender-ref ref ="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ERROR_APPENDER" />
+        <appender-ref ref="DATABASE" />
+    </logger>
+
+    <root level ="error">
+        <appender-ref ref ="CONSOLE" />
+        <appender-ref ref ="FILE" />
+        <appender-ref ref ="DATABASE" />
+    </root>
+</configuration>
