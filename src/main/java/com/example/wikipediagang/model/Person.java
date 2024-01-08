@@ -17,7 +17,7 @@ public class Person {
     @JoinColumn(name = "type_id" , referencedColumnName = "id")
     UserType type;
 
-    @OneToOne(fetch = FetchType.LAZY ,cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
     @JoinColumn(name = "login_info" )
     LoginInformation loginInfo;
 
