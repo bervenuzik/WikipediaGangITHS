@@ -6,9 +6,11 @@ public enum UserMenu implements MenuOption{
     CHANGE_EMAIL("Change your email"),
     WRITE("Write an article"),
     EDIT("Edit an article you have written"),
-    SEARCH("Search/Read an article"),
-    SHOW_RESERVED("Show my reserved articles"),
-    RETURN_RESERVED("Return a reserved article");
+    SEARCH("Search/Read/Reserve an article"),
+    SHOW_RESERVED_HARD_COPIES("Show my reserved hard-copies"),
+    RETURN_RESERVED("Return a reserved hard-copy"),
+    SHOW_RESERVATIONS_IN_QUEUE("Show reservations in queue");
+
     private final String displayText;
     UserMenu(String displayText){
         this.displayText=displayText;

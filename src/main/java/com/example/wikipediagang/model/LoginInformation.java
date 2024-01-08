@@ -67,7 +67,7 @@ public class LoginInformation {
 
     public static boolean passwordValidator(String password){
         if(password.isEmpty()){
-            System.out.println("password can't be enpty");
+            System.out.println("password can't be empty");
             return false;
         }
         char tempChar;

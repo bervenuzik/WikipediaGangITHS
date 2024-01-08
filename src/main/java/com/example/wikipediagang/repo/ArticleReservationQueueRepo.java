@@ -13,8 +13,6 @@ import java.util.List;
 public interface ArticleReservationQueueRepo extends JpaRepository<ArticleReservationQueue, Integer> {
 
     List<ArticleReservationQueue> findArticleReservationQueueByArticleOrderByTimestamp(Article article);
-
-
     List<ArticleReservationQueue> findArticleReservationQueueByPerson(Person person);
 
 }

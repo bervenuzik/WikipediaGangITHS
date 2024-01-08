@@ -10,16 +10,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import java.sql.Date;
-
-
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private int id;
+    private int id;
     @Column(name = "text")
     private String text;
 
@@ -32,18 +30,16 @@ public class Comment {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    private Date date;
-
+    private LocalDate date;
 
     public Comment() {
     }
 
-    public Comment(int id, String text, Person person, Article article, Date date) {
-        this.id = id;
+    public Comment(String text, Person person, Article article) {
         this.text = text;
         this.person = person;
         this.article = article;
-        this.date = date;
+        this.date = LocalDate.now();
     }
 
     public int getId() {
@@ -80,11 +76,11 @@ public class Comment {
         this.article = article;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -98,6 +94,8 @@ public class Comment {
 
     @Override
     public String toString() {
-        return id + " Comment from "+ person.getFirstName() +" "+ person.getLastName() + " On article: " + article.getTitle() +" comment: " + text + "Date: " + date;
+        return id + "\nComment: "+ text + "\nFrom: " + person.getFirstName() +" "+
+                person.getLastName() + "\nOn article: " + article.getTitle() +
+                "\nDate: " + date;
     }
 }

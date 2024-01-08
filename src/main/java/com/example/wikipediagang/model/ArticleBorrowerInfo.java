@@ -19,19 +19,22 @@ public class ArticleBorrowerInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="article_hard_copy_id")
     private ArticleHardCopy articleHardCopy;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="borrower_id")
     private Person person;
 
     @Column(name="borrow_date")
     private LocalDate borrowDate;
 
-    @Column(name="return_date")
-    private LocalDate returnDate;
+    @Column(name="expected_return_date")
+    private LocalDate expectedReturnDate;
+
+    @Column(name="actual_return_date")
+    private LocalDate actualReturnDate;
 
     public ArticleBorrowerInfo() {
     }
@@ -40,7 +43,7 @@ public class ArticleBorrowerInfo {
         this.articleHardCopy = articleHardCopy;
         this.person = person;
         this.borrowDate = LocalDate.now();
-        this.returnDate = borrowDate.plusWeeks(2);              // adds two weeks to borrow date,
+        this.expectedReturnDate = borrowDate.plusWeeks(2);              // adds two weeks to borrow date,
                                                                             // which makes loan period = 2 weeks/person
     }
 
@@ -72,22 +75,30 @@ public class ArticleBorrowerInfo {
         this.borrowDate = borrowDate;
     }
 
-    public LocalDate getReturnDate() {
-        return returnDate;
+    public LocalDate getExpectedReturnDate() {
+        return expectedReturnDate;
     }
 
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
+    public void setExpectedReturnDate(LocalDate expectedReturnDate) {
+        this.expectedReturnDate = expectedReturnDate;
+    }
+
+    public LocalDate getActualReturnDate() {
+        return actualReturnDate;
+    }
+
+    public void setActualReturnDate(LocalDate returnDate) {
+        this.actualReturnDate = returnDate;
     }
 
     @Override
     public String toString() {
         return "ArticleBorrowerInfo{" +
-                " id= " + articleHardCopy.getId() +
-                ", article= " + articleHardCopy.getArticle().getTitle() +
-                ", person= " + person.getFirstName() + " " + person.getLastName() +
-                ", borrowDate= " + borrowDate +
-                ", returnDate= " + returnDate +
+                ", article=" + articleHardCopy.getArticle().getTitle() +
+                ", person=" + person.getFirstName() + " " + person.getLastName() +
+                ", borrowDate=" + borrowDate +
+                ", expectedReturnDate=" + expectedReturnDate +
+                ", actualReturnDate=" + actualReturnDate +
                 '}' + "\n";
     }
 }

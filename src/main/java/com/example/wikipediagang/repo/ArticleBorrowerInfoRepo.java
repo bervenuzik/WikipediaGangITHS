@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,14 +17,9 @@ public interface ArticleBorrowerInfoRepo extends JpaRepository<ArticleBorrowerIn
     List<ArticleBorrowerInfo> findByArticleHardCopyAndAndPerson(ArticleHardCopy hardCopy, Person person);
     List<ArticleBorrowerInfo> findByPerson(Person person);
 
-    @Query(nativeQuery = true,
-            value = "select ab.* from article_borrower_info ab " +
-                    "inner join article_hard_copy ah on ah.id = ab.article_hard_copy_id " +
-                    "order by ab.return_date")
-    List<ArticleBorrowerInfo> sortHardCopiesByReturnDate(Article article);
-
-    List<ArticleBorrowerInfo> findArticleBorrowerInfoByPerson(Person person);
+    List<ArticleBorrowerInfo> findArticleBorrowerInfoByPersonAndActualReturnDate(Person person, LocalDate actualReturnDate);
     Optional<ArticleBorrowerInfo> findArticleBorrowerInfoByArticleHardCopy(ArticleHardCopy articleHardCopy);
-
-
+    @Query(nativeQuery = true,
+            value = "select count(*) from article_borrower_info ab where ab.article_hard_copy_id=:hardCopyId")
+    int numberOfTimesHardCopyIsBorrowed(Integer hardCopyId);
 }
