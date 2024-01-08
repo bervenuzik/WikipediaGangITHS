@@ -128,7 +128,7 @@ public class PersonService {
                 Date date = new Date();
                 String status = "unchecked";
                 Person CurrentUser = user.get();
-                errorLogService.sendErrorLog(errorText,date,status,CurrentUser);
+                errorLogService.saveErroLog(errorText,CurrentUser);
                 log.error("You have no enough rights for this action");
             } else{
                 log.error("You have to login to make actions");
@@ -157,7 +157,7 @@ public class PersonService {
             String errorText = "There was not found a default user";
             Date date = new Date();
             String status = "unchecked";
-            errorLogService.sendErrorLog(errorText,date,status,currentUser.get());
+            errorLogService.saveErroLog(errorText,currentUser.get());
             log.error("Opssss, we have a little problem with servern. Try later");
             return Optional.empty();
         }
@@ -172,7 +172,7 @@ public class PersonService {
                 String errorText = "Admin is trying to delete a default user";
                 Date date = new Date();
                 String status = "unchecked";
-                errorLogService.sendErrorLog(errorText,date,status,currentUser.get());
+                errorLogService.saveErroLog(errorText,currentUser.get());
                 continue;
             }
             userToDelete = personRepo.findByEmail(email);
@@ -201,7 +201,7 @@ public class PersonService {
                     String errorText = "Admin trying to delete himself";
                     Date date = new Date();
                     String status = "unchecked";
-                    errorLogService.sendErrorLog(errorText,date,status,currentUser.get());
+                    errorLogService.saveErroLog(errorText,currentUser.get());
                     continue;
                 }
                 admins = personRepo.findByType(currentUser.get().getType());
@@ -210,7 +210,7 @@ public class PersonService {
                     String errorText = "Admin trying to delete the las admin";
                     Date date = new Date();
                     String status = "unchecked";
-                    errorLogService.sendErrorLog(errorText,date,status,currentUser.get());
+                    errorLogService.saveErroLog(errorText,currentUser.get());
                     continue;
                 }
             }

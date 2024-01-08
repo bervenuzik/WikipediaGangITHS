@@ -41,7 +41,6 @@ public class ErrorLogService {
                 errorLog.setPerson(person);
                 errorLog.setDate(new Date());
                 errorLog.setText(errorMessage);
-                errorLog.setStatus("unchecked");
                 errorLogRepo.save(errorLog);
             }catch(Exception e){
                 errorLog.setText("Error"+e.getStackTrace());
