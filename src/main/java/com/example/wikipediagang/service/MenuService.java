@@ -69,7 +69,7 @@ public class MenuService {
                 case LOGOUT -> currentUser = Optional.empty();
                 case ADD_USER -> pService.createUser(currentUser);
                 case REMOVE_USER -> pService.deleteUser(currentUser);
-                case EDIT_USER -> pService.editUser();
+                case EDIT_USER -> pService.editUser(currentUser);
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
