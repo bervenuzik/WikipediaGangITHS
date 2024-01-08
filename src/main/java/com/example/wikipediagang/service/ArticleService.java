@@ -426,7 +426,9 @@ public class ArticleService {
         if(alreadyOrderedPersonalCopies.isEmpty() || !articleExistsInArticleList(article, alreadyOrderedPersonalCopies)){
             createPersonalHardCopy(article, person);
         }else {
-            System.out.println("You have already taken a Personal Hard Copy before, do you want to order again? (Yes=1, No =2)");
+            int numberOfPreviousPersonalCopies = numberOfTimesArticleAppearsInTheList(article, alreadyOrderedPersonalCopies);
+            System.out.println("You have already taken " + numberOfPreviousPersonalCopies +
+                    " Personal Hard Copy(ies) before,\ndo you want to order again? (Yes=1, No=2)");
             System.out.print("Enter your choice: ");
             int userChoice = ScannerHelper.getIntInput(2);
             if(userChoice == 1){
@@ -455,6 +457,15 @@ public class ArticleService {
             }
         }
         return exists;
+    }
+    private int numberOfTimesArticleAppearsInTheList(Article givenArticle, List<Article> articleList) {
+        int counter = 0;
+        for(Article article : articleList){
+            if(article.getId() == givenArticle.getId()){
+                counter++;
+            }
+        }
+        return counter;
     }
     private void assignAvailableHardCopyToFirstPersonInQueue(ArticleHardCopy hardCopy) {
         Article desiredArticle = hardCopy.getArticle();
