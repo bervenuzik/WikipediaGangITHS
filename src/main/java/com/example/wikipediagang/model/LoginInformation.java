@@ -95,7 +95,7 @@ public class LoginInformation {
 
     @Override
     public String toString() {
-        return userName;
+        return userName  +"  "+ password;
     }
 
 }
