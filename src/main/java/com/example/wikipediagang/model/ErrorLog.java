@@ -25,15 +25,13 @@ public class ErrorLog {
     @Temporal(TemporalType.DATE)
     Date date;
 
-    //String status;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id")
     Person person;
 
     public ErrorLog(String text, Date date,  Person person) {
         this.text = text;
         this.date = date;
-        //this.status = status;
         this.person = person;
     }
 

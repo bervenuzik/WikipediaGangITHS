@@ -91,6 +91,7 @@ public class ErrorLoggingAspect {
 
     @AfterThrowing(pointcut = "execution(* com.example.wikipediagang.service.*.*(..))", throwing = "ex")
     public void afterThrowing(JoinPoint joinPoint, Throwable ex) {
+
         String errorMessage = "Error in method" + joinPoint.getSignature().getName() + ": " + ex.getMessage();
         ErrorLogService.handleException(ex, errorMessage);
         /*if (ex instanceof ArticleNotFoundException) {

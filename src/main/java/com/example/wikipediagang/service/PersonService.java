@@ -47,16 +47,16 @@ public class PersonService {
 
         while (true) {
 
-                log.message("\nWrite in your login :");
-                login = input.nextLine().trim();
+            log.message("\nWrite in your login :");
+            login = input.nextLine().trim();
+            input.nextLine();
+            log.message("Write in your password:");
+            if(console == null) {
+                password = input.nextLine().trim();
                 input.nextLine();
-                log.message("Write in your password:");
-                if(console == null) {
-                    password = input.nextLine().trim();
-                    input.nextLine();
-                }else {
-                    password = String.valueOf(console.readPassword());
-                }
+            }else {
+                password = String.valueOf(console.readPassword());
+            }
 
             loginInfo = loginRepo.findByUserNameAndPassword(login, password);
 
@@ -210,22 +210,22 @@ public class PersonService {
 
         System.out.println(userToDelete);
 
-            comments = commentRepo.findCommentByPerson(userToDelete.get());
-            if(!comments.isEmpty()){
-                for (Comment comment: comments) {
-                    System.out.println(comment.toString());
-                    comment.setPerson(defaultUser.get());
-                    commentRepo.save(comment);
-                }
+        comments = commentRepo.findCommentByPerson(userToDelete.get());
+        if(!comments.isEmpty()){
+            for (Comment comment: comments) {
+                System.out.println(comment.toString());
+                comment.setPerson(defaultUser.get());
+                commentRepo.save(comment);
             }
+        }
 
-            errorLogs = errorLogRepo.findByPerson(userToDelete.get());
-            if(!errorLogs.isEmpty()){
-                for (ErrorLog logg: errorLogs) {
-                    logg.setPerson(defaultUser.get());
-                    errorLogRepo.save(logg);
-                }
+        errorLogs = errorLogRepo.findByPerson(userToDelete.get());
+        if(!errorLogs.isEmpty()){
+            for (ErrorLog logg: errorLogs) {
+                logg.setPerson(defaultUser.get());
+                errorLogRepo.save(logg);
             }
+        }
 
         articles = articleRepo.findArticleByPerson(userToDelete.get());
         if(!articles.isEmpty()){
@@ -434,7 +434,7 @@ public class PersonService {
     }
 
     private void changeUserType(Person person){
-       Optional<UserType> newUserType = inputNewUserType();
+        Optional<UserType> newUserType = inputNewUserType();
         if(newUserType.isPresent()) {
             person.setType(newUserType.get());
             personRepo.save(person);
@@ -522,8 +522,8 @@ public class PersonService {
                 ErrorLogService.saveErroLog("User not exist",person.get());
             }
         }
-  
-  
+
+
     public Optional<Person> transferListToOptional(List<Person> person){
         int index = 0;
         if (!person.isEmpty()) {
