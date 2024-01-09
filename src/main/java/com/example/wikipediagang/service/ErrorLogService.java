@@ -41,12 +41,10 @@ public class ErrorLogService {
                 errorLog.setPerson(person);
                 errorLog.setDate(new Date());
                 errorLog.setText(errorMessage);
-                errorLog.setStatus("unchecked");
                 errorLogRepo.save(errorLog);
             }catch(Exception e){
                 errorLog.setText("Error"+e.getStackTrace());
             }
-
 
     }
     public void uppdateErroLog(){
@@ -58,7 +56,7 @@ public class ErrorLogService {
             ErrorLog erro = erroLog.get();
             System.out.println("input status to uppdate");
             String newStatus = ScannerHelper.getStringInput();
-            erro.setStatus(newStatus);
+           // erro.setStatus(newStatus);
             errorLogRepo.save(erro);
         }
     }
