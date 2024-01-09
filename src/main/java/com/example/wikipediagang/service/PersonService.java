@@ -43,6 +43,7 @@ public class PersonService {
         List<LoginInformation> loginInfo;
         Console console = System.console();
 
+
         while (true) {
 
                 log.message("\nWrite in your login :");
@@ -93,7 +94,7 @@ public class PersonService {
         String firstName;
         String lastName;
         Optional<UserType> type;
-        Optional<Person> newUser;
+        Person newUser;
         LoginInformation loginInfo;
 
 
@@ -116,12 +117,14 @@ public class PersonService {
 
             password = inputNewPassword();
             if (password.isEmpty())return  Optional.empty();
+
             loginInfo = new LoginInformation(login, password);
             loginInfo = loginRepo.save(loginInfo);
-            newUser = Optional.of(new Person(firstName, lastName, email, type.get(), loginInfo));
-            newUser.get().setLoginInfo(user.get(), loginInfo);
-            personRepo.save(newUser.get());
-            return newUser;
+            newUser = new Person(firstName, lastName, email, type.get(), loginInfo);
+            System.out.println(newUser);
+            newUser.setLoginInfo(user.get(), loginInfo);
+            personRepo.save(newUser);
+            return Optional.of(newUser);
         } else {
             if(user.isPresent()) {
                 String errorText = "User trying to create a user without corresponding rights";
@@ -256,7 +259,6 @@ public class PersonService {
 
     private String inputNewFirstName() {
         String firstName;
-        boolean tryAgain;
         while (true) {
             log.question("Write in first name");
             firstName = input.nextLine().trim();
@@ -290,7 +292,6 @@ public class PersonService {
 
     public String inputNewEmail(){
         String email;
-        boolean tryAgain;
         Optional<Person> isInUse;
         while (true) {
             log.question("Write in email");
@@ -305,9 +306,7 @@ public class PersonService {
                 }
                 return email;
             }
-            log.error("Wrong format of email");
-            tryAgain = log.tryAgain();
-            if (!tryAgain) {
+            if (!log.tryAgain()) {
                 return "";
             }
         }
@@ -456,13 +455,13 @@ public class PersonService {
         }
     }
     public void editUser(){
-        log.menu("Input userId which you want to edit: ");
-        int id = ScannerHelper.getIntInput();
-        Optional<Person> findUser = personRepo.findById(id);
+        log.menu("Input Email which you want to edit: ");
+        String  email = ScannerHelper.getStringInput();
+        Optional<Person> findUser = personRepo.findByEmail(email);
         if(findUser.isPresent()){
             Person userToChange = findUser.get();
-            boolean flag = false;
-            while (!flag) {
+
+            while (true) {
                 log.menu("Which part do you want to update: ");
                 log.menu("1.Email");
                 log.menu("2.Firstname");
@@ -476,7 +475,7 @@ public class PersonService {
                     case 2 ->changeFirstName(userToChange);
                     case 3 ->changeLastName(userToChange);
                     case 4 ->changeUserType(userToChange);
-                    case 5 ->flag = true;
+                    case 5 ->{return;}
                 }
             }
         }

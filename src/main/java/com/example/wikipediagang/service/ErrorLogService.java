@@ -46,7 +46,6 @@ public class ErrorLogService {
                 errorLog.setText("Error"+e.getStackTrace());
             }
 
-
     }
     public void uppdateErroLog(){
         System.out.println("input text");
@@ -57,7 +56,7 @@ public class ErrorLogService {
             ErrorLog erro = erroLog.get();
             System.out.println("input status to uppdate");
             String newStatus = ScannerHelper.getStringInput();
-            erro.setStatus(newStatus);
+           // erro.setStatus(newStatus);
             errorLogRepo.save(erro);
         }
     }
