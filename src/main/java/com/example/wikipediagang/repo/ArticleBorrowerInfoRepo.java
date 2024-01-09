@@ -22,4 +22,8 @@ public interface ArticleBorrowerInfoRepo extends JpaRepository<ArticleBorrowerIn
     @Query(nativeQuery = true,
             value = "select count(*) from article_borrower_info ab where ab.article_hard_copy_id=:hardCopyId")
     int numberOfTimesHardCopyIsBorrowed(Integer hardCopyId);
+
+    @Query(nativeQuery = true,
+            value = "select * from article_borrower_info ab where ab.borrower_id=:personId and ab.expected_return_date is null")
+    List<ArticleBorrowerInfo> findPersonalHardCopiesByPerson(int personId);
 }

@@ -44,24 +44,31 @@ public class PersonService {
         List<LoginInformation> loginInfo;
         Console console = System.console();
 
+
         while (true) {
 
-            log.message("\nWrite in your login :");
-            login = input.nextLine().trim();
-            input.nextLine();
-            log.message("Write in your password:");
-            if(console == null) {
-                password = input.nextLine().trim();
+                log.message("\nWrite in your login :");
+                login = input.nextLine().trim();
                 input.nextLine();
-            }else {
-                password = String.valueOf(console.readPassword());
-            }
+                log.message("Write in your password:");
+                if(console == null) {
+                    password = input.nextLine().trim();
+                    input.nextLine();
+                }else {
+                    password = String.valueOf(console.readPassword());
+                }
 
             loginInfo = loginRepo.findByUserNameAndPassword(login, password);
 
             if (loginInfo.size() == 1) {
                 Optional<Person> user = personRepo.findByLoginInfo(loginInfo.get(0));
                 if (user.isPresent()) {
+                    String defaultUserEmail = "default@mail.com";
+                    if(user.get().getEmail().equals(defaultUserEmail)){
+                        log.error("You try loggin as default user. It is not allowed");
+                        if (!log.tryAgain()) return Optional.empty();
+                        continue;
+                    }
                     log.success("Login is success ");
                     log.success("Welcome, " + user.get().getFirstName() + " " + user.get().getLastName());
                     System.out.flush();
@@ -69,8 +76,7 @@ public class PersonService {
                 } else {
                     log.error("Login is failed ");
                     log.error("Wrong login or password ");
-                    tryAgain = log.tryAgain();
-                    if (!tryAgain) return Optional.empty();
+                    if (!log.tryAgain()) return Optional.empty();
                 }
             }else {
                 log.error("There is no such user. Control login and password");
@@ -89,7 +95,7 @@ public class PersonService {
         String firstName;
         String lastName;
         Optional<UserType> type;
-        Optional<Person> newUser;
+        Person newUser;
         LoginInformation loginInfo;
 
 
@@ -112,12 +118,14 @@ public class PersonService {
 
             password = inputNewPassword();
             if (password.isEmpty())return  Optional.empty();
+
             loginInfo = new LoginInformation(login, password);
             loginInfo = loginRepo.save(loginInfo);
-            newUser = Optional.of(new Person(firstName, lastName, email, type.get(), loginInfo));
-            newUser.get().setLoginInfo(user.get(), loginInfo);
-            personRepo.save(newUser.get());
-            return newUser;
+            newUser = new Person(firstName, lastName, email, type.get(), loginInfo);
+            System.out.println(newUser);
+            newUser.setLoginInfo(user.get(), loginInfo);
+            personRepo.save(newUser);
+            return Optional.of(newUser);
         } else {
             if(user.isPresent()) {
                 log.error("You have no enough rights for this action");
@@ -159,6 +167,7 @@ public class PersonService {
             if (email.isEmpty()) return Optional.empty();
             if(email.equals(defaultUser.get().getEmail())){
                 log.error("You can't delete this user, try again");
+
                 ErrorLogService.saveErroLog("Try to delete defaultuser",currentUser.get());
                 continue;
             }
@@ -185,13 +194,14 @@ public class PersonService {
             if(userToDelete.get().getType().getName().equals("admin")) {
                 if (userToDelete.get().getEmail().equals(currentUser.get().getEmail())) {
                     log.error("You can't delete yourself");
-                    ErrorLogService.saveErroLog("Try to delete itself",currentUser.get());
+
+                    ErrorLogService.saveErroLog("Admin is trying to delete itself",currentUser.get());
                     continue;
                 }
                 admins = personRepo.findByType(currentUser.get().getType());
                 if(admins.size() == 1){
                     log.error("You can't delete the last admin");
-                    ErrorLogService.saveErroLog("Try to delete last admin",currentUser.get());
+                    ErrorLogService.saveErroLog("Admin is trying to delete last admin",currentUser.get());
                     continue;
                 }
             }
@@ -200,22 +210,22 @@ public class PersonService {
 
         System.out.println(userToDelete);
 
-        comments = commentRepo.findCommentByPerson(userToDelete.get());
-        if(!comments.isEmpty()){
-            for (Comment comment: comments) {
-                System.out.println(comment.toString());
-                comment.setPerson(defaultUser.get());
-                commentRepo.save(comment);
+            comments = commentRepo.findCommentByPerson(userToDelete.get());
+            if(!comments.isEmpty()){
+                for (Comment comment: comments) {
+                    System.out.println(comment.toString());
+                    comment.setPerson(defaultUser.get());
+                    commentRepo.save(comment);
+                }
             }
-        }
 
-        errorLogs = errorLogRepo.findByPerson(userToDelete.get());
-        if(!errorLogs.isEmpty()){
-            for (ErrorLog logg: errorLogs) {
-                logg.setPerson(defaultUser.get());
-                errorLogRepo.save(logg);
+            errorLogs = errorLogRepo.findByPerson(userToDelete.get());
+            if(!errorLogs.isEmpty()){
+                for (ErrorLog logg: errorLogs) {
+                    logg.setPerson(defaultUser.get());
+                    errorLogRepo.save(logg);
+                }
             }
-        }
 
         articles = articleRepo.findArticleByPerson(userToDelete.get());
         if(!articles.isEmpty()){
@@ -237,7 +247,6 @@ public class PersonService {
 
     private String inputNewFirstName() {
         String firstName;
-        boolean tryAgain;
         while (true) {
             log.question("Write in first name");
             firstName = input.nextLine().trim();
@@ -271,7 +280,6 @@ public class PersonService {
 
     public String inputNewEmail(){
         String email;
-        boolean tryAgain;
         Optional<Person> isInUse;
         while (true) {
             log.question("Write in email");
@@ -286,9 +294,7 @@ public class PersonService {
                 }
                 return email;
             }
-            log.error("Wrong format of email");
-            tryAgain = log.tryAgain();
-            if (!tryAgain) {
+            if (!log.tryAgain()) {
                 return "";
             }
         }
@@ -335,6 +341,8 @@ public class PersonService {
             typeSearch = userTypeRepo.findByName(choise);
             if (typeSearch.isPresent()) {
                 return typeSearch;
+            }else{
+                log.error("Wrong input , choose from list");
             }
             if (!log.tryAgain()) return Optional.empty();
         }
@@ -394,7 +402,7 @@ public class PersonService {
 
     private void changeFirstName(Person person){
         String newFirstName = inputNewFirstName();
-        if(!newFirstName.isEmpty()) {
+        if(!newFirstName.isEmpty() && Person.firstNameValidator(newFirstName)) {
             person.setFirstName(newFirstName);
             personRepo.save(person);
             log.success("First name is changed");
@@ -405,7 +413,7 @@ public class PersonService {
 
     private void changeLastName(Person person){
         String newLastName = inputNewLastName();
-        if(!newLastName.isEmpty()) {
+        if(!newLastName.isEmpty() && Person.lastNameValidator(newLastName)) {
             person.setLastName(newLastName);
             personRepo.save(person);
             log.success("Last name is changed");
@@ -416,17 +424,17 @@ public class PersonService {
 
     public void changeEmail(Person person){
         String newEmail = inputNewEmail();
-        if(!newEmail.isEmpty()){
-            person.setEmail(newEmail);
-            personRepo.save(person);
-            log.success("Email is changed");
+        if(!newEmail.isEmpty() && Person.emailValidator(newEmail)){
+        person.setEmail(newEmail);
+        personRepo.save(person);
+        log.success("Email is changed");
         }else {
             log.error("Changing is unsuccessful");
         }
     }
 
     private void changeUserType(Person person){
-        Optional<UserType> newUserType = inputNewUserType();
+       Optional<UserType> newUserType = inputNewUserType();
         if(newUserType.isPresent()) {
             person.setType(newUserType.get());
             personRepo.save(person);
@@ -434,6 +442,7 @@ public class PersonService {
             log.error("Changing is unsuccessful");
         }
     }
+
 
     private Optional<Person> findUser() {
         log.message("Input info to find user: ");
@@ -483,36 +492,38 @@ public class PersonService {
         return null;
     }
 
-    public void editUser(Optional<Person> person){
+        public void editUser(Optional<Person> person){
         Optional<Person> findUser = findUser();
-        try {
-            if (findUser.isPresent()){
-                Person userToChange = findUser.get();
-                boolean flag = false;
-                while (!flag) {
-                    log.menu("Which part do you want to update: ");
-                    log.menu("1.Email");
-                    log.menu("2.Firstname");
-                    log.menu("3.Lastname");
-                    log.menu("4.Privilege");
-                    log.menu("5.Quit");
-                    log.menu("input ny choice: ");
-                    int choice = ScannerHelper.getIntInput(5);
-                    switch (choice){
-                        case 1 ->changeEmail(userToChange);
-                        case 2 ->changeFirstName(userToChange);
-                        case 3 ->changeLastName(userToChange);
-                        case 4 ->changeUserType(userToChange);
-                        case 5 ->flag = true;
-                        default -> log.error("Wrong input, try again");
+            try {
+                if (findUser.isPresent()){
+                    Person userToChange = findUser.get();
+                    boolean flag = false;
+                    while (!flag) {
+                        log.menu("Which part do you want to update: ");
+                        log.menu("1.Email");
+                        log.menu("2.Firstname");
+                        log.menu("3.Lastname");
+                        log.menu("4.Privilege");
+                        log.menu("5.Quit");
+                        log.menu("input ny choice: ");
+                        int choice = ScannerHelper.getIntInput(5);
+                        switch (choice){
+                            case 1 ->changeEmail(userToChange);
+                            case 2 ->changeFirstName(userToChange);
+                            case 3 ->changeLastName(userToChange);
+                            case 4 ->changeUserType(userToChange);
+                            case 5 ->flag = true;
+                            default -> log.error("Wrong input, try again");
+                        }
                     }
                 }
+            } catch (Exception e) {
+                log.error("User not exist");
+                ErrorLogService.saveErroLog("User not exist",person.get());
             }
-        } catch (Exception e) {
-            log.error("User not exist");
-            ErrorLogService.saveErroLog("User not exist",person.get());
         }
-    }
+
+
     public Optional<Person> transferListToOptional(List<Person> person){
         int index = 0;
         if (!person.isEmpty()) {
@@ -524,11 +535,11 @@ public class PersonService {
             int input = ScannerHelper.getIntInput(person.size()-1);
             Optional<Person> optionalPerson = Optional.of(person.get(input));
             return optionalPerson;
-        }else{
+     }else{
             return null;
         }
     }
-    public  List<Person> getAllUsers(){
+            public  List<Person> getAllUsers(){
         return personRepo.findAll();
     }
 

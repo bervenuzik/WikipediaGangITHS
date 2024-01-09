@@ -22,17 +22,16 @@ public class ErrorLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String text;
-    //@Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.DATE)
     Date date;
-    String status;
-    @ManyToOne()
+
+    @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id")
     Person person;
 
-    public ErrorLog(String text, Date date, String status, Person person) {
+    public ErrorLog(String text, Date date,  Person person) {
         this.text = text;
         this.date = date;
-        this.status = status;
         this.person = person;
     }
 
@@ -44,7 +43,6 @@ public class ErrorLog {
         return "ErrorLog{" +
                 ", text='" + text + '\'' +
                 ", date=" + date +
-                ", status=" + status +
                 ", person=" + person +
                 '}';
     }
@@ -81,11 +79,4 @@ public class ErrorLog {
         this.person = person;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }
