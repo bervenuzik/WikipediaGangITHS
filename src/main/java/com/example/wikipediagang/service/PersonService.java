@@ -3,6 +3,7 @@ package com.example.wikipediagang.service;
 import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.*;
 import com.example.wikipediagang.repo.*;
+import org.hibernate.internal.util.collections.ConcurrentReferenceHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -127,12 +128,8 @@ public class PersonService {
             return Optional.of(newUser);
         } else {
             if(user.isPresent()) {
-                String errorText = "User trying to create a user without corresponding rights";
-                Date date = new Date();
-                String status = "unchecked";
-                Person CurrentUser = user.get();
-                errorLogService.saveErroLog(errorText,CurrentUser);
                 log.error("You have no enough rights for this action");
+                ErrorLogService.saveErroLog("No right",user.get());
             } else{
                 log.error("You have to login to make actions");
             }
@@ -157,11 +154,9 @@ public class PersonService {
         }
 
         if(defaultUser.isEmpty()){
-            String errorText = "There was not found a default user";
-            Date date = new Date();
-            String status = "unchecked";
-            errorLogService.saveErroLog(errorText,currentUser.get());
             log.error("Opssss, we have a little problem with servern. Try later");
+            ErrorLogService.saveErroLog("Defaultuser not exist",currentUser.get());
+
             return Optional.empty();
         }
 
@@ -172,10 +167,8 @@ public class PersonService {
             if (email.isEmpty()) return Optional.empty();
             if(email.equals(defaultUser.get().getEmail())){
                 log.error("You can't delete this user, try again");
-                String errorText = "Admin is trying to delete a default user";
-                Date date = new Date();
-                String status = "unchecked";
-                errorLogService.saveErroLog(errorText,currentUser.get());
+
+                ErrorLogService.saveErroLog("Try to delete defaultuser",currentUser.get());
                 continue;
             }
             userToDelete = personRepo.findByEmail(email);
@@ -201,19 +194,14 @@ public class PersonService {
             if(userToDelete.get().getType().getName().equals("admin")) {
                 if (userToDelete.get().getEmail().equals(currentUser.get().getEmail())) {
                     log.error("You can't delete yourself");
-                    String errorText = "Admin trying to delete himself";
-                    Date date = new Date();
-                    String status = "unchecked";
-                    errorLogService.saveErroLog(errorText,currentUser.get());
+
+                    ErrorLogService.saveErroLog("Admin is trying to delete itself",currentUser.get());
                     continue;
                 }
                 admins = personRepo.findByType(currentUser.get().getType());
                 if(admins.size() == 1){
                     log.error("You can't delete the last admin");
-                    String errorText = "Admin trying to delete the las admin";
-                    Date date = new Date();
-                    String status = "unchecked";
-                    errorLogService.saveErroLog(errorText,currentUser.get());
+                    ErrorLogService.saveErroLog("Admin is trying to delete last admin",currentUser.get());
                     continue;
                 }
             }
@@ -454,34 +442,104 @@ public class PersonService {
             log.error("Changing is unsuccessful");
         }
     }
-    public void editUser(){
-        log.menu("Input Email which you want to edit: ");
-        String  email = ScannerHelper.getStringInput();
-        Optional<Person> findUser = personRepo.findByEmail(email);
-        if(findUser.isPresent()){
-            Person userToChange = findUser.get();
 
-            while (true) {
-                log.menu("Which part do you want to update: ");
-                log.menu("1.Email");
-                log.menu("2.Firstname");
-                log.menu("3.Lastname");
-                log.menu("4.Privilege");
-                log.menu("5.Quit");
-                log.menu("input ny choice: ");
-                int choice = ScannerHelper.getIntInput(5);
-                switch (choice){
-                    case 1 ->changeEmail(userToChange);
-                    case 2 ->changeFirstName(userToChange);
-                    case 3 ->changeLastName(userToChange);
-                    case 4 ->changeUserType(userToChange);
-                    case 5 ->{return;}
+
+    private Optional<Person> findUser() {
+        log.message("Input info to find user: ");
+        System.out.println("1. Find by user firstname");
+        System.out.println("2. Find by user Type");
+        System.out.println("3. Find by user Email");
+        System.out.println("4. Find by lastname");
+        boolean flag = false;
+        while (!flag) {
+            System.out.println("input your choice");
+            int choice = ScannerHelper.getIntInput();
+            if (choice == 1) {
+                System.out.println("input firstname");
+                String firstname = ScannerHelper.getStringInput();
+                List<Person> persons = personRepo.findByFirstName(firstname);
+                Optional<Person> person = transferListToOptional(persons);
+                return  person;
+            }
+            if (choice == 2) {
+                System.out.println("input Type");
+                int id = ScannerHelper.getIntInput();
+                List<Person> persons = personRepo.findByType(id);
+                Optional<Person> person = transferListToOptional(persons);
+                return person;
+            }
+            if (choice == 3) {
+                System.out.println("input email");
+                String email = ScannerHelper.getStringInput();
+                Optional<Person> persons = personRepo.findByEmail(email);
+                if (persons.isPresent()) {
+                    return persons;
+                } else {
+                    log.error("User is not exist");
+                    return null;
                 }
             }
+            if (choice == 4) {
+                System.out.println("input lastname");
+                String lastname = ScannerHelper.getStringInput();
+                List<Person> persons = personRepo.findByLastName(lastname);
+                Optional<Person> person = transferListToOptional(persons);
+                return person;
+            } else {
+                log.error("Wrong input, try again");
+            }
         }
+        return null;
     }
 
-    public  List<Person> getAllUsers(){
+        public void editUser(Optional<Person> person){
+        Optional<Person> findUser = findUser();
+            try {
+                if (findUser.isPresent()){
+                    Person userToChange = findUser.get();
+                    boolean flag = false;
+                    while (!flag) {
+                        log.menu("Which part do you want to update: ");
+                        log.menu("1.Email");
+                        log.menu("2.Firstname");
+                        log.menu("3.Lastname");
+                        log.menu("4.Privilege");
+                        log.menu("5.Quit");
+                        log.menu("input ny choice: ");
+                        int choice = ScannerHelper.getIntInput(5);
+                        switch (choice){
+                            case 1 ->changeEmail(userToChange);
+                            case 2 ->changeFirstName(userToChange);
+                            case 3 ->changeLastName(userToChange);
+                            case 4 ->changeUserType(userToChange);
+                            case 5 ->flag = true;
+                            default -> log.error("Wrong input, try again");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error("User not exist");
+                ErrorLogService.saveErroLog("User not exist",person.get());
+            }
+        }
+  
+  
+    public Optional<Person> transferListToOptional(List<Person> person){
+        int index = 0;
+        if (!person.isEmpty()) {
+            for(Person p : person){
+                System.out.println("option "+index+ "."+p);
+                index++;
+            }
+            System.out.println("Choose who to update");
+            int input = ScannerHelper.getIntInput(person.size()-1);
+            Optional<Person> optionalPerson = Optional.of(person.get(input));
+            return optionalPerson;
+     }else{
+            return null;
+        }
+    }
+            public  List<Person> getAllUsers(){
         return personRepo.findAll();
     }
 

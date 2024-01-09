@@ -69,7 +69,7 @@ public class MenuService {
                 case LOGOUT -> currentUser = Optional.empty();
                 case ADD_USER -> pService.createUser(currentUser);
                 case REMOVE_USER -> pService.deleteUser(currentUser);
-                case EDIT_USER -> pService.editUser();
+                case EDIT_USER -> pService.editUser(currentUser);
                 case SEARCH -> searchArticleMenu();
                 case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
@@ -165,7 +165,7 @@ public class MenuService {
     }
 
     public <T extends MenuOption> T getUserChoice(T[] options) {
-        log.menu("\nChoose from the following tasks- \n");
+        log.menu("Choose from the following tasks- \n");
         printChoices(options);
         log.message("\nEnter your choice:");
         int userChoice = ScannerHelper.getIntInput(options.length);

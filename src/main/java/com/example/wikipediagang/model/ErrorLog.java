@@ -24,6 +24,7 @@ public class ErrorLog {
     String text;
     @Temporal(TemporalType.DATE)
     Date date;
+
     //String status;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id")

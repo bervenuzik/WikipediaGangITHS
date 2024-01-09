@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +72,7 @@ public class ArticleService {
 
         Article newArticle = new Article(title, content, loggedInPerson, chosenCategory);
         articleRepo.save(newArticle);
-        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is SAVED successfully !!");
+        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is successfully SAVED in the category '" + chosenCategory + "' !!");
     }
     public void searchArticleByTitle(Person loggedInPerson){
         List<Article> desiredArticles = findPublishedArticlesByTitle();     //user can search through "published" articles only
@@ -88,7 +89,7 @@ public class ArticleService {
         optionsForReadingAnArticle(chosenArticle, loggedInPerson);
     }
     public void searchArticleByPerson(Person loggedInPerson){
-        List<Person> listOfPersonsWithSameName = findPersonByName();    //more than one author can have the same name
+        List<Person> listOfPersonsWithSameName = findPersonByName();       //more than one author can have the same name
         if (listOfPersonsWithSameName.isEmpty()) {
             log.error("!! Desired author NOT found !!");
             return;
@@ -216,15 +217,21 @@ public class ArticleService {
             return;
         }
         printAvailableCategories(articleCategoryList);
-
-        System.out.print("\nEnter category's number: ");
-        int categoryChoice = ScannerHelper.getIntInput(articleCategoryList.size());
-        ArticleCategory desiredCategory = articleCategoryList.get(categoryChoice - 1);
-        System.out.print("Enter category's new name: ");
-        String newName = ScannerHelper.getStringInput();
-        desiredCategory.setName(newName);
-        categoryRepo.save(desiredCategory);
-        log.success("!! Category Name has been UPDATED successfully !!");
+        System.out.println("\nDo you wish to continue? (Yes=1, No=2)");
+        System.out.print("Enter your choice: ");
+        int userChoice = ScannerHelper.getIntInput(2);
+        if (userChoice == 1) {
+            System.out.print("\nEnter category's number: ");
+            int categoryChoice = ScannerHelper.getIntInput(articleCategoryList.size());
+            ArticleCategory desiredCategory = articleCategoryList.get(categoryChoice - 1);
+            System.out.print("Enter category's new name: ");
+            String newName = ScannerHelper.getStringInput();
+            desiredCategory.setName(newName);
+            categoryRepo.save(desiredCategory);
+            log.success("!! Category's Name was UPDATED successfully !!");
+        } else {
+            System.out.println("!! None Category was updated !!");
+        }
     }
     private void printAvailableCategories(List<ArticleCategory> articleCategoryList) {
         log.menu("Available categories: ");
@@ -413,16 +420,52 @@ public class ArticleService {
         }
     }
     public void orderPersonalHardCopy(Article article, Person person) {
+
+        List<Article> alreadyOrderedPersonalCopies = personalArticlesOrderedByAPerson(person);
+
+        if(alreadyOrderedPersonalCopies.isEmpty() || !articleExistsInArticleList(article, alreadyOrderedPersonalCopies)){
+            createPersonalHardCopy(article, person);
+        }else {
+            int numberOfPreviousPersonalCopies = numberOfTimesArticleAppearsInTheList(article, alreadyOrderedPersonalCopies);
+            System.out.println("You have already taken " + numberOfPreviousPersonalCopies +
+                    " Personal Hard Copy(ies) before,\ndo you want to order again? (Yes=1, No=2)");
+            System.out.print("Enter your choice: ");
+            int userChoice = ScannerHelper.getIntInput(2);
+            if(userChoice == 1){
+                createPersonalHardCopy(article, person);
+            } else {
+                System.out.println("!! You decided NOT to order another personal copy !!");
+            }
+        }
+    }
+    private void createPersonalHardCopy(Article article, Person person){
         ArticleHardCopy personalHardCopy = new ArticleHardCopy(article);
+        personalHardCopy.setStatus("personal");             // set status of personal hard-copy => personal
         personalHardCopy = hardCopyRepo.save(personalHardCopy);
-        personalHardCopy.setStatus("personal");                     // set status of personal hard-copy => personal
-        hardCopyRepo.save(personalHardCopy);
 
         ArticleBorrowerInfo borrowerInfo = new ArticleBorrowerInfo(personalHardCopy, person);
-        borrowerInfo.setExpectedReturnDate(null);                   // expected-return-date => null, for personal hard-copy
-        borrowerInfo.setActualReturnDate(null);                           // actual-return-date => null, for personal hard-copy
+        borrowerInfo.setExpectedReturnDate(null);             // expected-return-date => null, for personal hard-copy
+        borrowerInfo.setActualReturnDate(null);               // actual-return-date => null, for personal hard-copy
         borrowerInfoRepo.save(borrowerInfo);
-        log.success("\n!! A Personal Hard Copy of the article '" + article.getTitle() + "' has been ORDERED successfully !!");
+        log.success("\n!! A Personal Hard Copy of the article has been ORDERED successfully !!");
+    }
+    private boolean articleExistsInArticleList(Article givenArticle, List<Article> articleList){
+        boolean exists = false;
+        for(Article article : articleList){
+            if(article.getId() == givenArticle.getId()){
+                exists = true;
+            }
+        }
+        return exists;
+    }
+    private int numberOfTimesArticleAppearsInTheList(Article givenArticle, List<Article> articleList) {
+        int counter = 0;
+        for(Article article : articleList){
+            if(article.getId() == givenArticle.getId()){
+                counter++;
+            }
+        }
+        return counter;
     }
     private void assignAvailableHardCopyToFirstPersonInQueue(ArticleHardCopy hardCopy) {
         Article desiredArticle = hardCopy.getArticle();
@@ -454,9 +497,9 @@ public class ArticleService {
             System.out.println(i+1 + ". " + listOfArticlesToBeReviewed.get(i).getTitle());
         }
 
-        while (listOfArticlesToBeReviewed.size() >= counter) {
+        while (listOfArticlesToBeReviewed.size() > counter) {
             System.out.print("\nENTER " + (listOfArticlesToBeReviewed.size() + 1) +
-                    ", back to Admin menu\nor\nEnter article number you want to review: ");
+                    ", go back to Admin menu OR\nEnter article number you want to review: ");
             int adminChoice = ScannerHelper.getIntInput(listOfArticlesToBeReviewed.size() + 1);
 
             if (adminChoice == (listOfArticlesToBeReviewed.size() + 1)) {
@@ -465,7 +508,7 @@ public class ArticleService {
 
             Article chosenArticle = listOfArticlesToBeReviewed.get(adminChoice - 1);
             if (chosenArticle.getStatus().equalsIgnoreCase("publish")) {
-                log.error("Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
+                log.error("Oops! Chosen Article has already been PUBLISHED\n!! Please choose another Article !!");
             } else {
                 System.out.println("---------------------------------------------------------------------------" + "\nTitle: " +
                         chosenArticle.getTitle().toUpperCase() + "\n" + "Written By: " +
@@ -489,6 +532,10 @@ public class ArticleService {
                 articleRepo.save(chosenArticle);
             }
         }
+
+        if (listOfArticlesToBeReviewed.size() == counter) {
+            log.success("NOTE: All pending articles have been PUBLISHED successfully :)");
+        }
     }
     private int numberOfTimesArticleIsBorrowed(Article article) {
         int counter = 0;
@@ -507,5 +554,31 @@ public class ArticleService {
             return true;
         }
         return false;
+    }
+    private List<Article> personalArticlesOrderedByAPerson(Person person) {
+        List<ArticleBorrowerInfo> listOfPersonalHardCopiesOfAUser = borrowerInfoRepo.findPersonalHardCopiesByPerson(person.getId());
+
+        if(listOfPersonalHardCopiesOfAUser.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        List<Integer> listOfPersonalHardCopyIds = new ArrayList<>();
+
+        for (ArticleBorrowerInfo abi : listOfPersonalHardCopiesOfAUser) {
+            int hardCopyId = abi.getArticleHardCopy().getId();
+            listOfPersonalHardCopyIds.add(hardCopyId);
+        }
+
+        List<Article> desiredArticlesList = new ArrayList<>();
+        for (Integer id : listOfPersonalHardCopyIds) {
+            Optional<ArticleHardCopy> hardCopy = hardCopyRepo.findArticleHardCopyById(id);
+            if (hardCopy.isPresent()) {
+                ArticleHardCopy desiredHardCopy = hardCopy.get();
+                Article desiredArticle = desiredHardCopy.getArticle();
+                desiredArticlesList.add(desiredArticle);
+            }
+        }
+
+        return desiredArticlesList;
     }
 }
