@@ -37,6 +37,7 @@ public class Person {
     }
 
     public Person(String firstName, String lastName, String email, UserType type, LoginInformation loginInfo) {
+        this.id = 1;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -71,6 +72,7 @@ public class Person {
         }
         return false;
     }
+
 
     public String getEmail() {
         return email;
@@ -155,6 +157,7 @@ public class Person {
             System.err.println("Wrong format of email");
             return false;
         }
+
 
 
 
