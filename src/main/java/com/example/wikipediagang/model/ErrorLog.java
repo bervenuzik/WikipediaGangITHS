@@ -22,10 +22,10 @@ public class ErrorLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String text;
-    @Temporal(TemporalType.DATE)
+    //@Temporal(TemporalType.DATE)
     Date date;
     String status;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "person_id")
     Person person;
 
