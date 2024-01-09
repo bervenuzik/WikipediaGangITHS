@@ -137,7 +137,7 @@ public class Person {
         if(secondName.matches(expression)){
             return true;
         } else{
-            System.err.println("Last name can't contain numbers");
+            System.err.println("Last name can't contain numbers or spaces");
             return false;
         }
 
