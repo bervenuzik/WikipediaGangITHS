@@ -72,7 +72,7 @@ public class ArticleService {
 
         Article newArticle = new Article(title, content, loggedInPerson, chosenCategory);
         articleRepo.save(newArticle);
-        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is successfully SAVED in the category '" + chosenCategory + "' !!");
+        log.success("!! New Article '" + newArticle.getTitle() + "'" + " is successfully SAVED in the category '" + chosenCategory.getName() + "' !!");
     }
     public void searchArticleByTitle(Person loggedInPerson){
         List<Article> desiredArticles = findPublishedArticlesByTitle();     //user can search through "published" articles only

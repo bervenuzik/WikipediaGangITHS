@@ -208,7 +208,7 @@ public class PersonService {
             break;
         }
 
-        System.out.println(userToDelete);
+
 
         comments = commentRepo.findCommentByPerson(userToDelete.get());
         if(!comments.isEmpty()){
@@ -237,6 +237,7 @@ public class PersonService {
 
         personRepo.delete(userToDelete.get());
 
+        log.success("SUCCESS. Person is deleted ==>  " + userToDelete.get() + "\n");
         return userToDelete;
     }
 
