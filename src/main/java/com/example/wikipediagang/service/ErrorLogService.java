@@ -29,9 +29,9 @@ public class ErrorLogService {
     @Autowired
     static PersonRepository personRepo;
 
-    public static void handleException(Throwable e, String additionalInfo){
+    public static void handleException(Throwable e, String additionalInfo,Person person){
         String errorMessage = "Exception occurred:" + e.getMessage()+". Additional Info: "+additionalInfo;
-        saveErroLog(errorMessage,null);
+        saveErroLog(errorMessage,person);
     }
 
     public static void saveErroLog(String errorMessage,Person person){
