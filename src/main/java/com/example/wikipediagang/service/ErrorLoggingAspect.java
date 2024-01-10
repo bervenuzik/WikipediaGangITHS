@@ -16,8 +16,8 @@ import java.util.Optional;
 @Aspect
 @Component
 public class ErrorLoggingAspect {
-    private static PersonRepository personRepository;
-    private static final Logger logger = LoggerFactory.getLogger(ErrorLoggingAspect.class);
+    private  PersonRepository personRepository;
+    private  final Logger logger = LoggerFactory.getLogger(ErrorLoggingAspect.class);
     private List<String> errologs = new ArrayList<>();
 
     @AfterThrowing(pointcut = "execution(* com.example.wikipediagang.service.*.*(..))", throwing = "ex")
