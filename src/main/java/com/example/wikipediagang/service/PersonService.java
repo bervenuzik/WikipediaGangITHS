@@ -443,70 +443,24 @@ public class PersonService {
             log.error("Changing is unsuccessful");
         }
     }
-
-
-    private Optional<Person> findUser() {
-        log.message("Input info to find user: ");
-        System.out.println("1. Find by user firstname");
-        System.out.println("2. Find by user Type");
-        System.out.println("3. Find by user Email");
-        System.out.println("4. Find by lastname");
-        boolean flag = false;
-        while (!flag) {
-            System.out.println("input your choice");
-            int choice = ScannerHelper.getIntInput();
-            if (choice == 1) {
-                System.out.println("input firstname");
-                String firstname = ScannerHelper.getStringInput();
-                List<Person> persons = personRepo.findByFirstName(firstname);
-                Optional<Person> person = transferListToOptional(persons);
-                return  person;
-            }
-            if (choice == 2) {
-                System.out.println("input Type");
-                int id = ScannerHelper.getIntInput();
-                List<Person> persons = personRepo.findByType(id);
-                Optional<Person> person = transferListToOptional(persons);
-                return person;
-            }
-            if (choice == 3) {
-                System.out.println("input email");
-                String email = ScannerHelper.getStringInput();
-                Optional<Person> persons = personRepo.findByEmail(email);
-                if (persons.isPresent()) {
-                    return persons;
-                } else {
-                    log.error("User is not exist");
-                    return null;
-                }
-            }
-            if (choice == 4) {
-                System.out.println("input lastname");
-                String lastname = ScannerHelper.getStringInput();
-                List<Person> persons = personRepo.findByLastName(lastname);
-                Optional<Person> person = transferListToOptional(persons);
-                return person;
-            } else {
-                log.error("Wrong input, try again");
-            }
-        }
-        return null;
-    }
-
+    
         public void editUser(Optional<Person> person){
-        Optional<Person> findUser = findUser();
+            System.out.println("input email");
+            String email = ScannerHelper.getStringInput();
+            Optional<Person> persons = personRepo.findByEmail(email);
             try {
-                if (findUser.isPresent()){
-                    Person userToChange = findUser.get();
+                if (persons.isPresent()){
+                    Person userToChange = persons.get();
                     boolean flag = false;
                     while (!flag) {
-                        log.menu("Which part do you want to update: ");
-                        log.menu("1.Email");
-                        log.menu("2.Firstname");
-                        log.menu("3.Lastname");
-                        log.menu("4.Privilege");
-                        log.menu("5.Quit");
-                        log.menu("input ny choice: ");
+                        log.menu("""
+                                \nWhich part do you want to update:
+                                \n1.Email
+                                 2.Firstname
+                                 3.Lastname
+                                 4.Privilege
+                                 5.Quit""");
+                        System.out.println("input ny choice: ");
                         int choice = ScannerHelper.getIntInput(5);
                         switch (choice){
                             case 1 ->changeEmail(userToChange);
