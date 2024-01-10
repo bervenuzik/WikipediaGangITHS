@@ -36,7 +36,7 @@ public class MenuService {
                 StartMenu userChoice = getUserChoice(StartMenu.values());
                 switch (userChoice) {
                     case EXIT -> {
-                        System.out.println("Thank you for using ITHS wikipedia! ");
+                        System.out.println("Thank you for using ITHPedia! ");
                         break main;
                     }
                     case LOGIN -> login();
