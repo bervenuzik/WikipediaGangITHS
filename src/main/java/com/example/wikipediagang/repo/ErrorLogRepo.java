@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ErrorLogRepo extends JpaRepository<ErrorLog, Integer> {
     Optional<ErrorLog> findAllById(Integer id);
+    Optional<ErrorLog> findErrorLogById(int id);
 
     @Query(nativeQuery = true, value = "select e.text from ErrorLog e")
     List<String> selectTextColumn();

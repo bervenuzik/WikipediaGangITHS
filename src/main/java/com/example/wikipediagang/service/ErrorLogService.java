@@ -49,9 +49,9 @@ public class ErrorLogService {
     }
     public void uppdateErroLog(){
         System.out.println("input text");
-        int text = ScannerHelper.getIntInput();
+        int id = ScannerHelper.getIntInput();
         ScannerHelper.getStringInput();
-        Optional<ErrorLog> erroLog = errorLogRepo.findById(text);
+        Optional<ErrorLog> erroLog = errorLogRepo.findById(id);
         if(erroLog.isPresent()){
             ErrorLog erro = erroLog.get();
             System.out.println("input status to uppdate");

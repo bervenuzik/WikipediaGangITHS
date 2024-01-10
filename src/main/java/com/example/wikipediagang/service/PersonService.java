@@ -443,8 +443,7 @@ public class PersonService {
             log.error("Changing is unsuccessful");
         }
     }
-
-
+    
         public void editUser(Optional<Person> person){
             System.out.println("input email");
             String email = ScannerHelper.getStringInput();
