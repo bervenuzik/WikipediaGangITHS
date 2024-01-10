@@ -25,7 +25,7 @@ public class MenuService {
     public void startMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
-                \nHey, Welcome to ITHS Wikipedia!
+                \nHey, Welcome to ITHPedia!
                                 
                 """);
 
