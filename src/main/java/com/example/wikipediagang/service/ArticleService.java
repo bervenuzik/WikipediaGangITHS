@@ -83,9 +83,14 @@ public class ArticleService {
         } else if (desiredArticles.size() == 1) {
             chosenArticle = desiredArticles.get(0);
         } else {
-            log.message("Desired article(s): " + desiredArticles);
-            chosenArticle = chooseAnArticleFromAList("\nChoose one of the following articles to read: ",desiredArticles);
+            printListOfAuthorsWhoWroteArticleWithSameTitle(desiredArticles);
+            System.out.print("\nEnter number to read an article written by that author: ");
+            int userChoice = ScannerHelper.getIntInput(desiredArticles.size());
+            chosenArticle = desiredArticles.get(userChoice - 1);
         }
+        log.success("\n!! Article '" + chosenArticle.getTitle() + "' \nwritten by " +
+                chosenArticle.getPerson().getFirstName() + " " + chosenArticle.getPerson().getLastName() +
+                " is ready to READ !!");
         optionsForReadingAnArticle(chosenArticle, loggedInPerson);
     }
     public void searchArticleByPerson(Person loggedInPerson){
@@ -267,12 +272,7 @@ public class ArticleService {
         }
         Article chosenArticle;
         if (listOfAllArticlesWithSameName.size() > 1) {
-            System.out.println("Desired article is written by following authors: ");
-            for (int i = 0; i < listOfAllArticlesWithSameName.size(); i++) {
-                Person person = listOfAllArticlesWithSameName.get(i).getPerson();
-                String authorsFullName = person.getFirstName() + " " + person.getLastName();
-                System.out.println(i + 1 + ". " + authorsFullName);
-            }
+            printListOfAuthorsWhoWroteArticleWithSameTitle(listOfAllArticlesWithSameName);
             System.out.print("Enter number to remove an article written by that author: ");
             int userChoice = ScannerHelper.getIntInput(listOfAllArticlesWithSameName.size());
             chosenArticle = listOfAllArticlesWithSameName.get(userChoice - 1);
@@ -282,6 +282,15 @@ public class ArticleService {
 
         log.success("!! Article '" + chosenArticle.getTitle() + "' is successfully DELETED !!");
         articleRepo.delete(chosenArticle);
+    }
+
+    private void printListOfAuthorsWhoWroteArticleWithSameTitle(List<Article> listOfAllArticlesWithSameName){
+        System.out.println("\nDesired article is written by following authors: ");
+        for (int i = 0; i < listOfAllArticlesWithSameName.size(); i++) {
+            Person person = listOfAllArticlesWithSameName.get(i).getPerson();
+            String authorsFullName = person.getFirstName() + " " + person.getLastName();
+            System.out.println(i + 1 + ". " + authorsFullName);
+        }
     }
     private void optionsForReadingAnArticle(Article article,Person person) {
         boolean isDone = true;
