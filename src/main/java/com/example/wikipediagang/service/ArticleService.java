@@ -280,7 +280,8 @@ public class ArticleService {
             chosenArticle = listOfAllArticlesWithSameName.get(0);
         }
 
-        log.success("!! Article '" + chosenArticle.getTitle() + "' is successfully DELETED !!");
+        log.success("!! Article '" + chosenArticle.getTitle() + "' \nwritten by '" + chosenArticle.getPerson().getFirstName() +
+                 " " + chosenArticle.getPerson().getLastName() + "' is DELETED successfully !!");
         articleRepo.delete(chosenArticle);
     }
 
