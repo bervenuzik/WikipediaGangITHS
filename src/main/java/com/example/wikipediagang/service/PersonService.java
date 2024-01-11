@@ -35,12 +35,16 @@ public class PersonService {
     MessageHandlerService log = new MessageHandlerService();
     Scanner input = new Scanner(System.in);
 
-
+    /**
+     * Function that initiate inlogning.
+     * It is restricted to log in as default user.
+     * @return Optional of class Person
+     * @see Person
+     */
     public Optional<Person> login() {
 
         String login;
         String password;
-        boolean tryAgain;
         List<LoginInformation> loginInfo;
         Console console = System.console();
 
@@ -87,8 +91,14 @@ public class PersonService {
     }
 
 
-
-    public Optional<Person> createUser(Optional<Person> user) {
+    /**
+     * Function creating a new currentUser adn dave him to database.
+     * Only admin have access to this function and can create new users
+     * @param currentUser Optional of class Person
+     * @return Optional Person
+     * @see Person
+     */
+    public Optional<Person> createUser(Optional<Person> currentUser) {
         String login;
         String password;
         String email;
@@ -99,8 +109,8 @@ public class PersonService {
         LoginInformation loginInfo;
 
 
-        //System.out.println(user.get().getType().getName());
-        if (user.isPresent() && user.get().getType().getName().equals("Admin")) {
+        //System.out.println(currentUser.get().getType().getName());
+        if (currentUser.isPresent() && currentUser.get().getType().getName().equals("Admin")) {
             firstName = inputNewFirstName();
             if( firstName.isEmpty()) return  Optional.empty();
 
@@ -123,13 +133,13 @@ public class PersonService {
             loginInfo = loginRepo.save(loginInfo);
             newUser = new Person(firstName, lastName, email, type.get(), loginInfo);
             System.out.println(newUser);
-            newUser.setLoginInfo(user.get(), loginInfo);
+            newUser.setLoginInfo(currentUser.get(), loginInfo);
             personRepo.save(newUser);
             return Optional.of(newUser);
         } else {
-            if(user.isPresent()) {
+            if(currentUser.isPresent()) {
                 log.error("You have no enough rights for this action");
-                ErrorLogService.saveErroLog("No right",user.get());
+                ErrorLogService.saveErroLog("No right",currentUser.get());
             } else{
                 log.error("You have to login to make actions");
             }
@@ -137,7 +147,21 @@ public class PersonService {
         return Optional.empty();
     }
 
-
+    /**
+     * Function start delete proses. Delete a user from database.
+     * Only admin have access to this function and can use it.
+     * Function find all articles , comments ,errorLogs and change author of them to default user.
+     * <p></p>
+     * !!! - It is restricted to delete:
+     *      <li>Users that have not returned a hard-copies back.</li>
+     *      <li>Default user</li>
+     *      <li>User that use this function</li>
+     *      <li>The last admin.</li>
+     *</p>
+     * @param  currentUser  instance of Person class
+     * @see Person
+     * @return Optional Person
+     */
     public Optional<Person> deleteUser(Optional<Person> currentUser){
         List<Comment> comments;
         List<ErrorLog> errorLogs;
@@ -242,10 +266,13 @@ public class PersonService {
     }
 
 
-
-
-
-
+    /**
+     * Takes String for new first name of user.
+     * Validate it and re
+     * @return <li>Empty string if validation is failed.
+     *         <li>First Name (String) if input is valid
+     * @see Person#firstNameValidator(String)
+     */
     private String inputNewFirstName() {
         String firstName;
         while (true) {
@@ -263,7 +290,13 @@ public class PersonService {
         }
     }
 
-
+    /**
+     * Takes String for new last name of user.
+     * Validate it and return.
+     * @return <li>Empty string if validation is failed.
+     *         <li>Last Name (String) if input is valid
+     * @see Person#lastNameValidator(String)
+     */
     private String inputNewLastName(){
         String lastName;
         while (true) {
@@ -279,6 +312,14 @@ public class PersonService {
         }
     }
 
+
+    /**
+     * Takes String for new email of user.
+     * Validate it and return.
+     * @return <li>Empty string if validation is failed.
+     *         <li>Email (String) if input is valid
+     * @see Person#emailValidator(String)
+     */
     public String inputNewEmail(){
         String email;
         Optional<Person> isInUse;
@@ -372,6 +413,7 @@ public class PersonService {
             }
         }
     }
+
 
     public String inputNewPassword(){
         String password;
