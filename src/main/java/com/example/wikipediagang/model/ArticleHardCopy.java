@@ -68,9 +68,9 @@ public class ArticleHardCopy {
     @Override
     public String toString() {
         return "ArticleHardCopy{" +
-                ", article=" + article +
-                ", status=" + status +
-                ", dateCreated=" + dateCreated +
+                ", article=" + getArticle().getTitle() +
+                ", status=" + getStatus() +
+                ", dateCreated=" + getDateCreated() +
                 '}' + "\n";
     }
 }

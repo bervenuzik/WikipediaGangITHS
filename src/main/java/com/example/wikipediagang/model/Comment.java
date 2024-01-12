@@ -80,10 +80,6 @@ public class Comment {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
     public boolean textValidator(String text){
         if(text.isEmpty()){
             System.out.println("you can't write an empty comment!");
@@ -94,8 +90,8 @@ public class Comment {
 
     @Override
     public String toString() {
-        return id + "\nComment: "+ text + "\nFrom: " + person.getFirstName() +" "+
-                person.getLastName() + "\nOn article: " + article.getTitle() +
-                "\nDate: " + date;
+        return getId() + ". Comment: "+ getText() + "\nFrom: " + getPerson().getFirstName() +" "+
+                getPerson().getLastName() + "\nOn article: " + getArticle().getTitle() +
+                "\nDate: " + getDate();
     }
 }

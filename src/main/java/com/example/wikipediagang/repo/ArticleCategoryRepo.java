@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArticleCategoryRepo extends JpaRepository<ArticleCategory, Integer> {
-    //List<ArticleCategory> findAll();
+
 }
