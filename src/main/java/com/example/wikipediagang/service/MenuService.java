@@ -69,9 +69,11 @@ public class MenuService {
                 case REMOVE_USER -> pService.deleteUser(currentUser);
                 case EDIT_USER -> pService.editUser(currentUser);
                 case SEARCH -> searchArticleMenu();
-                case WRITE -> articleService.createArticle(currentUser.get());
                 case DELETE -> articleService.deleteAnArticle();
                 case EDIT_CATEGORY_LIST -> articleService.updateNameOfAnExistingCategory();
+                case SHOW_RESERVED_HARD_COPIES -> articleService.showHardCopiesReservedByAPerson(currentUser.get());
+                case SHOW_RESERVATIONS_IN_QUEUE -> articleService.showArticlesReservedInQueue(currentUser.get());
+                case RETURN_RESERVED -> articleService.returnReservedHardCopyOfAnArticle(currentUser.get());
                 case REVIEW ->  articleService.reviewArticle();
             }
         }
