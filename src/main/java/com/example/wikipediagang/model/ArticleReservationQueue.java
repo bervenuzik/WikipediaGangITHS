@@ -63,16 +63,12 @@ public class ArticleReservationQueue {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
     public String toString() {
         return "ArticleReservationQueue{" +
-                ", article=" + article.getTitle() +
-                ", person=" + person.getFirstName() + " " + person.getLastName() +
-                ", timestamp=" + timestamp +
+                ", article=" + getArticle().getTitle() +
+                ", person=" + getPerson().getFirstName() + " " + getPerson().getLastName() +
+                ", timestamp=" + getTimestamp() +
                 '}' + "\n";
     }
 }

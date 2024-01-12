@@ -115,12 +115,12 @@ public class Article {
     @Override
     public String toString() {
         return "Article{" +
-                "title='" + title + '\'' + ",\n" +
-                " author=" + person.getFirstName() + " " + person.getLastName() +
-                ", category=" + category.getName() +
-                ", available as HardCopy='" + availableAsHardCopy + '\'' +
-                ", numOfViews=" + numOfViews +
-                ", status=" + status +
+                "title='" + getTitle() + '\'' + ",\n" +
+                " author=" + getPerson().getFirstName() + " " + getPerson().getLastName() +
+                ", category=" + getCategory().getName() +
+                ", available as HardCopy='" + getAvailableAsHardCopy() + '\'' +
+                ", numOfViews=" + getNumOfViews() +
+                ", status=" + getStatus() +
                 '}' + "\n";
     }
 }

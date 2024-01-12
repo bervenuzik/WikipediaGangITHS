@@ -1,6 +1,5 @@
 package com.example.wikipediagang.repo;
 
-import com.example.wikipediagang.model.Article;
 import com.example.wikipediagang.model.ArticleBorrowerInfo;
 import com.example.wikipediagang.model.ArticleHardCopy;
 import com.example.wikipediagang.model.Person;
@@ -14,15 +13,13 @@ import java.util.Optional;
 
 @Repository
 public interface ArticleBorrowerInfoRepo extends JpaRepository<ArticleBorrowerInfo, Integer> {
-    List<ArticleBorrowerInfo> findByArticleHardCopyAndAndPerson(ArticleHardCopy hardCopy, Person person);
-    List<ArticleBorrowerInfo> findByPerson(Person person);
 
+    List<ArticleBorrowerInfo> findByPerson(Person person);
     List<ArticleBorrowerInfo> findArticleBorrowerInfoByPersonAndActualReturnDate(Person person, LocalDate actualReturnDate);
     Optional<ArticleBorrowerInfo> findArticleBorrowerInfoByArticleHardCopy(ArticleHardCopy articleHardCopy);
     @Query(nativeQuery = true,
             value = "select count(*) from article_borrower_info ab where ab.article_hard_copy_id=:hardCopyId")
     int numberOfTimesHardCopyIsBorrowed(Integer hardCopyId);
-
     @Query(nativeQuery = true,
             value = "select * from article_borrower_info ab where ab.borrower_id=:personId and ab.expected_return_date is null")
     List<ArticleBorrowerInfo> findPersonalHardCopiesByPerson(int personId);

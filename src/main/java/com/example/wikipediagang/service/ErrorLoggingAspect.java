@@ -3,22 +3,16 @@ package com.example.wikipediagang.service;
 import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.PersonRepository;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Aspect
 @Component
 public class ErrorLoggingAspect {
     private  PersonRepository personRepository;
-    private  final Logger logger = LoggerFactory.getLogger(ErrorLoggingAspect.class);
-    private List<String> errologs = new ArrayList<>();
 
     @AfterThrowing(pointcut = "execution(* com.example.wikipediagang.service.*.*(..))", throwing = "ex")
     public void afterThrowing(JoinPoint joinPoint, Throwable ex) {

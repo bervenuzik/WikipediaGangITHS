@@ -1,26 +1,17 @@
 package com.example.wikipediagang.service;
 
-import com.example.wikipediagang.ScannerHelper;
 import com.example.wikipediagang.model.ErrorLog;
 import com.example.wikipediagang.model.Person;
 import com.example.wikipediagang.repo.ErrorLogRepo;
 import com.example.wikipediagang.repo.PersonRepository;
-import jakarta.persistence.EntityManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ErrorLogService {
     private static ErrorLogRepo errorLogRepo ;
-
-    //private static final Logger logger = LoggerFactory.getLogger();
-
 
     @Autowired
     public ErrorLogService(ErrorLogRepo errorLogRepo) {
@@ -46,18 +37,5 @@ public class ErrorLogService {
                 errorLog.setText("Error"+e.getStackTrace());
             }
 
-    }
-    public void uppdateErroLog(){
-        System.out.println("input text");
-        int id = ScannerHelper.getIntInput();
-        ScannerHelper.getStringInput();
-        Optional<ErrorLog> erroLog = errorLogRepo.findById(id);
-        if(erroLog.isPresent()){
-            ErrorLog erro = erroLog.get();
-            System.out.println("input status to uppdate");
-            String newStatus = ScannerHelper.getStringInput();
-           // erro.setStatus(newStatus);
-            errorLogRepo.save(erro);
-        }
     }
 }

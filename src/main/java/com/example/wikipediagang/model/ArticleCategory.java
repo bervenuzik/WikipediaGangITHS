@@ -38,8 +38,8 @@ public class ArticleCategory {
     @Override
     public String toString() {
         return "ArticleCategory{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
                 '}' + "\n";
     }
 }
