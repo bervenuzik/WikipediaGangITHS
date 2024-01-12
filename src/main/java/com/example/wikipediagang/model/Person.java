@@ -149,7 +149,8 @@ public class Person {
             System.err.println("Email can't be empty");
             return false;
         }
-        String expression = "(?im)^(?<c1>\"?)/w+(?:[/W&&[^@]]?)/w+/k<c1>@(?:/[?(?:/d{3}/.?){0,4}/]?|(?:[/w&&[^/d]]+[/./-]?)*(?<=/./w{2,6}))$";
+
+        String expression = "([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
         if(email.matches(expression)){
             return true;
         } else{

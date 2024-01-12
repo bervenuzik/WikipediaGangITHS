@@ -132,9 +132,9 @@ public class PersonService {
             loginInfo = new LoginInformation(login, password);
             loginInfo = loginRepo.save(loginInfo);
             newUser = new Person(firstName, lastName, email, type.get(), loginInfo);
-            System.out.println(newUser);
             newUser.setLoginInfo(currentUser.get(), loginInfo);
             personRepo.save(newUser);
+            log.success("SUCCESS , you have added a new user ====>  " + newUser.getFirstName() + " "+ newUser.getLastName());
             return Optional.of(newUser);
         } else {
             if(currentUser.isPresent()) {
@@ -261,7 +261,7 @@ public class PersonService {
 
         personRepo.delete(userToDelete.get());
 
-        log.success("SUCCESS. Person is deleted ==>  " + userToDelete.get() + "\n");
+        log.success("SUCCESS. Person is deleted ==>  " + userToDelete.get().getFirstName() +" " + userToDelete.get().getLastName() + " " + userToDelete.get().getEmail() + "\n");
         return userToDelete;
     }
 
