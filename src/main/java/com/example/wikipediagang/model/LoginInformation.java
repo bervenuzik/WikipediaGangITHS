@@ -19,9 +19,6 @@ public class LoginInformation {
      private String userName;
      private String password;
 
-
-   /* @Column(name = "person_id")
-    private int personId;*/
     public LoginInformation() {
     }
 
@@ -36,15 +33,6 @@ public class LoginInformation {
 
     public String getUserName() {
         return userName;
-    }
-
-    public void setUserName(String userName) {
-        if(userNameValidator(userName)){
-            this.userName = userName;}
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {

@@ -21,7 +21,6 @@ public class MenuService {
     @Autowired
     MessageHandlerService log;
 
-
     public void startMenu() {
         log.menu("""
                 ----------------------------------------------------------------------------------------
@@ -32,7 +31,6 @@ public class MenuService {
         main:
         while (true) {
             while (currentUser.isEmpty()) {
-                // System.out.println(pService.getAllUsers());
                 StartMenu userChoice = getUserChoice(StartMenu.values());
                 switch (userChoice) {
                     case EXIT -> {
